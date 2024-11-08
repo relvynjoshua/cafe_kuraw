@@ -1,28 +1,29 @@
 @extends('layouts.dashboard')
 
 @section('content')
-    <h1>Products</h1>
-    <a href="{{ route('dashboard.product.create') }}" class="btn btn-primary">Add Product</a>
+
+@include('components.alert')
+    <h1>List of Products</h1>
+    <a href="{{ route('product.showAdd') }}" class="btn btn-primary">Add Product</a>
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Actions</th>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Price</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($products as $product)
                 <tr>
-                    <td>{{ $product->id }}</td>
+                    <td scope="row">{{ $product->id }}</td>
                     <td>{{ $product->name }}</td>
-                    <td>{{ $product->category->name }}</td>
+                    <td>{{ $product->category->name ?? 'N/A'}}</td>
                     <td>{{ $product->price }}</td>
                     <td>
-                        <a href="{{ route('dashboard.product.edit', $product) }}" class="btn btn-sm btn-warning">Edit</a>
-                        <form action="{{ route('dashboard.product.destroy', $product) }}" method="POST" style="display: inline;">
+                        <a href="{{ route('product.edit', [ 'id' => $product->id ]) }}" class="btn btn-sm btn-warning">Edit</a>
+                        <form action="{{ route('product.destroy', [ 'id' => $product->id ]) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>

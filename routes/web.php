@@ -34,6 +34,9 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SignoutController;
+
 
 // Route::resource('products', ProductController::class);
 // Route::resource('categories', CategoryController::class);
@@ -118,4 +121,38 @@ Route::get('/contact', function () {
 
 Route::get('/enum', function () {
     return view('frontend.menu');
+});
+
+
+// Route::middleware('auth')->group(function(){
+
+//     Route::get('/signout', [SignoutController::class, 'signOut'])->name('logout');
+
+//     // Profile
+//     Route::get('/profile', [ProfileController::class, 'index'])->name('dashboard.profile.index');
+//     Route::get('/profile/edit', [ProfileController::class, 'showEdit'])->name('dashboard.profile.edit');
+//     Route::post('/profile/update', [ProfileController::class, 'update'])->name('dashboard.profile.update');
+
+//     // Dashboard
+//     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+//     // Product
+//     Route::controller(ProductController::class)->prefix('product')->name('product')->group(function () {
+//         Route::get('/', 'index');
+//         Route::get('/add', 'showAdd')->name('.showAdd');
+//         Route::post('/add', 'store')->name('.store');
+//         Route::get('/{id}/delete', 'destroy')->name('.destroy');
+//         Route::get('/{id}/edit', 'showEdit')->name('.showEdit');
+//         Route::post('/{id}/edit', 'update')->name('.update');
+//     });
+// });
+
+// Product
+Route::controller(ProductController::class)->prefix('product')->name('product')->group(function () {
+    Route::get('/', 'index');
+    Route::get('/add', 'showAdd')->name('.showAdd');
+    Route::post('/add', 'store')->name('.store');
+    Route::get('/{id}/delete', 'destroy')->name('.destroy');
+    Route::get('/{id}/edit', 'showEdit')->name('.showEdit');
+    Route::post('/{id}/edit', 'update')->name('.update');
 });

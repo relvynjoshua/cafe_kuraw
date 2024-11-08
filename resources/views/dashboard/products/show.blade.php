@@ -20,6 +20,6 @@
             <td>{{ $product->price }}</td>
         </tr>
     </table>
-    <a href="{{ route('dashboard.product.index') }}" class="btn btn-secondary">Back to Products</a>
+    <a href="{{ route('product.index') }}" class="btn btn-secondary">Back to Products</a>
 @endsection
 

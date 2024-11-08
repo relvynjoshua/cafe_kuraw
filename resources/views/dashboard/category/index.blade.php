@@ -8,15 +8,14 @@
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Actions</th>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($categories as $category)
                 <tr>
-                    <td>{{ $category->id }}</td>
+                    <td scope="row">{{ $category->id }}</td>
                     <td>{{ $category->name }}</td>
                     <td>
                         <a href="{{ route('dashboard.category.edit', $category) }}" class="btn btn-sm btn-warning">Edit</a>
