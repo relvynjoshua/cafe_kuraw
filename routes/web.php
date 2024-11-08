@@ -6,45 +6,116 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/', function () {
-    return view('pages.home');
-});
+// Route::get('/', function () {
+//     return view('pages.home');
+// });
 
-Route::get('/about', function () {
-    $company = 'Kuraw Coffee Shop';
-    return view('pages.about', ['company' => $company]);
-});
+// Route::get('/about', function () {
+//     $company = 'Kuraw Coffee Shop';
+//     return view('pages.about', ['company' => $company]);
+// });
 
-Route::get('/menu', function () {
-    return view('pages.menu');
-});
+// Route::get('/menu', function () {
+//     return view('pages.menu');
+// });
 
-Route::get('/gallery', function () {
-    return view('pages.gallery');
-});
+// Route::get('/gallery', function () {
+//     return view('pages.gallery');
+// });
 
-Route::get('/contact', function () {
-    return view('pages.contact');
-});
+// Route::get('/contact', function () {
+//     return view('pages.contact');
+// });
 
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\StockController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\DashboardController;
 
-Route::resource('products', ProductController::class);
-Route::resource('categories', CategoryController::class);
-Route::resource('stocks', StockController::class);
+// Route::resource('products', ProductController::class);
+// Route::resource('categories', CategoryController::class);
+// Route::resource('stocks', StockController::class);
+// Route::get('/dashboard', function () { return view('dashboard.index'); })->name('dashboard');
+// Route::resource('inventory', InventoryController::class);
+// Route::resource('reservation', ReservationController::class);
+// Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+// Route::get('/reservations', [ReservationController::class, 'index'])->name('reservation.index');
 
-Route::get('/dashboard/index', function () {
-    return view('dashboard.index');
+
+Route::prefix('dashboard')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('product')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('dashboard.product.index');
+        Route::post('/create', [ProductController::class, 'create'])->name('dashboard.product.create');
+        Route::post('/{id}/edit', [ProductController::class, 'edit'])->name('dashboard.product.edit');
+        Route::get('/{id}', [ProductController::class, 'show'])->name('dashboard.product.show');
+    });
+
+    Route::prefix('supplier')->group(function () {
+        Route::get('/', [SupplierController::class, 'index'])->name('dashboard.supplier.index');
+        Route::post('/create', [SupplierController::class, 'create'])->name('dashboard.supplier.create');
+        Route::post('/{id}/edit', [SupplierController::class, 'edit'])->name('dashboard.supplier.edit');
+        Route::get('/{id}', [SupplierController::class, 'show'])->name('dashboard.supplier.show');
+    });
+
+    Route::prefix('category')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('dashboard.category.index');
+        Route::get('/create', [CategoryController::class, 'create'])->name('dashboard.category.create');
+        Route::post('/{id}/edit', [CategoryController::class, 'edit'])->name('dashboard.category.edit');
+        Route::get('/{id}', [CategoryController::class, 'show'])->name('dashboard.category.show');
+        Route::post('/store', [CategoryController::class, 'store'])->name('dashboard.category.store');
+        Route::put('/{id}/update', [CategoryController::class, 'update'])->name('dashboard.category.update');
+        Route::delete('/{id}/destroy', [CategoryController::class, 'destroy'])->name('dashboard.category.destroy');
+    });
+
+    Route::prefix('profile')->group(function () {
+        Route::get('/', function () { return view('dashboard.profile.index'); })->name('dashboard.profile.index');
+        Route::post('/edit', function () { return view('dashboard.profile.edit'); })->name('dashboard.profile.edit');
+    });
+
+    Route::prefix('inventory')->group(function () {
+        Route::get('/', [InventoryController::class, 'index'])->name('dashboard.inventory.index');
+        Route::post('/create', [InventoryController::class, 'create'])->name('dashboard.inventory.create');
+        Route::post('/{id}/edit', [InventoryController::class, 'edit'])->name('dashboard.inventory.edit');
+        Route::get('/{id}', [InventoryController::class, 'show'])->name('dashboard.inventory.show');
+    });
+
+    Route::prefix('reservation')->group(function () {
+        Route::get('/', [ReservationController::class, 'index'])->name('dashboard.reservation.index');
+        Route::post('/create', [ReservationController::class, 'create'])->name('dashboard.reservation.create');
+        Route::post('/{id}/edit', [ReservationController::class, 'edit'])->name('dashboard.reservation.edit');
+        Route::get('/{id}', [ReservationController::class, 'show'])->name('dashboard.reservation.show');
+    });
+
 });
 
+// Frontend
 
-Route::resource('inventory', InventoryController::class);
-Route::resource('reservation', ReservationController::class);
+Route::get('/', function () {
+    return view('frontend.home');
+});
 
-Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
-Route::get('/reservations', [ReservationController::class, 'index'])->name('reservation.index');
+Route::get('/about', function () {
+    $company = 'Kuraw Coffee Shop';
+    return view('frontend.about', ['company' => $company]);
+});
+
+Route::get('/menu', function () {
+    return view('frontend.menu');
+});
+
+Route::get('/gallery', function () {
+    return view('frontend.gallery');
+});
+
+Route::get('/contact', function () {
+    return view('frontend.contact');
+});
+
+Route::get('/enum', function () {
+    return view('frontend.menu');
+});

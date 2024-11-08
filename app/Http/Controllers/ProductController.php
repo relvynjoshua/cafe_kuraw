@@ -14,14 +14,14 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        return view('products.index', compact('products'));
+        return view('dashboard.product.index', compact('products'));
     }
 
     // Show a single product by its ID
     public function show($id)
     {
         $product = Product::find($id);
-        return view('products.show', compact('product'));
+        return view('dashboard.product.show', compact('product'));
     }
 
     // Show the form to create a new product
@@ -31,7 +31,7 @@ class ProductController extends Controller
         $categories = Category::all(); // Assuming you have a Category model
         
         // Pass the categories to the view
-        return view('products.create', compact('categories'));
+        return view('dashboard.product.create', compact('categories'));
     }
 
     // Store a new product in the database
@@ -43,14 +43,14 @@ class ProductController extends Controller
         $product->description = $request->input('description');
         $product->save();
 
-        return redirect()->route('products.index');
+        return redirect()->route('dashboard.product.index');
     }
 
     // Show the form to edit an existing product
     public function edit($id)
     {
         $product = Product::find($id);
-        return view('products.edit', compact('product'));
+        return view('dashboard.product.edit', compact('product'));
     }
 
     // Update an existing product in the database
@@ -62,7 +62,7 @@ class ProductController extends Controller
         $product->description = $request->input('description');
         $product->save();
 
-        return redirect()->route('products.index');
+        return redirect()->route('dashboard.product.index');
     }
 
     // Delete a product from the database
@@ -71,6 +71,6 @@ class ProductController extends Controller
         $product = Product::find($id);
         $product->delete();
 
-        return redirect()->route('products.index');
+        return redirect()->route('dashboard.product.index');
     }
 }
