@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.test')
 
 @section('title', 'Home Page')
 
@@ -21,6 +21,8 @@
             object-fit: cover;
         }
     </style>
+
+
 
     <!-- Home Section -->
     <section class="home">

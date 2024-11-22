@@ -15,15 +15,18 @@ return new class extends Migration
             $table->id();
             $table->string('item_name');
             $table->integer('quantity');
-            $table->string('unit'); //e.g., kg, pcs, liter
-            $table->decimal('price', 10, 2); //price per unit
-            $table->date('expiry_date')->nullable(); //for perishable items
-            $table->string('supplier')->nullable();
+            $table->string('unit'); // e.g., kg, pcs, liter
+            $table->decimal('price', 10, 2); // price per unit
+            $table->date('expiry_date')->nullable(); // for perishable items
+            $table->unsignedBigInteger('supplier_id')->nullable(); // Foreign key for suppliers
+            $table->unsignedBigInteger('category_id')->nullable(); // Foreign key for categories
             $table->text('description')->nullable();
-            $table->string('category')->nullable(); //e.g., coffee beans, milk, sugar
-            $table->string('location')->nullable();//e.g., storage room A, shelf 2
+            $table->string('location')->nullable(); // e.g., storage room A, shelf 2
             $table->timestamps();
 
+            // Foreign key constraints
+            $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('set null');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
         });
     }
 
@@ -32,6 +35,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('inventory', function (Blueprint $table) {
+            $table->dropForeign(['supplier_id']);
+            $table->dropForeign(['category_id']);
+        });
+
         Schema::dropIfExists('inventory');
     }
 };

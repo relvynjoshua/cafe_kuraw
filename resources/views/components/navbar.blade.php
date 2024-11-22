@@ -1,89 +1,83 @@
-<!-- <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url('/') }}"><img src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
-    Kuraw Cafe</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-link" href="{{ url('/') }}">Home</a>
-        <a class="nav-link" href="{{ url('/about') }}">About Us</a>
-        <a class="nav-link" href="{{ url('/gallery') }}">Gallery</a>
-        <a class="nav-link" href="{{ url('/contact') }}">Contact</a>
-      </div>
+<header class="main-header">
+    <!-- START NAVIGATION AREA -->
+    <div class="sticky-menu">
+        <div class="mainmenu-area">
+            <div class="auto-container">
+                <div class="row align-items-center">
+                    <!-- Navigation Links -->
+                    <div class="col-lg-9 d-none d-lg-block">
+                        <nav class="navbar navbar-expand-lg justify-content-start">
+                            <ul class="navbar-nav">
+                                <li class="nav-item {{ Request::is('/') ? 'active' : '' }}">
+                                    <a href="{{ url('/') }}" class="nav-link">Home</a>
+                                </li>
+                                <li class="nav-item {{ Request::is('about') ? 'active' : '' }}">
+                                    <a href="{{ url('/about') }}" class="nav-link">About Us</a>
+                                </li>
+                                <li class="nav-item {{ Request::is('menu') ? 'active' : '' }}">
+                                    <a href="{{ url('/menu') }}" class="nav-link">Menu</a>
+                                </li>
+                                <li class="nav-item {{ Request::is('gallery') ? 'active' : '' }}">
+                                    <a href="{{ url('/gallery') }}" class="nav-link">Gallery</a>
+                                </li>
+                                <li class="nav-item {{ Request::is('contact') ? 'active' : '' }}">
+                                    <a href="{{ url('/contact') }}" class="nav-link">Contact</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <!-- Search and Profile Icons -->
+                    <div class="col-lg-3 d-none d-lg-block text-end">
+                        <!-- Search Icon -->
+                        <a href="#" class="header-search me-3" data-bs-toggle="modal" data-bs-target="#headerSearchModal">
+                            <i class="icofont-search-2"></i>
+                        </a>
+
+                        <!-- Profile Dropdown -->
+                        <div class="dropdown d-inline">
+                            <a href="#" class="dropdown-toggle text-decoration-none" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="icofont-user"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                @if(Auth::check())
+                                    <li><a class="dropdown-item" href="{{ url('/profile') }}">My Profile</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('/logout') }}">Logout</a></li>
+                                @else
+                                    <li><a class="dropdown-item" href="{{ url('/login') }}">Login</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('/register') }}">Register</a></li>
+                                @endif
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</nav> -->
 
-<style>
-    header{
-    position: fixed;
-    width: 100%;
-    top: 0;
-    right: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 50px;
-    }
-    .logo img{
-        width: 200px;
-        height: auto;
-    }
-    .navlist{
-        display: flex;
-    }
-    .navlist a{
-        color: #051b4a;
-        font-size: 14px;
-        text-transform: uppercase;
-        font-weight: 700;
-        padding: 4px 5px;
-        margin: 0 22px;
-        border-bottom: 2px solid transparent;
-        transition: all .42s;   
-    }
-    .navlist a:hover{
-        color: #051b4a;
-        border-bottom: 2px solid #fff;
-    }
-    #menu-icon{
-        color: #fff;
-        font-size: 35px;
-        z-index: 10001;
-        cursor: pointer;
-        display: none;
-    }
-    .home-btn{
-        display: inline-block;
-        color: #fff;
-        text-transform: uppercase;
-        border: 2px solid #051b4a;
-        background-color: #051b4a;
-        padding: 10px 25px;
-        border-radius: 30px;
-        transition: all .42s;
-    }
-    .home-btn:hover{
-        background-color: transparent;
-        color: #051b4a;
-        border: 2px solid #051b4a;
-    }
-</style>
+    <!-- Search Modal -->
+    <div class="modal fade" id="headerSearchModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <form class="header-search-box">
+                        <div class="row g-0 align-items-center">
+                            <div class="col">
+                                <input class="form-control form-control-lg" type="search" placeholder="Search..." />
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-lg header-search-btn" type="submit">
+                                    <i class="icofont-search-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Search Modal -->
 
-<header>
-        <a href="#" class="logo"><img src="images/logo1.png" alt=""></a>
-        <div class="bx bx-menu" id="menu-icon"></div>
-
-        <ul class="navlist">
-            <li><a class="nav-link" href="{{ url('/') }}">Home</a></li>
-            <li><a class="nav-link" href="{{ url('/about') }}">About Us</a></li>
-            <li><a class="nav-link" href="{{ url('/menu') }}">Menu</a></li>
-            <li><a class="nav-link" href="{{ url('/gallery') }}">Gallery</a></li>
-            <li><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
-        </ul>
-
-        <a class="nav-link home-btn" href="{{ url('/login') }}" class="home-btn">Kuraw Now!</a>
+    <!-- END NAVIGATION AREA -->
 </header>

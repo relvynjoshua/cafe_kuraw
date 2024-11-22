@@ -16,7 +16,7 @@ class Reservation extends Model
         'reservation_date',
         'reservation_time',
         'number_of_guests',
-        'special_requests',
+        'note',
         'status', // Add a status field (e.g., 'pending', 'confirmed', 'cancelled')
     ];
 

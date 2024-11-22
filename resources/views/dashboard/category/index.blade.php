@@ -10,6 +10,7 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
+                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -18,11 +19,11 @@
                     <td scope="row">{{ $category->id }}</td>
                     <td>{{ $category->name }}</td>
                     <td>
-                        <a href="{{ route('dashboard.category.edit', $category) }}" class="btn btn-sm btn-warning">Edit</a>
-                        <form action="{{ route('dashboard.category.destroy', $category) }}" method="POST" style="display: inline;">
+                        <a href="{{ route('dashboard.category.edit', $category->id) }}" class="btn btn-warning">Edit</a>
+                        <form action="{{ route('dashboard.category.destroy', $category->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                     </td>
                 </tr>

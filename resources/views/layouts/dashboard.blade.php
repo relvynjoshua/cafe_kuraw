@@ -27,7 +27,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="{{ route('dashboard.product.index') }}">
+				<a href="{{ route('dashboard.products.index') }}">
 					<i class='bx bxs-doughnut-chart'></i>
 					<span class="text">Products</span>
 				</a>
@@ -57,7 +57,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="{{ route('dashboard.reservation.index') }}">
+				<a href="{{ route('dashboard.reservations.index') }}">
 					<i class='bx bxs-calendar-event'></i>
 					<span class="text">Reservations</span>
 				</a>
@@ -77,7 +77,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="login" class="logout">
+				<a href="login-signup" class="login">
 					<i class='bx bxs-log-out-circle'></i>
 					<span class="text">Logout</span>
 				</a>

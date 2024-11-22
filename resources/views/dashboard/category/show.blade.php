@@ -12,5 +12,5 @@
             <td>{{ $category->name }}</td>
         </tr>
     </table>
-    <a href="{{ route('dashboard.category.index') }}" class="btn btn-secondary">Back to Categories</a>
+    <a href="{{ route('category.index') }}" class="btn btn-secondary">Back to Categories</a>
 @endsection

@@ -26,6 +26,7 @@
                 <ul class="footer-links">
                 <li><a href="{{ url('/') }}">Home</a></li>
                 <li><a href="{{ url('/about') }}">About Us</a></li>
+                <li><a href="{{ url('/menu') }}">Menu</a></li>
                 <li><a href="{{ url('/gallery') }}">Gallery</a></li>
                 <li><a href="{{ url('/contact') }}">Contact</a></li>
                 <li><a href="{{ url('/login') }}">Admin Login</a></li>

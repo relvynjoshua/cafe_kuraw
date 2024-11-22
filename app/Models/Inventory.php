@@ -8,15 +8,28 @@ use Illuminate\Database\Eloquent\Model;
 class Inventory extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'item_name',
         'quantity',
         'unit',
         'price',
         'expiry_date',
-        'supplier',
+        'supplier_id', // Corrected
         'description',
-        'category',
-        'location'
+        'category_id', // Corrected
+        'location',
     ];
+    
+
+    // Define the relationship to the Category model
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+    
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
 }

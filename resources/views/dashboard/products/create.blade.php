@@ -3,10 +3,10 @@
 @section('content')
 
 @include('components.alert')
-    <a href="{{ route('product') }}" class="btn btn-secondary">Back to Products</a>
-    
+    <a href="{{ route('dashboard.products.index') }}" class="btn btn-secondary">Back to Products</a>
+
     <h1>Add Product</h1>
-    <form action="{{ route('product.store') }}" method="POST">
+    <form action="{{ route('dashboard.products.store') }}" method="POST">
         @csrf
         <div class="form-group">
             <label for="name">Product Name</label>
@@ -39,6 +39,17 @@
             <input type="text" name="price" class="form-control" id="price" required>
 
             @error('price')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea name="description" class="form-control" id="description" required></textarea>
+
+            @error('description')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
