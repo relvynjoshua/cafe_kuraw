@@ -10,6 +10,7 @@ use App\Http\Controllers\{
     InventoryController,
     ReservationController,
     DashboardController,
+    OrderController,
     AdminController,
     AuthController
 };
@@ -29,9 +30,15 @@ Route::get('/menu', fn(): View => view('frontend.menu'))->name('menu');
 Route::get('/gallery', fn(): View => view('frontend.gallery'))->name('gallery');
 Route::get('/contact', fn(): View => view('frontend.contact'))->name('contact');
 
+// Display the reservation page (GET request)
+Route::get('/reservation', fn(): View => view('frontend.reservation'))->name('reservation');
+
+// Handle reservation form submission (POST request)
+Route::post('/reservation', [ReservationController::class, 'store'])->name('reservation.store');
+
 // Dashboard Routes
 Route::middleware(['auth'])->prefix('dashboard')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
     // Category Routes
     Route::prefix('category')->controller(CategoryController::class)->name('dashboard.category')->group(function () {
@@ -53,6 +60,17 @@ Route::prefix('products')->controller(ProductController::class)->name('dashboard
     Route::get('/{id}/edit', 'showEdit')->name('.showEdit'); // Edit product form
     Route::put('/{id}/edit', 'update')->name('.update'); // Update product
     Route::delete('/{id}/delete', 'destroy')->name('.destroy'); // Delete product
+});
+
+// Order Routes
+Route::prefix('orders')->controller(OrderController::class)->name('dashboard.orders')->group(function () {
+    Route::get('/', 'index')->name('.index'); // List orders
+    Route::get('/add', 'showAdd')->name('.showAdd'); // Add order form
+    Route::post('/add', 'store')->name('.store'); // Store order
+    Route::get('/{id}', 'show')->name('.show'); // Show order details
+    Route::get('/{id}/edit', 'showEdit')->name('.showEdit'); // Edit order form
+    Route::put('/{id}/edit', 'update')->name('.update'); // Update order
+    Route::delete('/{id}/delete', 'destroy')->name('.destroy'); // Delete order
 });
 
     

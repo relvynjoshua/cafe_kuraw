@@ -11,8 +11,8 @@ class CategoryController extends Controller
     // Show the list of categories
     public function index()
     {
-        $categories = Category::orderBy('id', 'DESC')->get();
-        return view('dashboard.category.index', compact('categories'));
+        $categories = Category::orderBy('id', 'DESC')->paginate(10); // Show 10 categories per page
+    return view('dashboard.category.index', compact('categories'));
     }
 
     // Show the form to add a new category

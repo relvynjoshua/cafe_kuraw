@@ -1,22 +1,47 @@
 @extends('layouts.dashboard')
 
 @section('content')
-    <h1>Edit Profile</h1>
-    <form action="{{ route('profile.update', auth()->user()->id) }}" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" name="name" class="form-control" id="name" value="{{ auth()->user()->name }}">
+
+@include('components.alert')
+
+<div class="container">
+    <a href="{{ route('dashboard.profile.index') }}" class="btn btn-secondary mb-3">Back to Profiles</a>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <h2 class="mb-4">Edit Profile</h2>
+            <form action="{{ route('dashboard.profile.update', $user->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="form-group mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" name="name" class="form-control" id="name" value="{{ $user->name }}" required>
+                    @error('name')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" id="email" value="{{ $user->email }}" required>
+                    @error('email')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Leave blank to keep current password">
+                    @error('password')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
         </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" name="email" class="form-control" id="email" value="{{ auth()->user()->email }}">
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="password" class="form-control" id="password">
-        </div>
-        <button type="submit" class="btn btn-primary">Update Profile</button>
-    </form>
+    </div>
+</div>
+
 @endsection

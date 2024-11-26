@@ -20,6 +20,9 @@
                                 <li class="nav-item {{ Request::is('gallery') ? 'active' : '' }}">
                                     <a href="{{ url('/gallery') }}" class="nav-link">Gallery</a>
                                 </li>
+                                <li class="nav-item {{ Request::is('reservation') ? 'active' : '' }}">
+                                    <a href="{{ url('/reservation') }}" class="nav-link">Reservation</a>
+                                </li>
                                 <li class="nav-item {{ Request::is('contact') ? 'active' : '' }}">
                                     <a href="{{ url('/contact') }}" class="nav-link">Contact</a>
                                 </li>

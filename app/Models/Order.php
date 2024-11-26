@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Profile extends Model
+class Order extends Model
 {
     protected $fillable = [
-        'user_id', 'name', 'phone_number','email', 'password'
+        'customer_name', 'email', 'phone', 'total_amount', 'status',
     ];
 }

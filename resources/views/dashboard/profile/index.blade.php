@@ -1,28 +1,48 @@
 @extends('layouts.dashboard')
 
 @section('content')
-    <div class="container">
+
+@include('components.alert')
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>User Profiles</h1>
-        <form action="{{ route('profile.index') }}" method="GET">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Search by ID" name="search">
-                <button class="btn btn-outline-secondary" type="submit">Search</button>
-            </div>
+        <form action="{{ route('dashboard.profile.index') }}" method="GET" class="d-flex">
+            <input type="text" class="form-control me-2" placeholder="Search by Name or Email" name="search">
+            <button class="btn btn-outline-primary" type="submit">Search</button>
         </form>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($users as $user)
-                    <tr><td>{{ $user->id }}</td><td>{{ $user->name }}</td><td>{{ $user->email }}</td><td><a href="{{ route('profile.edit', $user->id) }}" class="btn btn-primary">Edit</a></td></tr>
-                @endforeach
-            </tbody>
-        </table>
     </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($users as $user)
+                        <tr>
+                            <td>{{ $user->id }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>
+                                <a href="{{ route('profile.edit', $user->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center">No users found.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 @endsection
