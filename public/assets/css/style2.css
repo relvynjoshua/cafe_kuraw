@@ -1,0 +1,217 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #E6E6E6;
+  }
+  
+  a {
+    text-decoration: none;
+  }
+  
+  /* container */
+  .container {
+    position: relative;
+    width: 70vw;
+    height: 80vh;
+    background: #FFFF;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3), 0 8px 20px 0 rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
+  
+  
+  /* LOGIN TITLE */
+  .login-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+  
+  /* LOGIN FORM */
+  .login-form {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: #F03322;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    
+  }
+  
+  /* REGISTER TITLE */
+  .register-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+  
+  /* REGISTER FORM */
+  .registration-form {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: #F03322;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    transition: display 500ms;
+  }
+
+  /* INPUT FIELDS */
+  input[type=text], [type=password], [type=email]{
+    width: 20rem;
+    padding: 12px 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border-width: 1.5px;
+    border-color: #F1C40F;
+    background-color: white;
+  }
+  
+  /* LOGIN && REGISTER BUTTONS */
+  .login button, .register button{
+    width: 20rem;
+    padding: 12px 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border-width: 1.5px;
+    font-weight: bolder;
+    border-color: #7cfc00  ;
+    background-color: #7cfc00  ;
+  }
+  
+  .login button:hover, .register button:hover{
+    font-size: .9rem;
+    background-color: #adff2f;
+    font-weight: bolder;
+    color: white;
+    cursor: pointer;
+    transition: 1s;
+  }
+  
+  /* SIGN UP & SIGN IN BUTTONS */
+  button {
+    width: 15rem;
+    padding: 12px 10px;
+    margin: 5px 0;
+    margin-top: 20rem;
+    border-radius: 5px;
+    border-width: 1.5px;
+    border-color: white;
+    background-color: #F16024;
+    font-weight: bolder;
+  }
+  
+  button:hover{
+    font-size: 1rem;
+    background-color: #F6A07D;
+    cursor: pointer;
+    border-color: #F6A07D;
+  }
+  
+  
+  
+  /* RIGHT PANEL */
+  .right-panel {
+    position: absolute;
+    padding-top: 100px;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: white;
+    display: flex;
+    align-items: top;
+    justify-content: center;
+    background-image: url("/assets/img/wow.png");
+    background-size: cover;
+    background-position: bottom;
+    
+  }
+  
+  .right-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white
+  }
+  
+  .right-button button {
+    margin-top: 25rem;
+    color: black;
+  }
+  
+  .right-panel button:hover {
+    background-color: #F6A07D;
+    color: white;
+    border: #F6A07D;
+    transition: 1s;
+  }
+  
+  /* LEFT PANEL */
+  .left-panel {
+    position: absolute;
+    padding-top: 50px;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: white;
+    display: flex;
+    align-items: top;
+    justify-content: center;
+  
+    background-image: url("/assets/img/wow.png");
+    background-size: cover;
+    background-position: bottom;
+  }
+  
+  .left-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+  }
+  
+  .left-button button {
+    margin-top: 30rem;
+    color: black;
+  }
+  
+  .left-button button:hover {
+    background-color: #F6A07D;
+    color: white;
+    border: #F6A07D;
+    transition: 1s;
+  }
+  
+  
+  
+  
+  
+  
+  

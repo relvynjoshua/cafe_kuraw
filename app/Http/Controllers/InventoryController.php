@@ -11,11 +11,28 @@ use Illuminate\Support\Facades\Log;
 class InventoryController extends Controller
 {
     // Show the list of inventories
-    public function index()
+    public function index(Request $request)
     {
         try {
-            // Fetch inventories with categories and suppliers
-            $inventories = Inventory::with(['category', 'supplier'])->orderBy('id', 'DESC')->get();
+            // Get search query
+            $search = $request->input('search');
+
+            // Fetch inventories with categories and suppliers, and apply search filters
+            $inventories = Inventory::with(['category', 'supplier'])
+                ->when($search, function ($query, $search) {
+                    $query->where('item_name', 'like', "%$search%")
+                        ->orWhere('price', 'like', "%$search%")
+                        ->orWhere('location', 'like', "%$search%")
+                        ->orWhereHas('category', function ($q) use ($search) {
+                            $q->where('name', 'like', "%$search%");
+                        })
+                        ->orWhereHas('supplier', function ($q) use ($search) {
+                            $q->where('company_name', 'like', "%$search%");
+                        });
+                })
+                ->orderBy('id', 'DESC')
+                ->paginate(10); // Adjust pagination size as needed
+
             return view('dashboard.inventory.index', compact('inventories'));
         } catch (\Exception $e) {
             Log::error("Failed to retrieve inventories: " . $e->getMessage());

@@ -8,9 +8,20 @@ use App\Models\Supplier;
 class SupplierController extends Controller
 {
     // Show the list of suppliers
-    public function index()
+    public function index(Request $request)
     {
-        $suppliers = Supplier::orderBy('id', 'DESC')->get();
+        // Get search query
+        $search = $request->input('search');
+
+        // Fetch suppliers with optional search filters
+        $suppliers = Supplier::when($search, function ($query, $search) {
+            $query->where('company_name', 'like', "%$search%")
+                ->orWhere('contact_person', 'like', "%$search%")
+                ->orWhere('email', 'like', "%$search%");
+        })
+        ->orderBy('id', 'DESC')
+        ->paginate(10); // Adjust pagination size as needed
+
         return view('dashboard.supplier.index', compact('suppliers'));
     }
 

@@ -1,3 +1,8 @@
+@extends('layouts.app')
+
+@section('title', 'Reservation')
+
+@section('content')
 <!DOCTYPE html>
 <html lang="en">
 
@@ -143,34 +148,6 @@
 
 
 <body id="main">
-    <!-- START HEADER SECTION -->
-    <header class="main-header">
-        <div class="sticky-menu">
-            <div class="mainmenu-area">
-                <div class="auto-container">
-                    <nav class="navbar navbar-expand-lg">
-                        <ul class="navbar-nav">
-                            <li><a href="index.html" class="nav-link">Home</a></li>
-                            <li><a href="about.html" class="nav-link">About Us</a></li>
-                            <li><a href="reservation.html" class="nav-link">Reservation</a></li>
-                            <li><a href="gallery.html" class="nav-link">Gallery</a></li>
-                            <li class="dropdown"><a class="nav-link" href="#">Pages</a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="teachers.html">Administration</a></li>
-                                    <li><a href="faq.html">FAQ</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="blog.html" class="nav-link">News</a></li>
-                            <li><a href="contact.html" class="nav-link">Contact</a></li>
-                            <li><a href="admin.html" class="nav-link">Admin</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
-    <!-- END HEADER SECTION -->
-
     <div class="container1-wrapper">
         <div class="calendar-container">
             <div id="month-nav">
@@ -318,3 +295,5 @@
 </body>
 
 </html>
+
+@endsection

@@ -9,10 +9,17 @@ use Illuminate\Support\Facades\Log;
 class CategoryController extends Controller
 {
     // Show the list of categories
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::orderBy('id', 'DESC')->paginate(10); // Show 10 categories per page
-    return view('dashboard.category.index', compact('categories'));
+        // Get the search term
+        $search = $request->input('search');
+
+        // Fetch categories with optional search filter
+        $categories = Category::when($search, function ($query, $search) {
+            $query->where('name', 'like', "%$search%");
+        })->paginate(10); // Adjust pagination as needed
+
+        return view('dashboard.category.index', compact('categories'));
     }
 
     // Show the form to add a new category

@@ -15,9 +15,9 @@
                 @method('PUT')
 
                 <div class="form-group mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" name="name" class="form-control" id="name" value="{{ $user->name }}" required>
-                    @error('name')
+                    <label for="firstname" class="form-label">Name</label>
+                    <input type="text" name="firstname" class="form-control" id="firstname" value="{{ $user->firstname }}" required>
+                    @error('firstname')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

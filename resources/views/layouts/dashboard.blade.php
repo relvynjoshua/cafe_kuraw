@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('Admin - Kuraw Cafe')</title>
-    
-    <!-- Include your Bootstrap or CSS links here -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@yield('Admin - Kuraw Cafe')</title>
+
+	<!-- Include your Bootstrap or CSS links here -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 </head>
+
 <body>
 
-    <!-- SIDEBAR -->
-    <section id="sidebar">
+	<!-- SIDEBAR -->
+	<section id="sidebar">
 		<a href="#" class="brand">
 			<i class="fas fa-coffee"></i>
 			<span class="text">Kuraw Cafe</span>
@@ -72,16 +74,19 @@
 		</ul>
 		<ul class="side-menu">
 			<li>
-				<a href="#">
+				<a href="{{ route('dashboard.pages.settings') }}">
 					<i class="fas fa-cog"></i>
 					<span class="text">Settings</span>
 				</a>
 			</li>
 			<li>
-				<a href="login-signup" class="logout">
-					<i class="fas fa-sign-out-alt"></i>
-					<span class="text">Logout</span>
-				</a>
+				<form action="{{ route('logout') }}" method="POST" style="display: inline;">
+					@csrf
+					<button type="submit" class="logout" style="border: none; background: none; cursor: pointer;">
+						<i class="fas fa-sign-out-alt"></i>
+						<span class="text">Logout</span>
+					</button>
+				</form>
 			</li>
 		</ul>
 	</section>
@@ -117,7 +122,8 @@
 		</div>
 	</section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/dashboard.js') }}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="{{ asset('js/dashboard.js') }}"></script>
 </body>
+
 </html>

@@ -54,7 +54,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             // Redirect based on the user's role
             if (Auth::user()->role === 'admin') {
-                return redirect()->route('dashboard'); // Admin dashboard route
+                return redirect()->route('dashboard.index'); // Admin dashboard route
             }
 
             return redirect()->route('menu'); // Regular user menu route

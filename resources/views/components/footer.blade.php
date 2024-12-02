@@ -1,55 +1,71 @@
-<!-- <footer class="text-center mt-4">
-    <p>&copy; 2024 Your Company</p>
-</footer> -->
-
-<style>
-    .footer-links a{
-        color: #051b4a;
-    }
-
-</style>
-
-<footer class="site-footer">
-        <div class="container">
-            <div class="row">
-            <div class="col-sm-12 col-md-6">
-                <h6>About</h6>
-                <p class="text-justify">Kuraw Cafe <i>'kuraw ta kape!'</i> is a coffee shop in
-                San Pedro St, Capisnon, Cagayan de Oro City - with an assortment of drinks and foods
-                the customer can order. Kuraw na ta!</p>
+<!-- START FOOTER -->
+<footer class="footer-section">
+        <div id="top-footer" class="overlay-2 section-back-image-2"
+            data-background="{{ asset('assets/img/kuraw/kuraw2.jpg') }}">
+            <div class="auto-container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-widget-title">
+                            <div class="logo">
+                                <a href="{{ url('/') }}">
+                                    <img class="img-fluid" src="{{ asset('assets/img/kuraw/logo.jpg') }}" alt="">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h4>Latest Posts</h4>
+                        <div class="footer-widget-inner">
+                            <div class="singleRecpost">
+                                <img src="{{ asset('assets/img/news/loyaltycard.jpg') }}" alt="" class="img-fluid">
+                                <h6 class="recTitle">
+                                    <a href="#">KURAW’s Loyalty Card for Coffee Connoisseur</a>
+                                </h6>
+                                <p class="posted-on">20 NOVEMBER 2024</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h4>Get In Touch</h4>
+                        <div class="footer-widget-inner">
+                            <div class="footer-contact-widget">
+                                <div class="footer-contact-sin">
+                                    <div class="footer-contact-sin-left">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div class="footer-contact-sin-right">
+                                        <p>San Pedro St, Capisnon...</p>
+                                    </div>
+                                </div>
+                                <div class="footer-contact-sin">
+                                    <div class="footer-contact-sin-left">
+                                        <i class="fas fa-phone"></i>
+                                    </div>
+                                    <div class="footer-contact-sin-right">
+                                        <p>0956 165 7495</p>
+                                    </div>
+                                </div>
+                                <div class="footer-contact-sin">
+                                    <div class="footer-contact-sin-left">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="footer-contact-sin-right">
+                                        <p>kurawcafe@gmail.com</p>
+                                    </div>
+                                </div>
+                                <div class="footer-contact-sin">
+                                    <div class="footer-contact-sin-left">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="footer-contact-sin-right">
+                                        <p>Mon - Thu : 10AM - 7PM</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="col-xs-6 col-md-3"></div>
-
-            <div class="col-xs-6 col-md-3">
-                <h6>Quick Links</h6>
-                <ul class="footer-links">
-                <li><a href="{{ url('/') }}">Home</a></li>
-                <li><a href="{{ url('/about') }}">About Us</a></li>
-                <li><a href="{{ url('/menu') }}">Menu</a></li>
-                <li><a href="{{ url('/gallery') }}">Gallery</a></li>
-                <li><a href="{{ url('/contact') }}">Contact</a></li>
-                <li><a href="{{ url('/login') }}">Admin Login</a></li>
-                </ul>
-            </div>
-            </div>
-            <hr>
         </div>
-        <div class="container">
-            <div class="row">
-            <div class="col-md-8 col-sm-6 col-xs-12">
-                <p class="copyright-text">Copyright &copy; 2024 | All Rights Reserved.
-                </p>
-            </div>
-
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <ul class="social-icons">
-                <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
-                <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
-                <li><a class="dribbble" href="#"><i class="fa fa-dribbble"></i></a></li>
-                <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>   
-                </ul>
-            </div>
-            </div>
-        </div>
-</footer>
+    </footer>
+    <!-- END FOOTER -->

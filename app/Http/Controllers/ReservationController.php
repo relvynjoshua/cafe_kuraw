@@ -8,11 +8,23 @@ use App\Models\Reservation;
 class ReservationController extends Controller
 {
     // Show the list of reservations
-    public function index() 
-{
-    $reservations = Reservation::orderBy('id', 'DESC')->get();
-    return view('dashboard.reservations.index', compact('reservations'));
-}
+    public function index(Request $request)
+    {
+        // Get search query
+        $search = $request->input('search');
+
+        // Fetch reservations with optional search filters
+        $reservations = Reservation::when($search, function ($query, $search) {
+            $query->where('name', 'like', "%$search%")
+                ->orWhere('reservation_date', 'like', "%$search%")
+                ->orWhere('reservation_time', 'like', "%$search%")
+                ->orWhere('number_of_guests', 'like', "%$search%");
+        })
+        ->orderBy('id', 'DESC')
+        ->paginate(10); // Adjust pagination size as needed
+
+        return view('dashboard.reservations.index', compact('reservations'));
+    }
 
     // Show all added reservations
     public function showAdd() 

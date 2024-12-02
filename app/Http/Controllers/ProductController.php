@@ -9,11 +9,25 @@ use App\Models\Category;
 class ProductController extends Controller
 {
     // Show the list of products
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::orderBy('id', 'DESC')->with('category')->get();
+        // Get search query
+        $search = $request->input('search');
+
+        // Fetch products with optional search filters and paginate results
+        $products = Product::with('category')
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%$search%")
+                    ->orWhere('price', 'like', "%$search%")
+                    ->orWhereHas('category', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    });
+            })
+            ->paginate(10); // Display 10 products per page
+
         return view('dashboard.products.index', compact('products'));
     }
+
 
     // Show the form to add a new product
     public function showAdd()

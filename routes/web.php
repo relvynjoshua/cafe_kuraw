@@ -12,8 +12,17 @@ use App\Http\Controllers\{
     DashboardController,
     OrderController,
     AdminController,
+    ProfileController,
+    SettingsController,
+    ContactController,
     AuthController
 };
+
+// Contact Page and Form Submission
+Route::controller(ContactController::class)->group(function () {
+    Route::get('/contact', 'index')->name('contact'); // Display contact form
+    Route::post('/contact', 'store')->name('contact.process'); // Handle form submission
+});
 
 // Authentication Routes
 Route::controller(AuthController::class)->group(function () {
@@ -27,7 +36,15 @@ Route::controller(AuthController::class)->group(function () {
 Route::get('/', fn(): View => view('frontend.home'))->name('home');
 Route::get('/about', fn(): View => view('frontend.about'))->name('about');
 Route::get('/menu', fn(): View => view('frontend.menu'))->name('menu');
-Route::get('/gallery', fn(): View => view('frontend.gallery'))->name('gallery');
+Route::get('/gallery', function (): View {
+    $galleryImages = [
+        ['src' => 'assets/img/gallery/moments/1.jpg', 'alt' => 'Moment 1', 'category' => 'two'],
+        ['src' => 'assets/img/gallery/moments/2.jpg', 'alt' => 'Moment 2', 'category' => 'two'],
+        ['src' => 'assets/img/gallery/location/1.jpg', 'alt' => 'Location 1', 'category' => 'three'],
+    ];
+
+    return view('frontend.gallery', compact('galleryImages'));
+})->name('gallery');
 Route::get('/contact', fn(): View => view('frontend.contact'))->name('contact');
 
 // Display the reservation page (GET request)
@@ -104,8 +121,13 @@ Route::prefix('inventory')->controller(InventoryController::class)->group(functi
     });
     // Profile Routes
     Route::prefix('profile')->group(function () {
-        Route::get('/', fn(): View => view('dashboard.profile.index'))->name('dashboard.profile.index');
-        Route::get('/edit', fn(): View => view('dashboard.profile.edit'))->name('dashboard.profile.edit');
+        Route::get('/', [ProfileController::class, 'index'])->name('dashboard.profile.index'); // List profiles
+        Route::get('/{id}/edit', [ProfileController::class, 'edit'])->name('dashboard.profile.edit'); // Edit a profile
+        Route::put('/{id}', [ProfileController::class, 'update'])->name('dashboard.profile.update'); // Update a profile
+    });
+    // Settings Routes
+    Route::prefix('pages')->group(function () {
+        Route::get('/settings', [SettingsController::class, 'index'])->name('dashboard.pages.settings');
     });
 });
 

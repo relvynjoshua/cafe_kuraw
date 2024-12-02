@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.main-content {
+    padding-top: 80px; /* Adds more space above the box */
+    padding-bottom: 80px; /* Adds more space below the box */
+    display: flex;
+    justify-content: center; /* Centers the box horizontally */
+    align-items: center; /* Centers the box vertically */
+    background-color: #f0f0f0; /* Optional: adjust background color */
+}
+
+.welcome-box {
+    background-color: white;
+    padding: 50px;
+    margin-top: 100px;  
+    margin-left: 40rem;
+    border-radius: 10px;
+    width: 600px;              /* Set the width to make it rectangular */
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+
+.welcome-box h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.welcome-body p {
+    font-size: 14px;
+    color: #666;
+    margin: 10px 0;
+}
+
+.button-box {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;  /* Space between the buttons */
+}
+
+.btn {
+    background-color: #ff5722;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #e64a19;
+}

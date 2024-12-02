@@ -42,9 +42,19 @@
 </style>
 
 <div class="container mt-4">
-    <h1>Categories</h1>
+    <h1>
+        <i class="fas fa-chart-pie"></i> Categories
+    </h1>
     <h6>List of all categories</h6>
+
+    <!-- Search Bar -->
+    <form action="{{ route('dashboard.category.index') }}" method="GET" class="d-flex mb-3">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search by Category Name" value="{{ request('search') }}">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+
     <a href="{{ route('dashboard.category.create') }}" class="btn btn-primary mb-3">Add Category</a>
+
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
             <tr>
@@ -54,7 +64,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($categories as $category)
+            @forelse ($categories as $category)
                 <tr>
                     <td scope="row">{{ $category->id }}</td>
                     <td>{{ $category->name }}</td>
@@ -71,7 +81,11 @@
                         </form>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="3" class="text-center">No categories found.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 

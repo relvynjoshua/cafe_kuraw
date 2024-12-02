@@ -42,6 +42,13 @@
                             Sign in here
                         </b>
                     </p>
+                    <p>
+                        <a href="{{ url('/') }}">
+                            <span>
+                            Go back to Home
+                            </span>
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -78,6 +85,13 @@
                         <b onclick="toggle()" class="pointer">
                             Sign up here
                         </b>
+                    </p>
+                    <p>
+                        <a href="{{ url('/') }}">
+                            <span>
+                            Go back to Home
+                            </span>
+                        </a>
                     </p>
                 </div>
             </div>

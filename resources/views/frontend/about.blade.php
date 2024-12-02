@@ -18,103 +18,48 @@
    <link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico') }}" />
 
    <!--Page Title-->
-   <title>NMFIC - Mock Website</title>
+   <title>KURAW - About Us</title>
 
-   <link href="{{ asset('css/animate.css') }}" rel="stylesheet">
-   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-   <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-   <link href="{{ asset('css/icofont.min.css') }}" rel="stylesheet">
-   <link href="{{ asset('css/meanmenu.min.css') }}" rel="stylesheet">
-   <link href="{{ asset('css/owl.carousel.min.css') }}" rel="stylesheet">
-   <link href="{{ asset('css/owl.theme.default.min.css') }}" rel="stylesheet">
-   <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
-   <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-   <link href="{{ asset('css/venobox.min.css') }}" rel="stylesheet">
+   <!-- Bootstrap core CSS -->
+   <link href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+   <!-- Google Fonts -->
+   <link
+      href="https://fonts.googleapis.com/css?family=Dosis:300,400,500,600,700,800|Roboto:300,400,400i,500,500i,700,700i,900,900i"
+      rel="stylesheet">
+   <!-- Font Awesome -->
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+   <!-- Meanmenu CSS -->
+   <link rel="stylesheet" href="{{ asset('assets/css/meanmenu.min.css') }}">
+   <!-- Owl Carousel CSS -->
+   <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.carousel.min.css') }}">
+   <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.theme.default.min.css') }}">
+   <!-- Animate CSS -->
+   <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}">
+   <!-- Venobox -->
+   <link rel="stylesheet" href="{{ asset('assets/venobox/css/venobox.min.css') }}" />
+   <!-- Style CSS -->
+   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+   <!-- Responsive CSS -->
+   <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
 </head>
 
 <body>
-
-      <!-- START LOGO AREA -->
-      <div class="logo-area">
-         <div class="auto-container">
-            <div class="row">
-               <div class="col-lg-3 col-12 mx-auto text-lg-left text-center pl-0 mb-lg-0 mb-4">
-                  <div class="logo">
-                     <a href="{{ url('/') }}">
-                        <img class="img-fluid" src="{{ asset('/img/fic.jpg') }}" alt="">
-                     </a>
-                  </div>
-               </div>
-               <!-- end col -->
-               <div class="col-lg-9 col-12">
-                  <div class="header-info-box">
-                     <div class="header-info-icon">
-                        <i class="icofont-envelope"></i>
-                     </div>
-                     <h5>Connect With Us</h5>
-                     <p>ustp.fic.edu.ph</p>
-                  </div>
-                  <div class="header-info-box">
-                     <div class="header-info-icon">
-                        <i class="icofont-headphone-alt-3"></i>
-                     </div>
-                     <h5>Call For Inquiry</h5>
-                     <p>123-456-789</p>
-                  </div>
-                  <div class="header-info-box">
-                     <div class="header-info-icon">
-                        <i class="icofont-eye-open"></i>
-                     </div>
-                     <h5>Opening hours</h5>
-                     <p>Mon - Fri : 09:00 - 16:00</p>
-                  </div>
-               </div>
-               <!-- end col -->
-            </div>
-         </div>
-      </div>
-      <!-- END LOGO AREA -->
-
-      <!-- START TOP AREA -->
-      <div class="top-area">
-         <div class="auto-container">
-            <div class="row">
-               <div class="col-lg-4 col-md-12 col-sm-12 col-12 text-lg-left text-center">
-                  <div class="header-social">
-                     <ul>
-                        <li><a href="#"><i class="icofont-facebook"></i></a></li>
-                        <li><a href="#"><i class="icofont-twitter"></i></a></li>
-                        <li><a href="#"><i class="icofont-youtube"></i></a></li>
-                     </ul>
-                  </div>
-               </div>
-               <!-- end col -->
-               <div class="col-lg-8 col-md-12 col-sm-12 col-12 text-lg-right text-center">
-                  <div class="top-menu">
-                     <ul>
-                        <li><a href="#"><i class="icofont-location-pin"></i>Claro M. Recto Avenue, Lapasan 9000 Cagayan
-                              de Oro City, Philippines</a></li>
-                        <li><a href="#"><i class="icofont-phone"></i>088-856-1738</a></li>
-                     </ul>
-                  </div>
-               </div>
-               <!-- end col -->
-            </div>
-         </div>
-      </div>
-      <!-- END TOP AREA -->
-   </header>
-   <!-- END HEADER SECTION -->
+   <!-- START PRELOADER -->
+   <div id="page-preloader">
+      <div class="loader"></div>
+      <div class="loa-shadow"></div>
+   </div>
+   <!-- END PRELOADER -->
 
    <!-- START PAGEBREDCUMS -->
-   <div class="page-banner page-banner-overlay" data-background="{{ asset('/img/bldg/bldg1_night.jpg') }}">
+   <div class="page-banner page-banner-overlay" data-background="{{ asset('/assets/img/white.png') }}">
       <div class="container h-100">
          <div class="row h-100">
             <div class="col-lg-12 my-auto">
                <div class="page-banner-content text-center">
                   <h2 class="page-banner-title">About Us</h2>
                   <div class="page-banner-breadcrumb">
-                     <p><a href="#">Home</a> About</p>
+                     <p><a href="{{ url('/') }}">Home</a> About</p>
                   </div>
                </div>
             </div>
@@ -129,43 +74,22 @@
       <div class="auto-container">
          <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-lg-0 mb-lg-0 mb-5">
-               <img class="img-fluid" src="{{ asset('assets/img/bldg/bldg2.JPG') }}" alt="" />
+               <img class="img-fluid" src="{{ asset('assets/img/kuraw/day.jpg') }}" alt="">
             </div>
             <!-- end col -->
             <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                <div class="welcome-section-title">
                   <h6 class="theme-color">Welcome To</h6>
-                  <h2>Kuraw Coffee Shop </h2>
-                  <p>The Kuraw Coffee Shop  a micro, small, and medium-sized enterprise, 
-                     was established on March 8, 2024, as a sole proprietorship by Sir Rolan Lutrania. 
-                     However, the business was operated in partnership with Sir William. 
-                     The concept for this business emerged during a pandemic, and the name "Kuraw," 
-                     which means "mix" in Visayan.<br></p>
-               </div>
-               <div class="welcome-des wow fadeInUp">
-                  <div class="col-lg-8 col-md-7 col-12 pl-0 mt-4">
-                     <div class="row">
-                        <div class="col-lg-6 mb-md-3 mb-3">
-                           <div class="welcome-btn">
-                              <a href="#" class="welcome-into-btn">Learn More <i
-                                    class="icofont icofont-caret-right"></i></a>
-                           </div>
-                        </div>
-                        <div class="col-lg-6">
-                           <a class="welcome-video venobox" data-autoplay="true" data-vbtype="video"
-                              data-title="Introduction Video" data-gall="videoa"
-                              href="https://youtube.com/watch?v=-qUBenfVw7E">
-                              <div class="welcome-video-icon">
-                                 <i class="icofont-youtube-play"></i>
-                              </div>
-                              <div class="welcome-video-des">
-                                 <h5>Watch Video</h5>
-                                 <p>About Us</p>
-                              </div>
-                           </a>
-                        </div>
-                     </div>
-                  </div>
+                  <h2>Kuraw Coffee Shop</h2>
+                  <p>
+                     Kuraw Coffee Shop, a micro, small, and medium-sized enterprise (MSME), was established on
+                     March 8, 2024, as a sole proprietorship owned by Sir Rolan Lutrania. Despite its sole
+                     proprietorship status, the business is collaboratively managed with Sir William, showcasing
+                     a shared passion for delivering exceptional coffee and service. Situated in a cozy
+                     residential area in Capsinon, Kauswagan, Cagayan de Oro City, the shop provides a welcoming
+                     ambiance for customers. While space and parking are limited, the shop accommodates
+                     reservations for meetings, ensuring a personalized and convenient experience.<br>
+                  </p>
                </div>
             </div>
             <!-- end col -->
@@ -174,464 +98,29 @@
    </section>
    <!-- END ABOUT PAGE WELCOME SECTION -->
 
-   <!-- START COUNTER SECTION -->
-   <section id="counter" class="counter-section counter-padding overlay section-back-image"
-      data-background="{{ asset('/img/bldg/bldg2') }}.jpg">
-      <div class="auto-container">
-         <div class="row text-center wow fadeInUp">
-            <div class="col-lg-3 col-md-3 col-12 mb-lg-0 mb-md-0 mb-4">
-               <div class="single-counter-item single-counter-item-s-2">
-                  <i class="icofont-book"></i>
-                  <h4 class="timer">121</h4>
-                  <p>Satisfied Customers</p>
-               </div>
-            </div>
-            <!-- End single counter item -->
-            <div class="col-lg-3 col-md-3 col-12 mb-lg-0 mb-md-0 mb-4">
-               <div class="single-counter-item single-counter-item-s-2">
-                  <i class="icofont-light-bulb"></i>
-                  <h4 class="timer">342</h4>
-                  <p>Successful Events</p>
-               </div>
-            </div>
-            <!-- End single counter item -->
-   </section>
-   <!-- END COUNTER SECTION -->
-
-
-   <!-- START SERVICE TAB SECTION -->
-   <section id="servicetab" class="section-padding">
-      <div class="auto-container">
-         <div class="row">
-            <div class="col-lg-7 col-md-7 col-12 mx-auto text-center">
-               <div class="section-title">
-                  <h6 class="theme-color">What We Do</h6>
-                  <h2>Services We Provide</h2>
-                  <p>At Kuraw Coffee Shop, we blend quality coffee with a cozy ambiance,
-                      creating a space for relaxation, connection, and productivity.
-                      Our mission is to offer not only the finest brews but also a 
-                      welcoming environment where friends, families, and colleagues
-                      can come together. Whether you're stopping by for a quick coffee,
-                      looking for a comfortable spot to work, or hosting a gathering,
-                      we're here to make your time memorable.</p>
-               </div>
-            </div>
-         </div>
-         <!-- end section title -->
-         <div class="service-tab">
-            <div class="row">
-               <div class="col-lg-3 col-12 mb-lg-0 mb-md-4 mb-4">
-                  <ul id="tabsJustified" class="nav nav-tabs">
-                     <li class="nav-item">
-                        <a href="#" data-target="#one" data-toggle="tab" class="nav-link">
-                           <span>Meeting Reservations</span>
-                        </a>
-                     </li>
-                     <li class="nav-item">
-                        <a href="#" data-target="#two" data-toggle="tab" class="nav-link active">
-                           <span>Food Reservations</span>
-                        </a>
-                     </li>
-                     <li class="nav-item">
-                        <a href="#" data-target="#three" data-toggle="tab" class="nav-link">
-                           <span>Deliveries</span>
-                        </a>
-                     </li>
-                  </ul>
-               </div>
-               <!-- end col -->
-               <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-                  <div id="tabsJustifiedContent" class="tab-content">
-                     <div id="one" class="tab-pane animated fadeInUp">
-                        <div class="auto-container">
-                           <div class="row">
-                              <div class="col-lg-6 col-md-6 col-12 mb-lg-0 mb-md-0 mb-5 text-lg-right text-left">
-                                 <div class="service-tab-left">
-                                    <h4>Meeting Reservations</h4>
-                                    <p>Our coffee shop offers a calm and productive setting for meetings. 
-                                       Reserve a spot with us to host small business gatherings, 
-                                       casual catch-ups, or study sessions, and let us handle the rest.</p>
-                                 </div>
-                              </div>
-                              <!-- end col -->
-                              <div class="col-lg-6 col-md-6 col-12 pl-lg-5 pl-0">
-                                 <div class="ab-img-col">
-                                    <figure>
-                                       <img class="img-fluid" src="{{ asset('assets/img/service/6.jpg') }}" alt="">
-                                    </figure>
-                                 </div>
-                              </div>
-                              <!-- end col -->
-                           </div>
-                        </div>
-                     </div>
-                     <div id="two" class="tab-pane animated fadeInUp active show">
-                        <div class="auto-container">
-                           <div class="row">
-                              <div class="col-lg-6 col-md-6 col-12 mb-lg-0 mb-md-0 mb-5 text-lg-right text-left">
-                                 <div class="service-tab-left">
-                                    <h4>Food Reservations</h4>
-                                    <p>For those planning a special occasion or a casual meetup, you can reserve meals in advance. 
-                                       We make it easy to enjoy a great meal without the wait.</p>
-                                 </div>
-                              </div>
-                              <!-- end col -->
-                              <div class="col-lg-6 col-md-6 col-12 pl-lg-5 pl-0">
-                                 <div class="ab-img-col">
-                                    <figure>
-                                       <img class="img-fluid" src="{{ asset('assets/img/service/2.jpg') }}" alt="">
-                                    </figure>
-                                 </div>
-                              </div>
-                              <!-- end col -->
-                           </div>
-                        </div>
-                     </div>
-                     <div id="three" class="tab-pane animated fadeInUp">
-                        <div class="auto-container">
-                           <div class="row">
-                              <div class="col-lg-6 col-md-6 col-12 mb-lg-0 mb-md-0 mb-5 text-lg-right text-left">
-                                 <div class="service-tab-left">
-                                    <h4>Deliveries</h4>
-                                    <p>Get your favorite coffee and treats delivered right to your door! Perfect for
-                                        enjoying Kuraw’s quality coffee and menu items from the comfort 
-                                        of your home or office.</p>
-                                 </div>
-                              </div>
-                              <!-- end col -->
-         </div>
-      </div>
-      </div>
-      <!--- END CONTAINER -->
-   </section>
-   <!-- END SERVICE TAB SECTION -->
-
-
-   <!-- START ABOUT TESTIMONIAL SECTION -->
-   <section id="aboutes" class="section-padding bg-gray">
-      <div class="auto-container">
-         <div class="row">
-            <div class="col-lg-7 col-md-7 col-12 mx-auto text-center">
-               <div class="section-title">
-                  <h6 class="theme-color">Believe in Satisfaction</h6>
-                  <h2>...</h2>
-                  <p>.......</p>
-               </div>
-            </div>
-         </div>
-         <!-- end section title -->
-         <div class="row">
-            <div class="col-lg-6 col-md-6 col-12 mb-lg-0 mb-md-0 mb-4 wow fadeInLeft">
-               <div class="testimonial-style-2">
-                  <div class="testimonial-style-2-left">
-                     <img class="testimonial-thumb rounded-circle" src="{{ asset('assets/img/testimonial/maloi.jpg') }}"
-                        alt="">
-                     <h4>Maloi</h4>
-                     <span>BPO Worker</span>
-                  </div>
-                  <div class="testimonial-style-2-right rounded">
-                     <p>Pellentesque Sed ut perspiciatis unde omnis iste natus error sitre voluptatem accusantium udema
-                        doloremque laudantium, totarmd aperiam, eaque ipsa quae ab illa inventore veritati.</p>
-                  </div>
-               </div>
-            </div>
-            <!-- end col -->
-            <div class="col-lg-6 col-md-6 col-12 wow fadeInRight">
-               <div class="testimonial-style-2">
-                  <div class="testimonial-style-2-left">
-                     <img class="testimonial-thumb rounded-circle" src="{{ asset('assets/img/testimonial/maki.png') }}"
-                        alt="">
-                     <h4>Maki</h4>
-                     <span>Student</span>
-                  </div>
-                  <div class="testimonial-style-2-right rounded">
-                     <p>Pellentesque Sed ut perspiciatis unde omnis iste natus error sitre voluptatem accusantium udema
-                        doloremque laudantium, totarmd aperiam, eaque ipsa quae ab illa inventore veritati.</p>
-                  </div>
-               </div>
-            </div>
-            <!-- end col -->
-         </div>
-      </div>
-   </section>
-   <!-- END ABOUT TESTIMONIAL SECTION -->
-
-
-            </div>
-         </div>
-      </section>
-      <!-- END ABOUT PAGE WELCOME SECTION -->
-
-      <!-- START COUNTER SECTION -->
-      <section id="counter" class="counter-section counter-padding overlay section-back-image" data-background="{{ asset('/img/bldg/bldg2') }}.jpg">
-         <div class="auto-container">
-            <div class="row text-center wow fadeInUp">
-               <div class="col-lg-3 col-md-3 col-12 mb-lg-0 mb-md-0 mb-4">
-                  <div class="single-counter-item single-counter-item-s-2">
-                     <i class="icofont-book"></i>
-                     <h4 class="timer">121</h4>
-                     <p>Research Studies</p>
-                  </div>
-               </div>
-               <!-- end col -->
-               <div class="col-lg-3 col-md-6 col-sm-12 col-12 mb-lg-0 mb-md-0 mb-sm-5 mb-5">
-                  <div class="footer-widget-title col-12 p-0">
-                     <h4>Useful Links</h4>
-                  </div>
-                  <div class="footer-widget-inner">
-                     <ul>
-                        <li><a href="{{ url('/documents') }}"><i class="icofont-circled-right"></i> Documents</a></li>
-                        <li><a href="{{ url('/services') }}"><i class="icofont-circled-right"></i> Latest Services</a>
-                        </li>
-                        <li><a href="{{ url('/administration') }}"><i class="icofont-circled-right"></i>
-                              Administration</a></li>
-                        <li><a href="{{ url('/gallery') }}"><i class="icofont-circled-right"></i> Image Gallery</a></li>
-                        <li><a href="{{ url('/') }}"><i class="icofont-circled-right"></i> FAQs</a></li>
-                     </ul>
-                  </div>
-               </div>
-               <!-- end col -->
-               <div class="col-lg-3 col-md-6 col-sm-12 col-12 mb-lg-0 mb-md-0 mb-sm-0 mb-0">
-                  <div class="footer-widget-title col-12 p-0">
-                     <h4>Get In Touch</h4>
-                  </div>
-                  <div class="footer-widget-inner">
-                     <div class="footer-contact-widget">
-                        <div class="footer-contact-sin">
-                           <div class="footer-contact-sin-left">
-                              <i class="icofont-pin"></i>
-                           </div>
-                           <div class="footer-contact-sin-right">
-                              <p>Claro M. Recto Ave, Cagayan de Oro</p>
-                           </div>
-                        </div>
-                        <div class="footer-contact-sin">
-                           <div class="footer-contact-sin-left">
-                              <i class="icofont-smart-phone"></i>
-                           </div>
-                           <div class="footer-contact-sin-right">
-                              <p>+639667811333</p>
-                           </div>
-                        </div>
-                        <div class="footer-contact-sin">
-                           <div class="footer-contact-sin-left">
-                              <i class="icofont-envelope"></i>
-                           </div>
-                           <div class="footer-contact-sin-right">
-                              <p>ustp.fic.edu.ph</p>
-                           </div>
-                        </div>
-                        <div class="footer-contact-sin">
-                           <div class="footer-contact-sin-left">
-                              <i class="icofont-clock-time"></i>
-                           </div>
-                           <div class="footer-contact-sin-right">
-                              <p>Mon - Fri : 08:00 - 05:00</p>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <!-- end col -->
-            </div>
-         </div>
-      </div>
-      <div id="bottom-footer" class="bg-gray">
-         <div class="auto-container">
-            <div class="row mb-lg-0 mb-md-4 mb-4">
-               <div class="col-lg-6 col-md-12 col-12">
-                  <p class="copyright-text">Copyright © 2024 <a href="#">USTP - FIC</a> | All Rights Reserved</p>
-               </div>
-               <!-- end col -->
-               <div class="col-lg-6 col-md-12 col-12">
-                  <div class="footer-menu">
-                     <ul>
-                        <li><a href="{{ url('/index') }}">Home</a></li>
-                        <li><a href="{{ url('/about') }}">About Us</a></li>
-                        <li><a href="{{ url('/contact') }}">Contact Us</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                     </ul>
-                  </div>
-               </div>
-               <!-- end col -->
-            </div>
-         </div>
-      </div>
-   </footer>
-   <!-- END FOOTER -->
-
    <!-- Latest jQuery -->
-   <script src="{{ asset('js/app.js') }}"></script>
-   <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-   <script src="{{ asset('js/bootstrap.js') }}"></script>
-   <script src="{{ asset('js/form-contact.js') }}"></script>
-   <script src="{{ asset('js/isotope.3.0.6.min.js') }}"></script>
-   <script src="{{ asset('js/jquery-2.2.4.min.js') }}"></script>
-   <script src="{{ asset('js/jquery.appear.js') }}"></script>
-   <script src="{{ asset('js/jquery.inview.min.js') }}"></script>
-   <script src="{{ asset('js/jquery.meanmenu.js') }}"></script>
-   <script src="{{ asset('js/jquery.sticky.js') }}"></script>
-   <script src="{{ asset('js/main.js') }}"></script>
-   <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
-   <script src="{{ asset('js/popper.js') }}"></script>
-   <script src="{{ asset('js/scripts.js') }}"></script>
-   <script src="{{ asset('js/scrolltopcontrol.js') }}"></script>
-   <script src="{{ asset('js/venobox.min.js') }}"></script>
-   <script src="{{ asset('js/wow.min.js') }}"></script>
+   <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+   <script src="{{ asset('assets/bootstrap/js/popper.min.js') }}"></script>
+   <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+   <script src="{{ asset('assets/js/form-contact.js') }}"></script>
+   <script src="{{ asset('assets/js/isotope.3.0.6.min.js') }}"></script>
+   <script src="{{ asset('assets/js/jquery-2.2.4.min.js') }}"></script>
+   <script src="{{ asset('assets/js/jquery.appear.js') }}"></script>
+   <script src="{{ asset('assets/js/jquery.inview.min.js') }}"></script>
+   <script src="{{ asset('assets/js/jquery.meanmenu.js') }}"></script>
+   <script src="{{ asset('assets/js/jquery.sticky.js') }}"></script>
+   <script src="{{ asset('assets/js/main.js') }}"></script>
+   <script src="{{ asset('assets/js/modal.js') }}"></script>
+   <script src="{{ asset('assets/js/order-summary.js') }}"></script>
+   <script src="{{ asset('assets/js/ordermodal.js') }}"></script>
+   <script src="{{ asset('assets/js/proceed.js') }}"></script>
+   <script src="{{ asset('assets/js/redirectorder.js') }}"></script>
+   <script src="{{ asset('assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
+   <script src="{{ asset('assets/js/scripts.js') }}"></script>
+   <script src="{{ asset('assets/js/scrolltopcontrol.js') }}"></script>
+   <script src="{{ asset('assets/venobox/js/venobox.min.js') }}"></script>
+   <script src="{{ asset('assets/js/wow.min.js') }}"></script>
 </body>
 
-      <!-- START FOOTER -->
-          <footer class="footer-section">
-            <div id="top-footer" class="overlay-2 section-back-image-2" data-background="{{ asset('/img/bg/fic-footer.jpg') }}">
-               <div class="auto-container">
-                  <div class="row">
-                     <div class="col-lg-3 col-md-6 col-sm-12 col-12 mb-lg-0 mb-md-5 mb-sm-5 mb-5">
-                        <div class="footer-widget-title col-12 p-0">
-                           <div class="logo">
-                              <a href="index.blade.php">
-                                 <img class="img-fluid" src="{{ asset('assets/img/ff.png') }}" alt="">
-                              </a>
-                           </div>
-                        </div>
-                        <div class="footer-widget-inner">
-                           <div class="img-menu float-lg-left float-none mt-3">
-                              <div class="footer-social">
-                                 <ul>
-                                    <li><a class="social-fb" href="https://www.facebook.com/nmficustpcdo"><i class="icofont-facebook"></i></a></li>
-                                    <li><a class="social-tw" href="#"><i class="icofont-twitter"></i></a></li>
-                                    <li><a class="social-gp" href="#"><i class="icofont-youtube"></i></a></li>
-                                 </ul>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <!-- end col -->
-                     <div class="col-lg-3 col-md-6 col-sm-12 col-12 mb-lg-0 mb-md-5 mb-sm-5 mb-5">
-                        <div class="footer-widget-title col-12 p-0">
-                           <h4>Latest Posts</h4>
-                        </div>
-                        <div class="footer-widget-inner">
-                           <div class="singleRecpost">
-                              <img src="{{ asset('assets/img/NMFIC2.jpg') }}" alt="" class="img-fluid">
-                              <h6 class="recTitle">
-                                 <a href="#">USTP CDO COVID-19 Initiative</a>
-                              </h6>
-                              <p class="posted-on">1 APRIL 2020</p>
-                           </div>
-                           <div class="singleRecpost">
-                              <img src="{{ asset('assets/img/NMFIC4.jpg') }}" alt="" class="img-fluid">
-                              <h6 class="recTitle">
-                                 <a href="#">FIC produced snacks for COVID-19 frontliners</a>
-                              </h6>
-                              <p class="posted-on">13 APRIL 2020</p>
-                           </div>
-                        </div>
-                     </div>
-                     <!-- end col -->
-                     <div class="col-lg-3 col-md-6 col-sm-12 col-12 mb-lg-0 mb-md-0 mb-sm-5 mb-5">
-                        <div class="footer-widget-title col-12 p-0">
-                           <h4>Useful Links</h4>
-                        </div>
-                        <div class="footer-widget-inner">
-                           <ul>
-                              <li><a href="{{ url('/documents') }}"><i class="icofont-circled-right"></i> Documents</a></li>
-                              <li><a href="{{ url('/services') }}"><i class="icofont-circled-right"></i> Latest Services</a></li>
-                              <li><a href="{{ url('/administration') }}"><i class="icofont-circled-right"></i> Administration</a></li>
-                              <li><a href="{{ url('/gallery') }}"><i class="icofont-circled-right"></i> Image Gallery</a></li>
-                              <li><a href="{{ url('/') }}"><i class="icofont-circled-right"></i> FAQs</a></li>
-                           </ul>
-                        </div>
-                     </div>
-                     <!-- end col -->
-                     <div class="col-lg-3 col-md-6 col-sm-12 col-12 mb-lg-0 mb-md-0 mb-sm-0 mb-0">
-                        <div class="footer-widget-title col-12 p-0">
-                           <h4>Get In Touch</h4>
-                        </div>
-                        <div class="footer-widget-inner">
-                           <div class="footer-contact-widget">
-                              <div class="footer-contact-sin">
-                                 <div class="footer-contact-sin-left">
-                                    <i class="icofont-pin"></i>
-                                 </div>
-                                 <div class="footer-contact-sin-right">
-                                    <p>Claro M. Recto Ave, Cagayan de Oro</p>
-                                 </div>
-                              </div>
-                              <div class="footer-contact-sin">
-                                 <div class="footer-contact-sin-left">
-                                    <i class="icofont-smart-phone"></i>
-                                 </div>
-                                 <div class="footer-contact-sin-right">
-                                    <p>+639667811333</p>
-                                 </div>
-                              </div>
-                              <div class="footer-contact-sin">
-                                 <div class="footer-contact-sin-left">
-                                    <i class="icofont-envelope"></i>
-                                 </div>
-                                 <div class="footer-contact-sin-right">
-                                    <p>ustp.fic.edu.ph</p>
-                                 </div>
-                              </div>
-                              <div class="footer-contact-sin">
-                                 <div class="footer-contact-sin-left">
-                                    <i class="icofont-clock-time"></i>
-                                 </div>
-                                 <div class="footer-contact-sin-right">
-                                    <p>Mon - Fri : 08:00 - 05:00</p>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <!-- end col -->
-                  </div>
-               </div>
-            </div>
-            <div id="bottom-footer" class="bg-gray">
-               <div class="auto-container">
-                  <div class="row mb-lg-0 mb-md-4 mb-4">
-                     <div class="col-lg-6 col-md-12 col-12">
-                        <p class="copyright-text">Copyright © 2024 <a href="#">USTP - FIC</a> | All Rights Reserved</p>
-                     </div>
-                     <!-- end col -->
-                     <div class="col-lg-6 col-md-12 col-12">
-                        <div class="footer-menu">
-                           <ul>
-                              <li><a href="{{ url('/index') }}">Home</a></li>
-                              <li><a href="{{ url('/about') }}">About Us</a></li>
-                              <li><a href="{{ url('/contact') }}">Contact Us</a></li>
-                              <li><a href="#">Privacy Policy</a></li>
-                           </ul>
-                        </div>
-                     </div>
-                     <!-- end col -->
-               </div>
-            </div>
-         </div>
-      </footer>
-      <!-- END FOOTER -->
-
-      <!-- Latest jQuery -->
-      <script src="{{ asset('js/app.js') }}"></script>
-      <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-      <script src="{{ asset('js/bootstrap.js') }}"></script>
-      <script src="{{ asset('js/form-contact.js') }}"></script>
-      <script src="{{ asset('js/isotope.3.0.6.min.js') }}"></script>
-      <script src="{{ asset('js/jquery-2.2.4.min.js') }}"></script>
-      <script src="{{ asset('js/jquery.appear.js') }}"></script>
-      <script src="{{ asset('js/jquery.inview.min.js') }}"></script>
-      <script src="{{ asset('js/jquery.meanmenu.js') }}"></script>
-      <script src="{{ asset('js/jquery.sticky.js') }}"></script>
-      <script src="{{ asset('js/main.js') }}"></script>
-      <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
-      <script src="{{ asset('js/popper.js') }}"></script>
-      <script src="{{ asset('js/scripts.js') }}"></script>
-      <script src="{{ asset('js/scrolltopcontrol.js') }}"></script>
-      <script src="{{ asset('js/venobox.min.js') }}"></script>
-      <script src="{{ asset('js/wow.min.js') }}"></script>
-   </body>
 </html>
 @endsection
-
-
