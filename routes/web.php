@@ -11,6 +11,7 @@ use App\Http\Controllers\{
     ReservationController,
     DashboardController,
     OrderController,
+    CartController,
     AdminController,
     ProfileController,
     SettingsController,
@@ -46,6 +47,17 @@ Route::get('/gallery', function (): View {
     return view('frontend.gallery', compact('galleryImages'));
 })->name('gallery');
 Route::get('/contact', fn(): View => view('frontend.contact'))->name('contact');
+
+// Cart Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+
+    // Order Routes
+    Route::post('/cart/checkout', [OrderController::class, 'store'])->name('order.store');
+});
 
 // Display the reservation page (GET request)
 Route::get('/reservation', fn(): View => view('frontend.reservation'))->name('reservation');

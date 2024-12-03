@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Order;
+use Illuminate\Support\Facades\Session;
 
 class OrderController extends Controller
 {
@@ -14,15 +15,30 @@ class OrderController extends Controller
             'customer_name' => 'required|string|max:255',
             'email' => 'required|email',
             'phone' => 'required|string|max:15',
-            'total_amount' => 'required|numeric|min:0',
-            'status' => 'required|in:pending,completed,cancelled',
         ]);
 
-        Order::create($request->all());
+        $cart = Session::get('cart', []);
+        if (empty($cart)) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+        }
 
-        return redirect()->route('dashboard.orders.index')
-            ->with('success', 'Order created successfully.');
+        $totalAmount = collect($cart)->sum(function ($item) {
+            return $item['price'] * $item['quantity'];
+        });
+
+        $order = Order::create([
+            'customer_name' => $request->customer_name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'total_amount' => $totalAmount,
+            'status' => 'pending',
+        ]);
+
+        Session::forget('cart');
+
+        return redirect()->route('dashboard.orders.index')->with('success', 'Order placed successfully.');
     }
+
 
     public function update(Request $request, Order $order)
     {
@@ -40,24 +56,29 @@ class OrderController extends Controller
             ->with('success', 'Order updated successfully.');
     }
 
-    public function index() {
+    public function index()
+    {
         $orders = Order::orderBy('id', 'DESC')->paginate(10); // Show 10 categories per page
         return view('dashboard.orders.index', compact(var_name: 'orders'));
     }
 
-    public function showAdd() {
+    public function showAdd()
+    {
         // Display the form to add a new order
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         // Display the details of a specific order
     }
 
-    public function showEdit($id) {
+    public function showEdit($id)
+    {
         // Display the form to edit an existing order
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         // Delete the specified order from the database
     }
 }

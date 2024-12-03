@@ -4,7 +4,7 @@
 
 @section('content')
 <!DOCTYPE html>
-<html lang="zxx">
+<html lang="en">
 
 <head>
    <!--Meta Tags-->

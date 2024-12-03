@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Home Page')
+@section('title', 'Home')
 
 @section('content')
 <!DOCTYPE html>
@@ -656,13 +656,29 @@
     </section>
     <!-- END BLOG SECTION -->
 
-    <!-- Scripts -->
-    <script src="{{ asset('assets/js/jquery-2.2.4.min.js') }}"></script>
-    <script src="{{ asset('assets/bootstrap/js/popper.min.js') }}"></script>
-    <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('assets/js/scripts.js') }}"></script>
+    <!-- Latest jQuery -->
+   <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+   <script src="{{ asset('assets/bootstrap/js/popper.min.js') }}"></script>
+   <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+   <script src="{{ asset('assets/js/form-contact.js') }}"></script>
+   <script src="{{ asset('assets/js/isotope.3.0.6.min.js') }}"></script>
+   <script src="{{ asset('assets/js/jquery-2.2.4.min.js') }}"></script>
+   <script src="{{ asset('assets/js/jquery.appear.js') }}"></script>
+   <script src="{{ asset('assets/js/jquery.inview.min.js') }}"></script>
+   <script src="{{ asset('assets/js/jquery.meanmenu.js') }}"></script>
+   <script src="{{ asset('assets/js/jquery.sticky.js') }}"></script>
+   <script src="{{ asset('assets/js/main.js') }}"></script>
+   <script src="{{ asset('assets/js/modal.js') }}"></script>
+   <script src="{{ asset('assets/js/order-summary.js') }}"></script>
+   <script src="{{ asset('assets/js/ordermodal.js') }}"></script>
+   <script src="{{ asset('assets/js/proceed.js') }}"></script>
+   <script src="{{ asset('assets/js/redirectorder.js') }}"></script>
+   <script src="{{ asset('assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
+   <script src="{{ asset('assets/js/scripts.js') }}"></script>
+   <script src="{{ asset('assets/js/scrolltopcontrol.js') }}"></script>
+   <script src="{{ asset('assets/venobox/js/venobox.min.js') }}"></script>
+   <script src="{{ asset('assets/js/wow.min.js') }}"></script>
 </body>
 
 </html>
-
 @endsection
