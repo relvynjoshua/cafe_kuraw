@@ -5,39 +5,39 @@
 @include('components.alert')
 
 <style>
-    /* Styling for pagination */
+    /* Pagination Styling */
     .pagination .page-link {
-        font-size: 12px; /* Smaller font size */
-        padding: 5px 10px; /* Adjust padding for smaller size */
-        color: #007bff; /* Default Bootstrap link color */
-        border: 1px solid #dee2e6; /* Border for pagination buttons */
+        font-size: 12px;
+        padding: 5px 10px;
+        color: #007bff;
+        border: 1px solid #dee2e6;
     }
 
     .pagination .page-link:hover {
-        color: #0056b3; /* Darker link on hover */
-        text-decoration: none; /* Remove underline */
+        color: #0056b3;
+        text-decoration: none;
     }
 
     .pagination .page-item.active .page-link {
-        background-color: #007bff; /* Active background color */
-        color: #fff; /* Active text color */
-        border-color: #007bff; /* Active border color */
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
     }
 
     .pagination .page-item {
-        margin: 0 2px; /* Reduce spacing between buttons */
+        margin: 0 2px;
     }
 
-    /* Styling for the container */
+    /* Container Styling */
     .container {
-        background-color: #f9f9f9; /* Light gray background */
+        background-color: #f9f9f9;
         padding: 20px;
-        border-radius: 8px; /* Rounded corners */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     h1, h6 {
-        color: #333; /* Darker text color for headers */
+        color: #333;
     }
 </style>
 
@@ -49,23 +49,27 @@
 
     <!-- Search Bar -->
     <form action="{{ route('dashboard.reservations.index') }}" method="GET" class="d-flex mb-3">
-        <input type="text" name="search" class="form-control me-2" placeholder="Search by Name, Date, Time, or Guests" value="{{ request('search') }}">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search by Name, Date, or Status" value="{{ request('search') }}">
         <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
 
-    <a href="{{ route('dashboard.reservations.create') }}" class="btn btn-primary mb-3">Add Reservation</a>
+    <!-- Add Reservation Button -->
+    <a href="{{ route('dashboard.reservations.create') }}" class="btn btn-primary mb-3">
+        <i class="fas fa-plus"></i> Add Reservation
+    </a>
 
+    <!-- Reservations Table -->
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
-                <th scope="col">Phone Number</th>
-                <th scope="col">Reservation Date</th>
-                <th scope="col">Reservation Time</th>
-                <th scope="col">Number of Guests</th>
-                <th scope="col">Actions</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Date</th>
+                <th scope="col">Time</th>
+                <th scope="col">Guests</th>
+                <th scope="col">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -79,10 +83,19 @@
                     <td>{{ $reservation->reservation_time }}</td>
                     <td>{{ $reservation->number_of_guests }}</td>
                     <td>
+                        <span class="badge 
+                            {{ $reservation->status == 'pending' ? 'bg-warning' : ($reservation->status == 'confirmed' ? 'bg-success' : 'bg-danger') }}">
+                            {{ ucfirst($reservation->status) }}
+                        </span>
+                    </td>
+                    <td>
+                        <!-- Edit Button -->
                         <a href="{{ route('dashboard.reservations.edit', $reservation->id) }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i> Edit
                         </a>
-                        <form action="{{ route('dashboard.reservations.destroy', $reservation->id) }}" method="POST" style="display:inline;">
+
+                        <!-- Delete Form -->
+                        <form action="{{ route('dashboard.reservations.destroy', $reservation->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this reservation?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">
@@ -93,7 +106,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="text-center">No reservations found.</td>
+                    <td colspan="9" class="text-center">No reservations found.</td>
                 </tr>
             @endforelse
         </tbody>

@@ -1,58 +1,27 @@
-// Get modal element and buttons
-const orderModal = document.getElementById('orderModal');
-const orderButtons = document.querySelectorAll('.order-now-btn');
-const closeBtn = document.querySelector('.close-btn');
-const quantityInput = document.querySelector('.quantity-input');
-const quantityBtns = document.querySelectorAll('.quantity-btn');
-const optionGroups = document.querySelectorAll('.option-group');
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById("orderModal");
+  const modalImage = modal.querySelector(".modal-content img");
+  const orderNowBtns = document.querySelectorAll(".order-now-btn");
 
-// Show modal when "ORDER NOW" is clicked
-orderButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    orderModal.style.display = 'block';
+  orderNowBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+          // Get the image source from the button's parent or data attribute
+          const imgSrc = btn.closest('figure').querySelector('img').src;
+          modalImage.src = imgSrc;  // Change modal image
+          modal.style.display = "block";  // Show the modal
+      });
   });
-});
 
-// Hide modal when "X" button is clicked
-closeBtn.onclick = function() {
-  orderModal.style.display = 'none';
-}
-
-// Hide modal when clicking outside the modal content
-window.onclick = function(event) {
-  if (event.target == orderModal) {
-    orderModal.style.display = 'none';
-  }
-}
-
-// Quantity control functionality
-quantityBtns.forEach(btn => {
-  btn.addEventListener('click', function() {
-    let currentValue = parseInt(quantityInput.value);
-    if (this.textContent === '+' && currentValue < 10) {
-      quantityInput.value = currentValue + 1;
-    } else if (this.textContent === '−' && currentValue > 1) {
-      quantityInput.value = currentValue - 1;
-    }
+  // Close the modal
+  const closeBtn = modal.querySelector(".close-btn");
+  closeBtn.addEventListener("click", function () {
+      modal.style.display = "none";
   });
-});
 
-// Toggle active state on option buttons
-optionGroups.forEach(group => {
-  const buttons = group.querySelectorAll('.option-btn');
-  
-  buttons.forEach(button => {
-    button.addEventListener('click', () => {
-      // If the button is already active, deactivate it
-      if (button.classList.contains('active')) {
-        button.classList.remove('active');
-      } else {
-        // Remove active class from all buttons in the group
-        buttons.forEach(btn => btn.classList.remove('active'));
-        
-        // Activate the clicked button
-        button.classList.add('active');
+  // Close the modal if clicked outside
+  window.addEventListener("click", function (event) {
+      if (event.target === modal) {
+          modal.style.display = "none";
       }
-    });
   });
 });

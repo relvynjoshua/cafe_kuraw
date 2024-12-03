@@ -11,10 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventories', function (Blueprint $table) {
-            $table->id();
-            $table->string('item_name');
-            $table->integer('category_id');
+        Schema::table('inventories', function (Blueprint $table) {
             $table->integer('supplier_id')->unsigned()->nullable()->after('category_id');
             $table->integer('quantity')->unsigned()->after('supplier_id');
             $table->string('unit')->nullable()->after('quantity');
@@ -22,7 +19,6 @@ return new class extends Migration
             $table->date('expiry_date')->nullable()->after('price');
             $table->text('description')->nullable()->after('expiry_date');
             $table->string('location')->nullable()->after('description');
-            $table->timestamps();
 
             // Foreign key constraints (optional)
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
@@ -35,6 +31,18 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventories');
+        Schema::table('inventories', function (Blueprint $table) {
+            $table->dropForeign(['category_id']);
+            $table->dropForeign(['supplier_id']);
+            $table->dropColumn([
+                'supplier_id',
+                'quantity',
+                'unit',
+                'price',
+                'expiry_date',
+                'description',
+                'location',
+            ]);
+        });
     }
 };

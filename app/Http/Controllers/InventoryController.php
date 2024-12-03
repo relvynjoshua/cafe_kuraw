@@ -14,10 +14,8 @@ class InventoryController extends Controller
     public function index(Request $request)
     {
         try {
-            // Get search query
             $search = $request->input('search');
 
-            // Fetch inventories with categories and suppliers, and apply search filters
             $inventories = Inventory::with(['category', 'supplier'])
                 ->when($search, function ($query, $search) {
                     $query->where('item_name', 'like', "%$search%")
@@ -31,7 +29,7 @@ class InventoryController extends Controller
                         });
                 })
                 ->orderBy('id', 'DESC')
-                ->paginate(10); // Adjust pagination size as needed
+                ->paginate(10);
 
             return view('dashboard.inventory.index', compact('inventories'));
         } catch (\Exception $e) {
@@ -43,40 +41,33 @@ class InventoryController extends Controller
     // Show the form to add a new inventory item
     public function create()
     {
-        $categories = Category::all(); // Fetch categories for dropdown
-        $suppliers = Supplier::all(); // Fetch suppliers for dropdown
+        $categories = Category::all(); 
+        $suppliers = Supplier::all(); 
         return view('dashboard.inventory.create', compact('categories', 'suppliers'));
     }
 
     // Store a new inventory item in the database
     public function store(Request $request)
 {
-    Log::info('Incoming request for inventory creation:', $request->all()); // Debug log
+    // Validate the incoming data
+    $validated = $request->validate([
+        'item_name' => 'required|string|max:255',
+        'quantity' => 'required|integer',
+        'unit' => 'required|string|max:50',
+        'price' => 'required|numeric',
+        'expiry_date' => 'nullable|date',
+        'supplier_id' => 'required|exists:suppliers,id', // Ensure the supplier exists
+        'category_id' => 'required|exists:categories,id', // Ensure the category exists
+        'location' => 'nullable|string|max:255',
+    ]);
 
-    $this->validateInventory($request);
+    // Create a new inventory item
+    $inventory = Inventory::create($validated);
 
-    try {
-        $inventory = Inventory::create($request->only([
-            'item_name',
-            'quantity',
-            'unit',
-            'price',
-            'expiry_date',
-            'supplier_id', // Ensure it matches the database field
-            'description',
-            'category_id', // Ensure it matches the database field
-            'location',
-        ]));
-
-        Log::info('Inventory created successfully:', $inventory->toArray()); // Debug log
-
-        return redirect()->route('dashboard.inventory.index')
-            ->with('success', 'Inventory item created successfully.');
-    } catch (\Exception $e) {
-        Log::error("Error while creating inventory item: {$e->getMessage()}");
-        return redirect()->back()->withErrors('Failed to create inventory item.');
-    }
+    // Optionally redirect to another page or return a response
+    return redirect()->route('dashboard.inventory.index')->with('success', 'Inventory item added successfully');
 }
+
 
     // Show a single inventory item
     public function show($id)
@@ -89,8 +80,8 @@ class InventoryController extends Controller
     public function edit($id)
     {
         $inventory = Inventory::findOrFail($id);
-        $categories = Category::all(); // Fetch categories for dropdown
-        $suppliers = Supplier::all(); // Fetch suppliers for dropdown
+        $categories = Category::all();
+        $suppliers = Supplier::all();
         return view('dashboard.inventory.edit', compact('inventory', 'categories', 'suppliers'));
     }
 
@@ -102,15 +93,8 @@ class InventoryController extends Controller
         try {
             $inventory = Inventory::findOrFail($id);
             $inventory->update($request->only([
-                'item_name',
-                'quantity',
-                'unit',
-                'price',
-                'expiry_date',
-                'supplier_id', // Save supplier_id
-                'description',
-                'category_id', // Save category_id
-                'location',
+                'item_name', 'quantity', 'unit', 'price', 'expiry_date', 
+                'supplier_id', 'description', 'category_id', 'location',
             ]));
 
             return redirect()->route('dashboard.inventory.index')
@@ -138,17 +122,17 @@ class InventoryController extends Controller
 
     // Validation rules for inventory
     protected function validateInventory(Request $request)
-{
-    $request->validate([
-        'item_name' => ['required', 'string', 'max:255'],
-        'quantity' => ['required', 'integer', 'min:1'],
-        'unit' => ['required', 'string', 'max:50'],
-        'price' => ['required', 'numeric', 'min:0'],
-        'expiry_date' => ['nullable', 'date'],
-        'supplier_id' => ['required', 'exists:suppliers,id'], // Validate supplier_id
-        'description' => ['nullable', 'string'],
-        'category_id' => ['required', 'exists:categories,id'], // Validate category_id
-        'location' => ['nullable', 'string', 'max:255'],
-    ]);
-}
+    {
+        $request->validate([
+            'item_name' => ['required', 'string', 'max:255'],
+            'quantity' => ['required', 'integer', 'min:1'],
+            'unit' => ['required', 'string', 'max:50'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'expiry_date' => ['nullable', 'date'],
+            'supplier_id' => ['required', 'exists:suppliers,id'],
+            'description' => ['nullable', 'string'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'location' => ['nullable', 'string', 'max:255'],
+        ]);
+    }
 }
