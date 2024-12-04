@@ -12,31 +12,86 @@
         @csrf
         @method('PUT')
 
+        <!-- Company Name -->
         <div class="form-group mb-3">
             <label for="company_name" class="form-label">Company Name</label>
-            <input type="text" name="company_name" class="form-control" id="company_name" value="{{ $supplier->company_name }}" required>
+            <input 
+                type="text" 
+                name="company_name" 
+                class="form-control @error('company_name') is-invalid @enderror" 
+                id="company_name" 
+                value="{{ old('company_name', $supplier->company_name) }}" 
+                placeholder="Enter company name" 
+                required>
+            @error('company_name')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
+        <!-- Contact Person -->
         <div class="form-group mb-3">
             <label for="contact_person" class="form-label">Contact Person</label>
-            <input type="text" name="contact_person" class="form-control" id="contact_person" value="{{ $supplier->contact_person }}" required>
+            <input 
+                type="text" 
+                name="contact_person" 
+                class="form-control @error('contact_person') is-invalid @enderror" 
+                id="contact_person" 
+                value="{{ old('contact_person', $supplier->contact_person) }}" 
+                placeholder="Enter contact person's name" 
+                required>
+            @error('contact_person')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
+        <!-- Phone Number -->
         <div class="form-group mb-3">
             <label for="phone_number" class="form-label">Phone Number</label>
-            <input type="text" name="phone_number" class="form-control" id="phone_number" value="{{ $supplier->phone_number }}" required>
+            <input 
+                type="text" 
+                name="phone_number" 
+                class="form-control @error('phone_number') is-invalid @enderror" 
+                id="phone_number" 
+                value="{{ old('phone_number', $supplier->phone_number) }}" 
+                placeholder="Enter phone number" 
+                required>
+            @error('phone_number')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
+        <!-- Email -->
         <div class="form-group mb-3">
             <label for="email" class="form-label">Company Email</label>
-            <input type="email" name="email" class="form-control" id="email" value="{{ $supplier->email }}" required>
+            <input 
+                type="email" 
+                name="email" 
+                class="form-control @error('email') is-invalid @enderror" 
+                id="email" 
+                value="{{ old('email', $supplier->email) }}" 
+                placeholder="Enter company email" 
+                required>
+            @error('email')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
+        <!-- Address -->
         <div class="form-group mb-3">
             <label for="address" class="form-label">Company Address</label>
-            <input type="text" name="address" class="form-control" id="address" value="{{ $supplier->address }}" required>
+            <textarea 
+                name="address" 
+                class="form-control @error('address') is-invalid @enderror" 
+                id="address" 
+                placeholder="Enter company address" 
+                rows="3" 
+                required>{{ old('address', $supplier->address) }}</textarea>
+            @error('address')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
+        <!-- Submit Button -->
         <button type="submit" class="btn btn-primary">Update Supplier</button>
     </form>
 </div>

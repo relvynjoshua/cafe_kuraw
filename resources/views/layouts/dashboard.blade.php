@@ -54,15 +54,15 @@
 				</a>
 			</li>
 			<li>
-				<a href="{{ route('dashboard.inventory.index') }}">
-					<i class="fas fa-warehouse"></i>
-					<span class="text">Inventory</span>
-				</a>
-			</li>
-			<li>
 				<a href="{{ route('dashboard.supplier.index') }}">
 					<i class="fas fa-truck"></i>
 					<span class="text">Supplier</span>
+				</a>
+			</li>
+			<li>
+				<a href="{{ route('dashboard.inventory.index') }}">
+					<i class="fas fa-warehouse"></i>
+					<span class="text">Inventory</span>
 				</a>
 			</li>
 			<li>

@@ -66,7 +66,6 @@
                 <th scope="col">Category</th>
                 <th scope="col">Supplier</th>
                 <th scope="col">Location</th>
-                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
