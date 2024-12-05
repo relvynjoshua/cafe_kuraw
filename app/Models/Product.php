@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'category_id', 'description', 'price'];
+    protected $fillable = ['name', 'category_id', 'description', 'price', 'image'];
 
     /**
      * Define the relationship between the Product and Category model.
@@ -25,9 +26,9 @@ class Product extends Model
      * Each product has one stock record.
      */
     public function stock()
-{
-    return $this->hasOne(Stock::class);
-}
+    {
+        return $this->hasOne(Stock::class);
+    }
 
     /**
      * Define the many-to-many relationship between the Product and Order model.
@@ -37,7 +38,14 @@ class Product extends Model
     public function orders()
     {
         return $this->belongsToMany(Order::class)
-                    ->withPivot('quantity', 'price')
-                    ->withTimestamps();
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
+    }
+
+    // Define the relationship with ProductVariation
+    public function variations()
+    {
+        return $this->hasMany(ProductVariation::class);
     }
 }
+;

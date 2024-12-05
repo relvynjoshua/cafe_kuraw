@@ -9,13 +9,13 @@ class ReservationController extends Controller
 {
     // Show the reservation form with booked dates
     public function showReservationPage()
-{
-    // Fetch booked dates from the Reservation model
-    $bookedDates = Reservation::pluck('reservation_date')->toArray();
-    
-    // If there are no booked dates, it will return an empty array
-    return view('frontend.reservation', compact('bookedDates'));
-}
+    {
+        // Fetch only confirmed reservation dates from the Reservation model
+        $bookedDates = Reservation::where('status', 'confirmed')->pluck('reservation_date')->toArray();
+
+        // If there are no booked dates, it will return an empty array
+        return view('frontend.reservation', compact('bookedDates'));
+    }
 
     // Show the list of reservations (for admin dashboard)
     public function index(Request $request)

@@ -629,7 +629,7 @@ fieldset {
 /* logo area */
 
 .logo-area {
-  padding: 20px 0;
+
   background-color: black;
   color: #E8E4D9;
 }
@@ -637,7 +637,7 @@ fieldset {
 .logo-area .header-info-box {
   position: relative;
   float: left;
-  margin: 50px 10px 50px 10px;
+  margin: 30px 10px 30px 10px;
   padding: 0 0 0 62px;
   color: #E8E4D9;
 }
@@ -769,7 +769,7 @@ a.header-search {
 
 .mainmenu-area .navbar {
   padding: 0;
-  left:8rem;
+  left:1rem;
   align-items: center;
 }
 
@@ -794,7 +794,7 @@ a.header-search {
   height: 5px;
   bottom: 0;
   left: 0;
-  background-color: #dad3c3; /* Highlight underline */
+  background-color: black; /* Highlight underline */
 }
 
 .mainmenu-area .navbar-nav li.active .nav-link:hover {
@@ -810,12 +810,12 @@ a.header-search {
   height: 5px;
   bottom: 0;
   left: 0;
-  background-color: #dad3c3;
+  background-color: #251cac;
 }
 
 .mainmenu-area ul.navbar-nav li a {
   display: inline-block;
-  color: inherit;
+  color: black;
   vertical-align: middle;
   box-shadow: 0 0 1px transparent;
   position: relative;
@@ -835,7 +835,7 @@ a.header-search {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #dad3c3;
+  background: #313131;
   transform: scaleY(0);
   transform-origin: 50% 100%;
   transition: transform 0.3s ease-out;
@@ -2935,262 +2935,19 @@ a.header-search {
 */
 
 
-/*top footer*/
-
-.footer-section {
-  position: relative;
-  float: left;
-  width: 100%;
-}
-
-#top-footer {
-  padding: 85px 0 80px;
-  color: #E8E4D9;
-}
-
-.footer-widget-title .logo img {
-  width: 200px;
-}
-
-.footer-widget-title .logo {
-  margin-bottom: 13px;
-}
-
-.footer-widget-title h4 {
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  position: relative;
-  margin-bottom: 40px;
-}
-
-.footer-widget-title h4:after {
-  position: absolute;
-  content: "";
-  background-color: #E8E4D9;
-  height: 2px;
-  width: 25px;
-  left: 0;
-  top: auto;
-  bottom: -7px;
-  border-radius: 5px;
-}
-
-.footer-widget-inner ul li {
-  line-height: 35px;
-}
-
-.footer-widget-inner ul li a {
-  color: #333;
-}
-
-.footer-widget-inner ul li a:hover {
-  color: #dad3c3;
-}
-
-.footer-widget-inner ul li a:hover i {
-  padding-right: 0;
-}
-
-.footer-widget-inner ul li a i {
-  color: black;
-  padding-right: 6px;
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
-}
-
-.social-fb {
-  background-color: #967259;
-}
-
-.social-tw {
-  background-color: #967259;
-}
-
-.social-gp {
-  background-color: #967259;
-}
-
-.social-em {
-  background-color: #333;
-}
-
-.footer-social ul li {
-  float: left;
-}
-
-.footer-social ul li a {
-  height: 40px;
-  width: 40px;
-  line-height: 40px;
-  border-radius: 50px;
+/* Simplified Footer Style */
+.plain-footer {
+  background-color: black;
+  color: white;
   text-align: center;
-  display: inline-block;
-  margin: 0 10px 0 0;
+  padding: 15px 0;
 }
 
-.footer-social ul li a i {
-  color: #ece0d1;
-}
-
-.singleRecpost {
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  padding-left: 112px;
-  position: relative;
-}
-
-.singleRecpost:last-child {
-  border: none;
-  padding-bottom: 0;
-}
-
-.singleRecpost img {
-  position: absolute;
-  bottom: 2rem;
-  left: 0;
-  top: 0;
-  width: 100px;
-  -webkit-transition: all 0.4s ease 0s;
-  -moz-transition: all 0.4s ease 0s;
-  -o-transition: all 0.4s ease 0s;
-  transition: all 0.4s ease 0s;
-}
-
-.singleRecpost:hover img {
-  filter: grayscale(1) opacity(0.9);
-  -webkit-filter: grayscale(1) opacity(0.9);
-}
-
-.singleRecpost p {
-  margin-top: 5px;
+.plain-footer .copyright-text {
   font-size: 14px;
-}
-
-.recTitle {
-  line-height: 20px;
+  color: white;
   margin: 0;
-  font-size: 15px;
 }
-
-.recTitle a {
-  color: #333;
-}
-
-.recTitle a:hover {
-  color: #dad3c3;
-}
-
-.footer-contact-sin {
-  float: left;
-  width: 100%;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 8px;
-  padding-bottom: 8px;
-}
-
-.footer-contact-sin-left,
-.footer-contact-sin-right {
-  float: left;
-}
-
-.footer-contact-sin-left {
-  margin-right: 12px;
-}
-
-.footer-contact-sin-right {
-  width: 77%;
-}
-
-.footer-contact-sin-right p {
-  margin-top: 8px;
-  color: black;
-}
-
-.footer-contact-sin-left i {
-  color: black;
-  font-size: 18px;
-  text-align: center;
-  border-radius: 30px;
-  height: 40px;
-  width: 40px;
-  line-height: 35px;
-  display: block;
-  border: 4px double #ddd;
-}
-
-.footer-contact-sin:last-child {
-  border: none;
-}
-
-
-/*bootom footer*/
-
-#bottom-footer {
-  float: left;
-  width: 100%;
-}
-
-.footer-menu {
-  float: right;
-}
-
-.footer-menu ul li {
-  display: inline-block;
-  padding: 0 10px 0 0;
-}
-
-.footer-menu ul li:last-child {
-  padding-right: 0;
-}
-
-.footer-menu ul li a {
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  display: inline-block;
-  position: relative;
-  -webkit-transform: perspective(1px) translateZ(0);
-  transform: perspective(1px) translateZ(0);
-}
-
-.footer-menu ul li a:before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  left: 0;
-  right: 100%;
-  bottom: 0;
-  background: #E8E4D9;
-  height: 2px;
-  -webkit-transition-property: right;
-  transition-property: right;
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
-  -webkit-transition-timing-function: ease-out;
-  transition-timing-function: ease-out;
-}
-
-.footer-menu ul li a:hover:before,
-.footer-menu ul li a:focus:before,
-.footer-menu ul li a:active:before {
-  right: 0;
-}
-
-.footer-menu ul li a:hover {
-  color: #dad3c3;
-}
-
-.copyright-text,
-.footer-menu ul li a {
-  margin: 30px 0;
-  color: #333;
-}
-
-.copyright-text a {
-  color: #E8E4D9;
-}
-
 
 /*
 * ----------------------------------------------------------------------------------------
@@ -3391,6 +3148,40 @@ a.header-search {
 
 .welcome-video-des p {
   color: #333;
+}
+
+
+/* Active Nav Link Styling */
+.nav-link.active {
+    color: white !important;
+    font-weight: bold;
+    background-color: #000;
+}
+
+/* General Nav Link Styling */
+.nav-link {
+    color: gray; /* Default color for non-active links */
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: black; /* Hover color for nav links */
+    text-decoration: none;
+}
+
+/* Icon Styling */
+.header-search i,
+.header-cart i,
+.dropdown-toggle i {
+    color: black !important;
+    font-size: 1.2rem; /* Adjust size if needed */
+    transition: color 0.3s ease;
+}
+
+.header-search i:hover,
+.header-cart i:hover,
+.dropdown-toggle i:hover {
+    color: gray; /* Hover color for icons */
 }
 
 

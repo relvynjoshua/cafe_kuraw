@@ -54,6 +54,7 @@
                 <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
+
         <div class="form-group mb-3">
             <label for="payment_method" class="form-label">Payment Method</label>
             <select name="payment_method" class="form-control" id="payment_method" required>
@@ -118,70 +119,61 @@
     </form>
 </div>
 
-@section('scripts')
+
 <script>
-    // Add a new product entry
-    document.getElementById('add-product').addEventListener('click', function () {
-        // Clone the first product entry
-        var productEntry = document.querySelector('.product-entry').cloneNode(true);
-        var productCount = document.querySelectorAll('.product-entry').length;
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add a new product entry
+        document.getElementById('add-product').addEventListener('click', function () {
+            var productEntry = document.querySelector('.product-entry').cloneNode(true);
+            var productCount = document.querySelectorAll('.product-entry').length;
 
-        // Update the name attributes to ensure unique indices
-        productEntry.querySelector('.product-select').name = `products[${productCount}][product_id]`;
-        productEntry.querySelector('.product-select').value = ''; // Reset the product selection
-        productEntry.querySelector('input[type="number"]').name = `products[${productCount}][quantity]`;
-        productEntry.querySelector('input[type="number"]').value = ''; // Reset the quantity input
+            // Update the name attributes to ensure unique indices
+            productEntry.querySelector('.product-select').name = products[${productCount}][product_id];
+            productEntry.querySelector('.product-select').value = ''; // Reset the product selection
+            productEntry.querySelector('input[type="number"]').name = products[${productCount}][quantity];
+            productEntry.querySelector('input[type="number"]').value = ''; // Reset the quantity input
 
-        // Show the "Remove" button for the cloned entry
-        var removeButton = productEntry.querySelector('.remove-product');
-        removeButton.style.display = 'block';
+            // Append the new product entry
+            document.getElementById('product-list').appendChild(productEntry);
 
-        // Append the cloned product entry to the product list
-        document.getElementById('product-list').appendChild(productEntry);
+            // Update the total amount after adding a product
+            updateTotalAmount();
+        });
 
-        // Recalculate the total amount
-        updateTotalAmount();
-    });
-
-    // Remove a product entry
-    document.getElementById('product-list').addEventListener('click', function (e) {
-        if (e.target.classList.contains('remove-product')) {
-            e.target.closest('.product-entry').remove();
-            updateTotalAmount(); // Recalculate the total after removal
-        }
-    });
-
-    // Update the total amount based on selected products and quantities
-    function updateTotalAmount() {
-        var totalAmount = 0;
-        var productEntries = document.querySelectorAll('.product-entry');
-
-        productEntries.forEach(function (entry) {
-            var productSelect = entry.querySelector('.product-select');
-            var quantityInput = entry.querySelector('input[type="number"]');
-
-            // Ensure a product is selected and a quantity is provided
-            var price = parseFloat(productSelect.options[productSelect.selectedIndex]?.getAttribute('data-price') || 0);
-            var quantity = parseInt(quantityInput.value || 0);
-
-            if (!isNaN(price) && !isNaN(quantity)) {
-                totalAmount += price * quantity;
+        // Remove a product entry
+        document.getElementById('product-list').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-product')) {
+                e.target.closest('.product-entry').remove();
+                updateTotalAmount(); // Recalculate total amount after removal
             }
         });
 
-        // Set the calculated total amount
-        document.getElementById('total_amount').value = totalAmount.toFixed(2);
-    }
+        // Update the total amount based on selected products and quantities
+        function updateTotalAmount() {
+            var totalAmount = 0;
+            var productEntries = document.querySelectorAll('.product-entry');
 
-    // Update total amount when product or quantity changes
-    document.getElementById('product-list').addEventListener('change', updateTotalAmount);
-    document.getElementById('product-list').addEventListener('input', updateTotalAmount);
+            productEntries.forEach(function (entry) {
+                var productSelect = entry.querySelector('.product-select');
+                var quantityInput = entry.querySelector('input[type="number"]');
+                var price = parseFloat(productSelect.options[productSelect.selectedIndex]?.getAttribute('data-price') || 0);
+                var quantity = parseInt(quantityInput.value || 0);
 
-    // Initialize total amount calculation on page load
-    window.onload = function () {
+                if (!isNaN(price) && !isNaN(quantity)) {
+                    totalAmount += price * quantity;
+                }
+            });
+
+            document.getElementById('total_amount').value = totalAmount.toFixed(2);
+        }
+
+        // Update total amount when product or quantity changes
+        document.getElementById('product-list').addEventListener('change', updateTotalAmount);
+        document.getElementById('product-list').addEventListener('input', updateTotalAmount);
+
+        // Initialize total amount calculation on page load
         updateTotalAmount();
-    };
+    });
 </script>
-@endsection
 
 @endsection

@@ -3,137 +3,117 @@
 @section('title', 'Cart')
 
 @section('content')
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <!--Meta Tags-->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
+<div class="container py-5">
+    <h1 class="text-center mb-4"><i class="fas fa-shopping-cart"></i> My Cart</h1>
 
-    <!--Favicons-->
-    <link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico') }}" />
-
-    <!--Page Title-->
-    <title>KURAW - Cart</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css?family=Dosis:300,400,500,600,700,800|Roboto:300,400,400i,500,500i,700,700i,900,900i"
-        rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <!-- Meanmenu CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/meanmenu.min.css') }}">
-    <!-- Owl Carousel CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.carousel.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.theme.default.min.css') }}">
-    <!-- Animate CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}">
-    <!-- Venobox -->
-    <link rel="stylesheet" href="{{ asset('assets/venobox/css/venobox.min.css') }}" />
-    <!-- Style CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <!-- Responsive CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
-</head>
-
-<body>
-    <div class="container py-5">
-        <h1>Cart</h1>
-
-        @if ($cart)
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($cart as $id => $item)
-                        <tr>
-                            <td>{{ $item['name'] }}</td>
-                            <td>₱{{ number_format($item['price'], 2) }}</td>
-                            <td>
-                                <form action="{{ route('cart.update') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="item_id" value="{{ $id }}">
-                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1">
-                                    <button type="submit" class="btn btn-sm btn-primary">Update</button>
-                                </form>
-                            </td>
-                            <td>₱{{ number_format($item['price'] * $item['quantity'], 2) }}</td>
-                            <td>
-                                <form action="{{ route('cart.remove') }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <input type="hidden" name="item_id" value="{{ $id }}">
-                                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
-            <div class="mt-4">
-                <h3>Total: ₱{{ number_format(collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']), 2) }}
-                </h3>
+    @if ($cart)
+        <!-- Table Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark">
+                <h4 class="mb-0 text-white">Your Cart Items</h4>
             </div>
+            <div class="card-body">
+                <table class="table table-responsive-md">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($cart as $id => $item)
+                            <tr>
+                                <!-- Product and Variation -->
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="cart-item-image">
+                                            <img src="{{ asset('storage/' . ($item['image'] ?? 'default.jpg')) }}" 
+                                                 alt="{{ $item['name'] }}" 
+                                                 class="img-thumbnail me-3" 
+                                                 style="width: 60px; height: 60px;">
+                                        </div>
+                                        <div>
+                                            <p class="mb-0 fw-bold">{{ $item['name'] }}</p>
+                                            @if (!empty($item['variation']))
+                                                <small class="text-muted">Variation: {{ $item['variation'] }}</small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                                <!-- Price -->
+                                <td>₱{{ number_format($item['price'], 2) }}</td>
+                                <!-- Quantity -->
+                                <td>
+                                    <form action="{{ route('cart.update') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <input type="hidden" name="item_id" value="{{ $id }}">
+                                        <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" 
+                                               class="form-control form-control-sm d-inline w-auto">
+                                        <button type="submit" class="btn btn-sm btn-primary mt-1">Update</button>
+                                    </form>
+                                </td>
+                                <!-- Total -->
+                                <td>₱{{ number_format($item['price'] * $item['quantity'], 2) }}</td>
+                                <!-- Actions -->
+                                <td>
+                                    <form action="{{ route('cart.remove') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <input type="hidden" name="item_id" value="{{ $id }}">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Remove
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-            <form action="{{ route('order.store') }}" method="POST">
-                @csrf
-                <div class="form-group">
-                    <label for="customer_name">Name</label>
-                    <input type="text" name="customer_name" id="customer_name" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" name="email" id="email" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone</label>
-                    <input type="text" name="phone" id="phone" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-success mt-3">Place Order</button>
-            </form>
-        @else
-            <p>Your cart is empty.</p>
-        @endif
-    </div>
+        <!-- Total Price Section -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="mb-0 text-white">Order Summary</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="text-center text-success bg-light">Overall Total: ₱{{ number_format(collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']), 2) }}</h5>
+                <form action="{{ route('order.store') }}" method="POST" class="mt-3">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="customer_name" class="form-label">Name</label>
+                        <input type="text" name="customer_name" id="customer_name" class="form-control" placeholder="Enter your name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="text" name="phone" id="phone" class="form-control" placeholder="Enter your phone number" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Place Order</button>
+                </form>
+            </div>
+        </div>
+    @else
+        <div class="alert alert-warning text-center">
+            <h4>Your cart is empty.</h4>
+            <p>Go back to the <a href="{{ route('menu') }}" class="text-primary">menu</a> to add products to your cart.</p>
+        </div>
+    @endif
+</div>
 
-    <!-- Latest jQuery -->
-    <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('assets/bootstrap/js/popper.min.js') }}"></script>
-    <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('assets/js/form-contact.js') }}"></script>
-    <script src="{{ asset('assets/js/isotope.3.0.6.min.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery-2.2.4.min.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery.appear.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery.inview.min.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery.meanmenu.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery.sticky.js') }}"></script>
-    <script src="{{ asset('assets/js/main.js') }}"></script>
-    <script src="{{ asset('assets/js/modal.js') }}"></script>
-    <script src="{{ asset('assets/js/order-summary.js') }}"></script>
-    <script src="{{ asset('assets/js/ordermodal.js') }}"></script>
-    <script src="{{ asset('assets/js/proceed.js') }}"></script>
-    <script src="{{ asset('assets/js/redirectorder.js') }}"></script>
-    <script src="{{ asset('assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
-    <script src="{{ asset('assets/js/scripts.js') }}"></script>
-    <script src="{{ asset('assets/js/scrolltopcontrol.js') }}"></script>
-    <script src="{{ asset('assets/venobox/js/venobox.min.js') }}"></script>
-    <script src="{{ asset('assets/js/wow.min.js') }}"></script>
-</body>
-
-</html>
+<!-- Add Custom CSS -->
+<style>
+    .cart-item-image img {
+        border-radius: 0.5rem;
+        object-fit: cover;
+    }
+</style>
 @endsection

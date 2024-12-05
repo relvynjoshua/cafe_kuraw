@@ -1,6 +1,8 @@
 :root {
-    --primary-color: #bd9578;
-    --secondary-color: #967259;
+    --primary-color: #000000; /* Black */
+    --secondary-color: #757575; /* Gray */
+    --error-color: #ff0000; /* Red for errors */
+    --hover-color: #efefef; /* Light gray on hover */
     --black: #000000;
     --white: #ffffff;
     --gray: #efefef;

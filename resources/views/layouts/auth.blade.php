@@ -11,14 +11,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Custom Auth CSS -->
-    <link href="{{ asset('css/auth.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/auth.css') }}" rel="stylesheet">
 </head>
 <body>
     <div id="auth-container" class="container">
         @yield('content')
     </div>
     <!-- Include JavaScript -->
-    <script src="{{ asset('js/auth.js') }}"></script>
+    <script src="{{ asset('assets/js/auth.js') }}"></script>
     <!-- Optional: Add Auth-Specific JavaScript Here -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

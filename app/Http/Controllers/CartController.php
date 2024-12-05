@@ -3,59 +3,82 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
 {
     public function index()
     {
-        $cart = Session::get('cart', []);
+        $cart = session()->get('cart', []);
         return view('frontend.cart', compact('cart'));
     }
 
     public function add(Request $request)
     {
-        $request->validate([
-            'item_id' => 'required|integer',
-            'name' => 'required|string',
-            'price' => 'required|numeric',
-            'quantity' => 'required|integer|min:1',
-        ]);
+        $productId = $request->input('product_id');
+        $variationId = $request->input('variation_id');
+        $quantity = $request->input('quantity', 1);
 
-        $cart = Session::get('cart', []);
-        $cart[$request->item_id] = [
-            'name' => $request->name,
-            'price' => $request->price,
-            'quantity' => $request->quantity,
-        ];
-        Session::put('cart', $cart);
+        // Find product and variation
+        $product = \App\Models\Product::with('variations')->find($productId);
+        $variation = $product->variations->find($variationId);
 
-        return redirect()->route('cart.index')->with('success', 'Item added to cart.');
+        // Validation: Ensure product and variation exist
+        if (!$product || !$variation) {
+            return redirect()->route('menu')->withErrors('Product or variation not found. Please select a valid option.');
+        }
+
+        // Fetch existing cart or initialize it
+        $cart = session()->get('cart', []);
+
+        // Use product and variation ID as a unique cart key
+        $cartKey = $productId . '-' . $variationId;
+
+        if (isset($cart[$cartKey])) {
+            $cart[$cartKey]['quantity'] += $quantity;
+        } else {
+            // Add new item to the cart
+            $cart[$cartKey] = [
+                'name' => $product->name,
+                'image' => $product->image,
+                'price' => $variation->price, // Use variation price
+                'variation' => "{$variation->type} - {$variation->value}", // Display variation details
+                'quantity' => $quantity,
+            ];
+        }
+
+        // Save updated cart to session
+        session()->put('cart', $cart);
+
+        return redirect()->route('cart.index')->with('success', 'Product added to cart!');
     }
+
+
 
     public function update(Request $request)
     {
-        $request->validate([
-            'item_id' => 'required|integer',
-            'quantity' => 'required|integer|min:1',
-        ]);
+        $itemId = $request->input('item_id');
+        $quantity = $request->input('quantity');
 
-        $cart = Session::get('cart', []);
-        if (isset($cart[$request->item_id])) {
-            $cart[$request->item_id]['quantity'] = $request->quantity;
-            Session::put('cart', $cart);
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$itemId])) {
+            $cart[$itemId]['quantity'] = $quantity;
+            session()->put('cart', $cart);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Cart updated.');
+        return redirect()->route('cart.index')->with('success', 'Cart updated successfully!');
     }
 
     public function remove(Request $request)
     {
-        $request->validate(['item_id' => 'required|integer']);
+        $itemId = $request->input('item_id');
 
-        $cart = Session::get('cart', []);
-        unset($cart[$request->item_id]);
-        Session::put('cart', $cart);
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$itemId])) {
+            unset($cart[$itemId]);
+            session()->put('cart', $cart);
+        }
 
         return redirect()->route('cart.index')->with('success', 'Item removed from cart.');
     }

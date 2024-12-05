@@ -93,20 +93,27 @@
 
                         <!-- Profile Dropdown -->
                         <div class="dropdown">
-                            <a href="#" class="dropdown-toggle text-light" id="profileDropdown" role="button"
+                            <a href="#" class="dropdown-toggle text-dark" id="profileDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                                 @if(Auth::check())
-                                    <li><a class="dropdown-item" href="{{ url('/profile') }}">My Profile</a></li>
-                                    <li><a class="dropdown-item" href="{{ url('/logout') }}">Logout</a></li>
+                                    <li class="dropdown-header">Hello, {{ Auth::user()->firstname }}</li>
+                                    <li><a class="dropdown-item" href="{{ route('profile') }}">My Profile</a></li>
+                                    <li>
+                                        <form action="{{ route('logout') }}" method="POST" class="dropdown-item">
+                                            @csrf
+                                            <button type="submit" class="btn btn-link p-0 text-dark">Logout</button>
+                                        </form>
+                                    </li>
                                 @else
                                     <li><a class="dropdown-item" href="{{ url('/login-signup') }}">Login</a></li>
                                     <li><a class="dropdown-item" href="{{ url('/login-signup') }}">Register</a></li>
                                 @endif
                             </ul>
                         </div>
+
                     </div>
                 </div>
             </nav>

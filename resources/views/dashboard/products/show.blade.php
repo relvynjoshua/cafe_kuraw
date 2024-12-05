@@ -19,6 +19,14 @@
             <th>Price</th>
             <td>{{ $product->price }}</td>
         </tr>
+        <tr>
+            <th>Product Image</th>
+            <td>{{ $product->image->name }}</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ $product->description }}</td>
+        </tr>
     </table>
     <a href="{{ route('product.index') }}" class="btn btn-secondary">Back to Products</a>
 @endsection

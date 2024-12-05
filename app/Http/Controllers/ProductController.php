@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\ProductVariation;
 
 class ProductController extends Controller
 {
@@ -28,7 +29,6 @@ class ProductController extends Controller
         return view('dashboard.products.index', compact('products'));
     }
 
-
     // Show the form to add a new product
     public function showAdd()
     {
@@ -46,24 +46,43 @@ class ProductController extends Controller
     // Store a new product in the database
     public function store(Request $request)
     {
-        // Validate the incoming request
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'description' => 'required|string|max:500',
             'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'variations.*.type' => 'required|string|max:255',
+            'variations.*.value' => 'required|string|max:255',
+            'variations.*.price' => 'required|numeric|min:0',
         ]);
 
-        // Create the product
-        Product::create($request->only('name', 'price', 'description', 'category_id'));
+        $imagePath = null;
 
-        return redirect()->route('dashboard.products.index')->with(['message' => 'Product added successfully!', 'alert' => 'alert-success']);
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
+
+        // Create the product
+        $product = Product::create(array_merge(
+            $request->only('name', 'price', 'description', 'category_id'),
+            ['image' => $imagePath]
+        ));
+
+        // Save product variations
+        if ($request->has('variations')) {
+            foreach ($request->variations as $variation) {
+                $product->variations()->create($variation);
+            }
+        }
+
+        return redirect()->route('dashboard.products.index')->with('message', 'Product added successfully!');
     }
 
     // Show the form to edit an existing product
     public function showEdit($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with('variations')->findOrFail($id);
         $categories = Category::all();
         return view('dashboard.products.edit', compact('product', 'categories'));
     }
@@ -73,26 +92,60 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        // Validate the request
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'description' => 'required|string|max:500',
             'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'variations.*.type' => 'required|string|max:255',
+            'variations.*.value' => 'required|string|max:255',
+            'variations.*.price' => 'required|numeric|min:0',
         ]);
 
-        // Update the product
-        $product->update($request->only('name', 'price', 'description', 'category_id'));
+        $imagePath = $product->image;
 
-        return redirect()->route('dashboard.products.index')->with(['message' => 'Product updated successfully!', 'alert' => 'alert-success']);
+        if ($request->hasFile('image')) {
+            if ($product->image) {
+                \Storage::delete('public/' . $product->image);
+            }
+
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
+
+        // Update the product
+        $product->update(array_merge(
+            $request->only('name', 'price', 'description', 'category_id'),
+            ['image' => $imagePath]
+        ));
+
+        // Update variations
+        if ($request->has('variations')) {
+            $product->variations()->delete(); // Remove existing variations
+            foreach ($request->variations as $variation) {
+                $product->variations()->create($variation); // Recreate variations
+            }
+        }
+
+        return redirect()->route('dashboard.products.index')->with('message', 'Product updated successfully!');
     }
 
     // Delete a product from the database
     public function destroy($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with('variations')->findOrFail($id);
+
+        // Delete variations first
+        $product->variations()->delete();
+
+        // Delete product image from storage
+        if ($product->image) {
+            \Storage::delete('public/' . $product->image);
+        }
+
         $product->delete();
 
         return redirect()->route('dashboard.products.index')->with(['message' => 'Product deleted successfully!', 'alert' => 'alert-success']);
     }
 }
+;

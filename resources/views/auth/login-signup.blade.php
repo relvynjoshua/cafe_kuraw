@@ -23,12 +23,14 @@
                         </div>
                         <div class="input-group">
                             <i class='bx bxs-lock-alt'></i>
-                            <input type="password" name="password" placeholder="Password" minlength="5" required>
+                            <input type="password" name="password" id="signup-password" placeholder="Password" minlength="5" required>
+                            <i class='bx bx-hide toggle-password' onclick="togglePasswordVisibility('signup-password', this)"></i>
                         </div>
                         <div class="input-group">
                             <i class='bx bxs-lock-alt'></i>
-                            <input type="password" name="password_confirmation" placeholder="Confirm password"
+                            <input type="password" name="password_confirmation" id="signup-password-confirm" placeholder="Confirm password"
                                 minlength="5" required>
+                            <i class='bx bx-hide toggle-password' onclick="togglePasswordVisibility('signup-password-confirm', this)"></i>
                         </div>
                         <button type="submit">
                             Sign up
@@ -67,7 +69,8 @@
                         </div>
                         <div class="input-group">
                             <i class='bx bxs-lock-alt'></i>
-                            <input type="password" name="password" placeholder="Password" minlength="5" required>
+                            <input type="password" name="password" id="signin-password" placeholder="Password" minlength="5" required>
+                            <i class='bx bx-hide toggle-password' onclick="togglePasswordVisibility('signin-password', this)"></i>
                         </div>
                         <button type="submit">
                             Sign in
@@ -116,7 +119,7 @@
         <div class="col align-items-center flex-col">
             <div class="text sign-up">
                 <h2>
-                    Join with us
+                    Kuraw With Us
                 </h2>
             </div>
         </div>
@@ -124,4 +127,5 @@
     </div>
     <!-- END CONTENT SECTION -->
 </div>
+
 @endsection

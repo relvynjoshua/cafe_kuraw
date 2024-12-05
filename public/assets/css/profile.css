@@ -1,0 +1,67 @@
+.card {
+    border-radius: 10px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 1rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    color: #ffffff;
+}
+
+.card-header i {
+    color: #ffffff;
+}
+
+.card-header i:hover {
+    color: #d4edda;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+.card-body {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 0 0 10px 10px;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    color: #ffffff;
+}
+
+.btn:hover {
+    color: #ffffff;
+    transform: scale(1.02);
+}
+
+.btn-success {
+    background-color: #28a745;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    transform: scale(1.02);
+}
+
+.form-label {
+    font-weight: bold;
+    color: #495057;
+}
+
+.form-control {
+    border-radius: 0.5rem;
+    padding: 0.8rem;
+}

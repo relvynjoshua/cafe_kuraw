@@ -3,9 +3,22 @@
 @section('title', 'Reservation')
 
 @section('content')
-<!-- Link the CSS file -->
-<link rel="stylesheet" href="{{ asset('css/reservation.css') }}">
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Link the CSS file -->
+    <link rel="stylesheet" href="{{ asset('assets/css/reservation.css') }}">
+    
+</head>
+
+<body>
 <div class="container my-5">
     <!-- Success and Error Messages -->
     @if(session('success'))
@@ -93,17 +106,12 @@
 
 <!-- Scripts -->
 <script>
-    // Calendar Logic with Booked Dates
+    // Get booked dates passed from the backend
+    let bookedDates = @json($bookedDates);
+
     let currentDate = new Date();
     let currentMonth = currentDate.getMonth();
     let currentYear = currentDate.getFullYear();
-    let bookedDates = @json($bookedDates); // Pass booked dates from the backend
-
-    // Check if bookedDates is defined and not empty
-    if (!Array.isArray(bookedDates)) {
-        bookedDates = [];  // If not an array, set it to an empty array
-        console.log("No booked dates available.");
-    }
 
     function generateCalendar(month, year) {
         let firstDay = new Date(year, month, 1);
@@ -120,21 +128,25 @@
             let row = document.createElement("tr");
             for (let j = 0; j < 7; j++) {
                 let cell = document.createElement("td");
+
+                // Empty cells before the first day of the month
                 if ((i === 0 && j < startingDay) || date > totalDays) {
                     row.appendChild(cell);
                 } else {
                     let fullDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
                     cell.textContent = date;
 
-                    // Check if date is booked
+                    // Check if the date is in the bookedDates array
                     if (bookedDates.includes(fullDate)) {
                         cell.classList.add('booked-date');
+                        cell.title = "This date is already booked";
                     } else {
                         cell.classList.add('available-date');
                         cell.onclick = () => {
                             document.getElementById("reservationDate").value = fullDate;
                         };
                     }
+
                     row.appendChild(cell);
                     date++;
                 }
@@ -171,4 +183,8 @@
         generateCalendar(currentMonth, currentYear);
     });
 </script>
+
+</body>
+
+</html>
 @endsection
