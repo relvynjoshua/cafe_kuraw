@@ -31,10 +31,9 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="cart-item-image">
-                                            <img src="{{ asset('storage/' . ($item['image'] ?? 'default.jpg')) }}" 
-                                                 alt="{{ $item['name'] }}" 
-                                                 class="img-thumbnail me-3" 
-                                                 style="width: 60px; height: 60px;">
+                                            <img src="{{ asset('storage/' . ($item['image'] ?? 'default.jpg')) }}"
+                                                alt="{{ $item['name'] }}" class="img-thumbnail me-3"
+                                                style="width: 60px; height: 60px;">
                                         </div>
                                         <div>
                                             <p class="mb-0 fw-bold">{{ $item['name'] }}</p>
@@ -51,8 +50,8 @@
                                     <form action="{{ route('cart.update') }}" method="POST" class="d-inline">
                                         @csrf
                                         <input type="hidden" name="item_id" value="{{ $id }}">
-                                        <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" 
-                                               class="form-control form-control-sm d-inline w-auto">
+                                        <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1"
+                                            class="form-control form-control-sm d-inline w-auto">
                                         <button type="submit" class="btn btn-sm btn-primary mt-1">Update</button>
                                     </form>
                                 </td>
@@ -82,20 +81,43 @@
                 <h4 class="mb-0 text-white">Order Summary</h4>
             </div>
             <div class="card-body">
-                <h5 class="text-center text-success bg-light">Overall Total: ₱{{ number_format(collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']), 2) }}</h5>
+                <h5 class="text-center text-success bg-light">Overall Total:
+                    ₱{{ number_format(collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']), 2) }}</h5>
                 <form action="{{ route('order.store') }}" method="POST" class="mt-3">
                     @csrf
                     <div class="mb-3">
                         <label for="customer_name" class="form-label">Name</label>
-                        <input type="text" name="customer_name" id="customer_name" class="form-control" placeholder="Enter your name" required>
+                        <input type="text" name="customer_name" id="customer_name" class="form-control"
+                            placeholder="Enter your name" required>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" required>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email"
+                            required>
                     </div>
                     <div class="mb-3">
                         <label for="phone" class="form-label">Phone</label>
-                        <input type="text" name="phone" id="phone" class="form-control" placeholder="Enter your phone number" required>
+                        <input type="text" name="phone" id="phone" class="form-control"
+                            placeholder="Enter your phone number" required>
+                    </div>
+                    <!-- Payment Method -->
+                    <div class="mb-3">
+                        <label for="payment_method" class="form-label">Payment Method</label>
+                        <select name="payment_method" id="payment_method" class="form-select" required>
+                            <option value="" disabled selected>Select a payment method</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="paypal">Paypal</option>
+                            <option value="cash">Cash</option>
+                        </select>
+                    </div>
+                    <!-- Delivery Method -->
+                    <div class="mb-3">
+                        <label for="delivery_method" class="form-label">Delivery Method</label>
+                        <select name="delivery_method" id="delivery_method" class="form-select" required>
+                            <option value="" disabled selected>Select a delivery method</option>
+                            <option value="pickup">Pick-Up</option>
+                            <option value="delivery">Delivery</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-success w-100">Place Order</button>
                 </form>
@@ -115,5 +137,57 @@
         border-radius: 0.5rem;
         object-fit: cover;
     }
+
+    .modal-backdrop {
+        z-index: 1040 !important;
+    }
+
+    .modal {
+        z-index: 1050 !important;
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        @if (session('success') && session('order'))
+            // Trigger the modal when the page loads and a success message exists
+            const orderSuccessModal = new bootstrap.Modal(document.getElementById('orderSuccessModal'));
+            orderSuccessModal.show();
+        @endif
+    });
+</script>
+
+<!-- Success Modal -->
+<div class="modal fade" id="orderSuccessModal" tabindex="-1" aria-labelledby="orderSuccessModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="orderSuccessModalLabel"><i class="fas fa-check-circle"></i> Order Placed
+                    Successfully!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p>Your order has been successfully placed! Thank you for shopping with us.</p>
+                <p><strong>Order Summary:</strong></p>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Customer Name:</strong> {{ session('order.customer_name') }}
+                    </li>
+                    <li class="list-group-item"><strong>Email:</strong> {{ session('order.email') }}</li>
+                    <li class="list-group-item"><strong>Phone:</strong> {{ session('order.phone') }}</li>
+                    <li class="list-group-item"><strong>Total:</strong> ₱{{ session('order.total') }}</li>
+                    <li class="list-group-item"><strong>Payment Method:</strong> {{ session('order.payment_method') }}
+                    </li>
+                    <li class="list-group-item"><strong>Delivery Method:</strong> {{ session('order.delivery_method') }}
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <a href="{{ route('menu') }}" class="btn btn-primary"><i class="fas fa-utensils"></i> Continue
+                    Shopping</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection

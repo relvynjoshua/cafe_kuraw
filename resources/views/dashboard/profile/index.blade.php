@@ -43,7 +43,7 @@
 
 <div class="container mt-4">
     <h1>
-        <i class="fas fa-user"></i> User Profiles
+        <i class="fas fa-user"></i> User Management
     </h1>
     <h6>List of all user profiles</h6>
 

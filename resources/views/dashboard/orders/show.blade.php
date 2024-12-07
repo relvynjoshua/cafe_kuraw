@@ -25,10 +25,11 @@
 
     <!-- Products Section -->
     <h4 class="mt-4">Products in this Order</h4>
-    <table class="table table-striped">
+    <table class="table table-striped table-bordered">
         <thead class="thead-dark">
             <tr>
                 <th>Product Name</th>
+                <th>Variation</th>
                 <th>Quantity</th>
                 <th>Unit Price</th>
                 <th>Total</th>
@@ -38,13 +39,21 @@
             @foreach ($order->products as $product)
                 <tr>
                     <td>{{ $product->name }}</td>
+                    <td>
+                        @if ($product->pivot->variation)
+                            {{ $product->pivot->variation }}
+                        @else
+                            No Variation
+                        @endif
+                    </td>
                     <td>{{ $product->pivot->quantity }}</td>
-                    <td>${{ number_format($product->price, 2) }}</td>
-                    <td>${{ number_format($product->pivot->quantity * $product->price, 2) }}</td>
+                    <td>₱{{ number_format($product->pivot->price, 2) }}</td>
+                    <td>₱{{ number_format($product->pivot->price * $product->pivot->quantity, 2) }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
 
     <!-- Action Buttons -->
     <div class="d-flex justify-content-between mt-4">

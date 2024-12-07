@@ -17,6 +17,7 @@ use App\Http\Controllers\{
     ProfileController,
     SettingsController,
     ContactController,
+    AnalyticsController,
     UserProfileController,
     AuthController
 };
@@ -51,17 +52,20 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
-
-    // Order Routes
-    Route::post('/cart/checkout', [OrderController::class, 'store'])->name('order.store');
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('order.store');
 });
+
+Route::post('/clear-order-session', function () {
+    session()->forget('order');
+    return response()->json(['status' => 'success']);
+})->name('clear.order.session');
 
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
 Route::get('/contact', fn(): View => view('frontend.contact'))->name('contact');
 
 // Public Reservation Page
-Route::get('/reservation', [ReservationController::class, 'showReservationPage'])->name('reservation.page'); 
-Route::post('/reservation', [ReservationController::class, 'store'])->name('reservation.store'); 
+Route::get('/reservation', [ReservationController::class, 'showReservationPage'])->name('reservation.page');
+Route::post('/reservation', [ReservationController::class, 'store'])->name('reservation.store');
 
 // User Profile
 Route::middleware(['auth'])->group(function () {
@@ -70,6 +74,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/update', [UserProfileController::class, 'update'])->name('profile.update');
     Route::post('/logout', [AuthController::class, 'logoutAccount'])->name('logout');
 });
+
+Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 
 // Admin Dashboard Routes
 Route::middleware(['auth'])->prefix('dashboard')->group(function () {
@@ -98,16 +104,19 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     });
 
     // Order Routes
-    Route::prefix('orders')->controller(OrderController::class)->name('dashboard.orders.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/create', 'create')->name('create');
-        Route::post('/', 'store')->name('store');
-        Route::get('/{order}', 'show')->name('show'); // Change {id} to {order}
-        Route::get('/{order}/edit', 'edit')->name('edit'); // Change {id} to {order}
-        Route::put('/{order}', 'update')->name('update'); // Change {id} to {order}
-        Route::delete('/{order}', 'destroy')->name('destroy'); // Change {id} to {order}
-        Route::get('/{order}/products', 'showProducts')->name('products'); // Change {id} to {order}
-    });
+    Route::prefix('orders')
+        ->controller(OrderController::class)
+        ->name('dashboard.orders.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index'); // List all orders
+            Route::get('/create', 'create')->name('create'); // Create order form
+            Route::post('/', 'store')->name('store'); // Store new order
+            Route::get('/{order}', 'show')->name('show'); // Show specific order details
+            Route::get('/{order}/edit', 'edit')->name('edit'); // Edit order form
+            Route::put('/{order}', 'update')->name('update'); // Update order details
+            Route::delete('/{order}', 'destroy')->name('destroy'); // Delete order
+        });
+
 
 
     // Inventory Routes

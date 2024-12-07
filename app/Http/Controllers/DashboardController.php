@@ -14,8 +14,9 @@ class DashboardController extends Controller
         $totalInventory = \App\Models\Inventory::count();
         $totalReservations = \App\Models\Reservation::count();
         $totalCustomers = \App\Models\User::count();
+        $totalOrders = \App\Models\Order::count();
 
         return view('dashboard.index', compact('totalProducts', 'totalCustomers',
-            'totalSuppliers', 'totalCategories', 'totalInventory', 'totalReservations'));
+            'totalSuppliers', 'totalCategories', 'totalInventory', 'totalReservations', 'totalOrders'));
     }
 }

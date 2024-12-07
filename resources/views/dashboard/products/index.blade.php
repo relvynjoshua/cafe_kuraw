@@ -44,7 +44,8 @@
         font-size: 12px;
     }
 
-    .variation-table th, .variation-table td {
+    .variation-table th,
+    .variation-table td {
         padding: 5px;
     }
 </style>
@@ -62,7 +63,9 @@
         <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
 
-    <a href="{{ route('dashboard.products.showAdd') }}" class="btn btn-primary mb-3">Add Product</a>
+    <a href="{{ route('dashboard.products.showAdd') }}" class="btn btn-primary mb-3">
+        <i class="fas fa-plus"></i> Add Product
+    </a>
 
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">

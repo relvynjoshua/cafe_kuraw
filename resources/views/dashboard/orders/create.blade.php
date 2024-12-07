@@ -53,7 +53,8 @@
         <div class="form-group mb-3">
             <label for="payment_method" class="form-label">Payment Method</label>
             <select name="payment_method" class="form-control" id="payment_method" required>
-                <option value="credit_card" {{ old('payment_method') == 'credit_card' ? 'selected' : '' }}>Credit Card</option>
+                <option value="credit_card" {{ old('payment_method') == 'credit_card' ? 'selected' : '' }}>Credit Card
+                </option>
                 <option value="paypal" {{ old('payment_method') == 'paypal' ? 'selected' : '' }}>Paypal</option>
                 <option value="cash" {{ old('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
             </select>
@@ -76,43 +77,27 @@
 
         <!-- Product Selection -->
         <div id="product-list">
-            @if(old('products'))
-                @foreach(old('products') as $index => $product)
-                    <div class="product-entry mb-3">
-                        <select name="products[{{ $index }}][product_id]" class="form-control product-select" required>
-                            <option value="">Select a product</option>
-                            @foreach($products as $p)
-                                <option value="{{ $p->id }}" {{ old("products.{$index}.product_id") == $p->id ? 'selected' : '' }}
-                                    data-price="{{ $p->price }}">
-                                    {{ $p->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error("products.{$index}.product_id")
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                        <input type="number" name="products[{{ $index }}][quantity]" class="form-control mt-2"
-                            placeholder="Quantity" value="{{ old("products.{$index}.quantity") }}" min="1" required>
-                        @error("products.{$index}.quantity")
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                @endforeach
-            @else
-                <div class="product-entry mb-3">
-                    <select name="products[0][product_id]" class="form-control product-select" required>
-                        <option value="">Select a product</option>
-                        @foreach($products as $product)
-                            <option value="{{ $product->id }}" data-price="{{ $product->price }}">{{ $product->name }}</option>
-                        @endforeach
-                    </select>
-                    <input type="number" name="products[0][quantity]" class="form-control mt-2" placeholder="Quantity"
-                        min="1" required>
-                </div>
-            @endif
+            <div class="product-entry mb-3">
+                <select name="products[0][product_id]" class="form-control product-select" required>
+                    <option value="">Select a product</option>
+                    @foreach($products as $product)
+                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                    @endforeach
+                </select>
+                <select name="products[0][variation_id]" class="form-control mt-2">
+                    <option value="">No Variation</option>
+                    @foreach($product->variations as $variation)
+                        <option value="{{ $variation->id }}">
+                            {{ $variation->type }}: {{ $variation->value }} (+₱{{ $variation->price }})
+                        </option>
+                    @endforeach
+                </select>
+                <input type="number" name="products[0][quantity]" class="form-control mt-2" placeholder="Quantity"
+                    min="1" required>
+            </div>
         </div>
-
         <button type="button" id="add-product" class="btn btn-secondary mb-3">Add Product</button>
+
 
         <!-- Display Total Amount -->
         <div class="form-group mb-3">
@@ -178,4 +163,4 @@
         };
     </script>
 
-@endsection
+    @endsection

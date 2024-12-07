@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Order;
+use App\Models\Product;
 
 class CartController extends Controller
 {
@@ -52,8 +54,6 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', 'Product added to cart!');
     }
 
-
-
     public function update(Request $request)
     {
         $itemId = $request->input('item_id');
@@ -82,4 +82,55 @@ class CartController extends Controller
 
         return redirect()->route('cart.index')->with('success', 'Item removed from cart.');
     }
+
+    public function checkout(Request $request)
+    {
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string|max:15',
+            'payment_method' => 'required|string',
+            'delivery_method' => 'required|string',
+        ]);
+
+        $cart = session()->get('cart', []);
+
+        if (empty($cart)) {
+            return redirect()->route('cart.index')->withErrors('Your cart is empty.');
+        }
+
+        $totalAmount = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+
+        $order = Order::create([
+            'customer_name' => $validated['customer_name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'total_amount' => $totalAmount,
+            'status' => 'pending',
+            'payment_method' => $validated['payment_method'],
+            'delivery_method' => $validated['delivery_method'],
+        ]);
+
+        foreach ($cart as $key => $item) {
+            [$productId, $variationId] = explode('-', $key);
+            $order->products()->attach($productId, [
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
+                'variation' => $item['variation'] ?? null,
+            ]);
+        }
+
+        session()->forget('cart'); // Clear the cart session
+        session()->flash('order', [
+            'customer_name' => $validated['customer_name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'total' => number_format($totalAmount, 2),
+            'payment_method' => ucfirst($validated['payment_method']),
+            'delivery_method' => ucfirst($validated['delivery_method']),
+        ]);
+
+        return redirect()->route('cart.index')->with('success', 'Order placed successfully!');
+    }
+
 }

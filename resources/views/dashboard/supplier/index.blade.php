@@ -36,7 +36,8 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    h1, h6 {
+    h1,
+    h6 {
         color: #333;
     }
 </style>
@@ -49,11 +50,14 @@
 
     <!-- Search Bar -->
     <form action="{{ route('dashboard.supplier.index') }}" method="GET" class="d-flex mb-3">
-        <input type="text" name="search" class="form-control me-2" placeholder="Search by Company Name, Contact Person, or Email" value="{{ request('search') }}">
+        <input type="text" name="search" class="form-control me-2"
+            placeholder="Search by Company Name, Contact Person, or Email" value="{{ request('search') }}">
         <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
 
-    <a href="{{ route('dashboard.supplier.create') }}" class="btn btn-primary mb-3">Add Supplier</a>
+    <a href="{{ route('dashboard.supplier.create') }}" class="btn btn-primary mb-3">
+        <i class="fas fa-plus"></i> Add Supplier
+    </a>
 
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
@@ -80,7 +84,8 @@
                         <a href="{{ route('dashboard.supplier.edit', $supplier) }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i> Edit
                         </a>
-                        <form action="{{ route('dashboard.supplier.destroy', $supplier) }}" method="POST" style="display: inline;">
+                        <form action="{{ route('dashboard.supplier.destroy', $supplier) }}" method="POST"
+                            style="display: inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">

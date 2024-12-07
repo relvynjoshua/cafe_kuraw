@@ -68,7 +68,7 @@
 			<li>
 				<a href="{{ route('dashboard.profile.index') }}">
 					<i class="fas fa-user"></i>
-					<span class="text">Profile</span>
+					<span class="text">User Management</span>
 				</a>
 			</li>
 		</ul>

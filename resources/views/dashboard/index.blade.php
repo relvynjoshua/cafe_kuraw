@@ -10,7 +10,8 @@
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;;
+        margin-bottom: 20px;
+        ;
     }
 
     .dashboard-overview h1 {
@@ -63,6 +64,14 @@
 </div>
 
 <div class="dashboard-overview">
+    <h1>analytics here</h1>
+    <h3>work in progress!!</h3>
+    <h5>- suki/points rewards loyalty</h5>
+    <h5>- statistics</h5>
+    <h5>- overall sales?</h5>
+</div>
+
+<div class="dashboard-overview">
     <h3>Food Ordering System</h3>
 
     <div class="stats">
@@ -99,6 +108,13 @@
             <i class="fas fa-users"></i>
             <h2>Customers</h2>
             <p>{{ $totalCustomers }} people</p>
+        </div>
+
+        <!-- Orders Card -->
+        <div class="stat-card">
+            <i class="fas fa-shopping-cart"></i>
+            <h2>Orders</h2>
+            <p>{{ $totalOrders }} orders</p>
         </div>
 
         <!-- Reservations Card -->

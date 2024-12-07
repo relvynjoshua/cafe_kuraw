@@ -49,6 +49,7 @@ body {
 
 /* Icons */
 .logout {
+    margin-left: 1.3rem;
     color: red;
 }
 
