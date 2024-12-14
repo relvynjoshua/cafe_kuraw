@@ -67,10 +67,14 @@ class AuthController extends Controller
     /**
      * Handle user logout.
      */
-    public function logoutAccount()
+    public function logoutAccount(Request $request)
     {
         // Log out the user
         Auth::logout();
+
+        // Invalidate the session
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         // Redirect to the login-signup page
         return redirect()->route('login-signup.form');

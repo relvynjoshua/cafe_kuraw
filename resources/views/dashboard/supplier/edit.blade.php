@@ -3,18 +3,26 @@
 @section('content')
 
 @include('components.alert')
+<style>
+    /* Solid border */
+    hr.solid {
+        border-top: 5px solid #000000;
+    }
+</style>
 
 <a href="{{ route('dashboard.supplier.index') }}" class="btn btn-secondary mb-3">Back to Suppliers</a>
 
 <div class="card shadow p-4">
     <h2 class="mb-4">Edit Supplier</h2>
+    <hr class="solid">
+
     <form action="{{ route('dashboard.supplier.update', $supplier) }}" method="POST">
         @csrf
         @method('PUT')
 
         <!-- Company Name -->
         <div class="form-group mb-3">
-            <label for="company_name" class="form-label">Company Name</label>
+            <label for="company_name" class="form-label fw-bold">Company Name</label>
             <input 
                 type="text" 
                 name="company_name" 
@@ -30,7 +38,7 @@
 
         <!-- Contact Person -->
         <div class="form-group mb-3">
-            <label for="contact_person" class="form-label">Contact Person</label>
+            <label for="contact_person" class="form-label fw-bold">Contact Person</label>
             <input 
                 type="text" 
                 name="contact_person" 
@@ -46,7 +54,7 @@
 
         <!-- Phone Number -->
         <div class="form-group mb-3">
-            <label for="phone_number" class="form-label">Phone Number</label>
+            <label for="phone_number" class="form-label fw-bold">Phone Number</label>
             <input 
                 type="text" 
                 name="phone_number" 
@@ -62,7 +70,7 @@
 
         <!-- Email -->
         <div class="form-group mb-3">
-            <label for="email" class="form-label">Company Email</label>
+            <label for="email" class="form-label fw-bold">Company Email</label>
             <input 
                 type="email" 
                 name="email" 
@@ -78,7 +86,7 @@
 
         <!-- Address -->
         <div class="form-group mb-3">
-            <label for="address" class="form-label">Company Address</label>
+            <label for="address" class="form-label fw-bold">Company Address</label>
             <textarea 
                 name="address" 
                 class="form-control @error('address') is-invalid @enderror" 

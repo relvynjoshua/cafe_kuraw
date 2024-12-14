@@ -5,27 +5,108 @@
 @include('components.alert')
 
 <style>
-    /* Pagination Styling */
-    .pagination .page-link {
-        font-size: 12px;
-        padding: 5px 10px;
-        color: #007bff;
-        border: 1px solid #dee2e6;
+    .status-dropdown {
+        background-color: #f0f0f0;
+        /* Default color */
+        color: #000;
+        /* Default text color */
+        border: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 5px;
     }
 
-    .pagination .page-link:hover {
-        color: #0056b3;
-        text-decoration: none;
+    .status-dropdown[data-status="pending"] {
+        background-color: #ffc107;
+        /* Yellow for pending */
+        color: #000;
+        /* Black text for pending */
     }
 
-    .pagination .page-item.active .page-link {
-        background-color: #007bff;
+    .status-dropdown[data-status="confirmed"] {
+        background-color: #28a745;
+        /* Green for completed */
         color: #fff;
-        border-color: #007bff;
+        /* White text for completed */
     }
 
-    .pagination .page-item {
-        margin: 0 2px;
+    .status-dropdown[data-status="cancelled"] {
+        background-color: #dc3545;
+        /* Red for cancelled */
+        color: #fff;
+        /* White text for cancelled */
+    }
+
+    /* Pagination container */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    /* Pagination list */
+    .pagination ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+    }
+
+    /* Pagination items */
+    .pagination li {
+        margin: 0 5px;
+    }
+
+    /* Pagination links */
+    .pagination a {
+        display: inline-block;
+        padding: 6px 12px;
+        /* Adjusted padding for better button size */
+        color: #007bff;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background-color: #fff;
+        transition: background-color 0.3s, color 0.3s;
+        font-size: 1rem;
+        /* Adjusted font size for page numbers */
+        line-height: 1.5;
+    }
+
+    /* Hover and active state */
+    .pagination a:hover,
+    .pagination .active a {
+        background-color: #007bff;
+        color: white;
+    }
+
+    /* Disabled state */
+    .pagination .disabled a {
+        color: #ccc;
+        pointer-events: none;
+    }
+
+    /* Arrow buttons */
+    .pagination .arrow {
+        font-size: 1.2rem;
+        /* Make the arrows a bit bigger */
+        padding: 6px 10px;
+    }
+
+    /* Arrow hover effect */
+    .pagination .arrow:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    /* Adjust spacing and layout for responsiveness */
+    @media (max-width: 768px) {
+        .pagination .page-link {
+            font-size: 10px;
+            /* Smaller font size on smaller screens */
+            padding: 3px 6px;
+            /* Adjust padding for compact display */
+        }
     }
 
     /* Container Styling */
@@ -36,7 +117,8 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    h1, h6 {
+    h1,
+    h6 {
         color: #333;
     }
 </style>
@@ -49,7 +131,8 @@
 
     <!-- Search Bar -->
     <form action="{{ route('dashboard.reservations.index') }}" method="GET" class="d-flex mb-3">
-        <input type="text" name="search" class="form-control me-2" placeholder="Search by Name, Date, or Status" value="{{ request('search') }}">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search by Name, Date, or Status"
+            value="{{ request('search') }}">
         <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
 
@@ -83,19 +166,31 @@
                     <td>{{ $reservation->reservation_time }}</td>
                     <td>{{ $reservation->number_of_guests }}</td>
                     <td>
-                        <span class="badge 
-                            {{ $reservation->status == 'pending' ? 'bg-warning' : ($reservation->status == 'confirmed' ? 'bg-success' : 'bg-danger') }}">
-                            {{ ucfirst($reservation->status) }}
-                        </span>
+                        <form action="{{ route('dashboard.reservations.update-status', $reservation->id) }}" method="POST"
+                            class="d-inline">
+                            @csrf
+                            @method('PATCH')
+                            <select name="status" class="form-select status-dropdown" onchange="this.form.submit()"  data-status="{{ $reservation->status }}">
+                                <option value="pending" {{ $reservation->status == 'pending' ? 'selected' : '' }}>Pending
+                                </option>
+                                <option value="confirmed" {{ $reservation->status == 'confirmed' ? 'selected' : '' }}>
+                                    Confirmed</option>
+                                <option value="cancelled" {{ $reservation->status == 'cancelled' ? 'selected' : '' }}>
+                                    Cancelled</option>
+                            </select>
+                        </form>
                     </td>
                     <td>
                         <!-- Edit Button -->
-                        <a href="{{ route('dashboard.reservations.edit', $reservation->id) }}" class="btn btn-warning btn-sm">
+                        <a href="{{ route('dashboard.reservations.edit', $reservation->id) }}"
+                            class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i> Edit
                         </a>
 
                         <!-- Delete Form -->
-                        <form action="{{ route('dashboard.reservations.destroy', $reservation->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this reservation?');">
+                        <form action="{{ route('dashboard.reservations.destroy', $reservation->id) }}" method="POST"
+                            style="display:inline;"
+                            onsubmit="return confirm('Are you sure you want to delete this reservation?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">
@@ -110,12 +205,43 @@
                 </tr>
             @endforelse
         </tbody>
+
     </table>
 
     <!-- Pagination Links -->
-    <div class="d-flex justify-content-center mt-3">
-        {{ $reservations->appends(request()->query())->links() }}
+    <div class="pagination">
+        <!-- Previous arrow -->
+        <a href="#" class="arrow" onclick="changePage('prev')">«</a>
+
+        <!-- Page Numbers -->
+        <span>Page {{ $reservations->currentPage() }} of {{ $reservations->lastPage() }}</span>
+
+        <!-- Next arrow -->
+        <a href="#" class="arrow" onclick="changePage('next')">»</a>
     </div>
 </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdowns = document.querySelectorAll('.status-dropdown');
+
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('change', function () {
+                this.dataset.status = this.value; // Update the data-status attribute
+            });
+        });
+    });
+</script>
+<script>
+    // Function to change pages
+    function changePage(direction) {
+        const currentPage = {{ $reservations->currentPage() }};
+        let newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
+        if (newPage < 1) newPage = 1;
+        if (newPage > {{ $reservations->lastPage() }}) newPage = {{ $reservations->lastPage() }};
+        window.location.href = '{{ route('dashboard.reservations.index') }}?page=' + newPage;
+    }
+</script>
 
 @endsection

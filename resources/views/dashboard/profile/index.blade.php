@@ -5,27 +5,63 @@
 @include('components.alert')
 
 <style>
-    /* Styling for pagination */
-    .pagination .page-link {
-        font-size: 12px;
-        padding: 5px 10px;
+     /* Pagination container */
+     .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    /* Pagination list */
+    .pagination ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+    }
+
+    /* Pagination items */
+    .pagination li {
+        margin: 0 5px;
+    }
+
+    /* Pagination links */
+    .pagination a {
+        display: inline-block;
+        padding: 6px 12px; /* Adjusted padding for better button size */
         color: #007bff;
-        border: 1px solid #dee2e6;
-    }
-
-    .pagination .page-link:hover {
-        color: #0056b3;
         text-decoration: none;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background-color: #fff;
+        transition: background-color 0.3s, color 0.3s;
+        font-size: 1rem; /* Adjusted font size for page numbers */
+        line-height: 1.5;
     }
 
-    .pagination .page-item.active .page-link {
+    /* Hover and active state */
+    .pagination a:hover, .pagination .active a {
         background-color: #007bff;
-        color: #fff;
-        border-color: #007bff;
+        color: white;
     }
 
-    .pagination .page-item {
-        margin: 0 2px;
+    /* Disabled state */
+    .pagination .disabled a {
+        color: #ccc;
+        pointer-events: none;
+    }
+
+    /* Arrow buttons */
+    .pagination .arrow {
+        font-size: 1.2rem; /* Make the arrows a bit bigger */
+        padding: 6px 10px;
+    }
+
+    /* Arrow hover effect */
+    .pagination .arrow:hover {
+        background-color: #007bff;
+        color: white;
     }
 
     /* Styling for the container */
@@ -86,10 +122,29 @@
         </div>
     </div>
 
-    <!-- Pagination Links -->
-    <div class="d-flex justify-content-center mt-3">
-        {{ $users->appends(request()->query())->links() }}
+  <!-- Pagination Links -->
+  <div class="pagination">
+            <!-- Previous arrow -->
+            <a href="#" class="arrow" onclick="changePage('prev')">«</a>
+            
+            <!-- Page Numbers -->
+            <span>Page {{ $users->currentPage() }} of {{ $users->lastPage() }}</span>
+
+            <!-- Next arrow -->
+            <a href="#" class="arrow" onclick="changePage('next')">»</a>
+        </div>
     </div>
 </div>
+
+<script>
+    // Function to change pages
+    function changePage(direction) {
+        const currentPage = {{ $users->currentPage() }};
+        let newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
+        if (newPage < 1) newPage = 1;
+        if (newPage > {{ $users->lastPage() }}) newPage = {{ $users->lastPage() }};
+        window.location.href = '{{ route('dashboard.profile.index') }}?page=' + newPage;
+    }
+</script>
 
 @endsection

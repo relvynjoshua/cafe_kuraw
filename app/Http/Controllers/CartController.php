@@ -5,13 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
+use App\Notifications\NewOrderPlaced;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
     public function index()
     {
         $cart = session()->get('cart', []);
-        return view('frontend.cart', compact('cart'));
+        $totalPrice = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+        $discount = session('cart_discount', 0); // Retrieve the applied discount
+        $finalPrice = max(0, $totalPrice - $discount); // Calculate the final price after discount
+
+        $orders = Auth::check() ? Auth::user()->orders()->orderBy('created_at', 'desc')->get() : collect();
+
+        return view('frontend.cart', compact('cart', 'totalPrice', 'discount', 'finalPrice', 'orders'));
     }
 
     public function add(Request $request)
@@ -21,7 +30,7 @@ class CartController extends Controller
         $quantity = $request->input('quantity', 1);
 
         // Find product and variation
-        $product = \App\Models\Product::with('variations')->find($productId);
+        $product = Product::with('variations')->find($productId);
         $variation = $product->variations->find($variationId);
 
         // Validation: Ensure product and variation exist
@@ -51,7 +60,7 @@ class CartController extends Controller
         // Save updated cart to session
         session()->put('cart', $cart);
 
-        return redirect()->route('cart.index')->with('success', 'Product added to cart!');
+        return redirect()->route('menu')->with('success', 'Product added to cart!');
     }
 
     public function update(Request $request)
@@ -94,12 +103,19 @@ class CartController extends Controller
         ]);
 
         $cart = session()->get('cart', []);
+        $discount = session('cart_discount', 0);
 
         if (empty($cart)) {
             return redirect()->route('cart.index')->withErrors('Your cart is empty.');
         }
 
         $totalAmount = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+        $finalAmount = max(0, $totalAmount - $discount);
+
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->withErrors('You must be logged in to place an order.');
+        }
 
         $order = Order::create([
             'customer_name' => $validated['customer_name'],
@@ -120,17 +136,42 @@ class CartController extends Controller
             ]);
         }
 
-        session()->forget('cart'); // Clear the cart session
-        session()->flash('order', [
-            'customer_name' => $validated['customer_name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'total' => number_format($totalAmount, 2),
-            'payment_method' => ucfirst($validated['payment_method']),
-            'delivery_method' => ucfirst($validated['delivery_method']),
-        ]);
+        if ($discount > 0) {
+            \App\Models\PointsHistory::create([
+                'user_id' => $user->id,
+                'activity' => 'Redeemed points for cart checkout',
+                'points' => -$discount,
+            ]);
+        }
+
+        // Notify all admins
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewOrderPlaced($order));
+            \Log::info("Notification sent to admin: {$admin->id} for order: {$order->id}");
+        }
+
+        session()->forget(['cart', 'cart_discount']); // Clear session data after checkout
 
         return redirect()->route('cart.index')->with('success', 'Order placed successfully!');
     }
 
+    public function redeemPoints(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'points' => 'required|integer|min:1|max:' . $user->reward_points,
+        ]);
+
+        $pointsToRedeem = $request->input('points');
+
+        if (session()->has('cart_discount')) {
+            return back()->withErrors(['error' => 'You have already redeemed points.']);
+        }
+
+        session(['cart_discount' => $pointsToRedeem]);
+
+        return redirect()->route('cart.index')->with('success', "$pointsToRedeem points have been applied to your cart.");
+    }
 }

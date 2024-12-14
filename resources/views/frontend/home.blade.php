@@ -31,6 +31,9 @@
     <!-- Owl Carousel CSS -->
     <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.theme.default.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     <!-- Animate CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}">
     <!-- Venobox -->
@@ -54,82 +57,16 @@
         <div class="home-slides owl-carousel owl-theme">
             <div class="home-single-slide" data-background="{{ asset('assets/img/kuraw/header.jpg') }}">
                 <div class="home-single-slide-overlay"></div>
-                <div class="home-single-slide-inner">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <div class="home-single-slide-dec">
-                                    <!-- Optional Content -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-            <!-- end single slider -->
-            <div class="home-single-slide" data-background="{{ asset('assets/img/kuraw/day1.jpg')}}">
+            <div class="home-single-slide" data-background="{{ asset('assets/img/kuraw/day1.jpg') }}">
                 <div class="home-single-slide-overlay"></div>
-                <div class="home-single-slide-inner">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <div class="home-single-slide-dec">
-                                    <!--
-                              <h4>USTP - FIC</h4>
-                              <h2></h2>
-                              <p>Transforming concepts into products<br></p>
-                              -->
-                                    <div class="home-single-slide-button mt-4">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-            <!-- end single slider -->
-            <div class="home-single-slide" data-background="{{ asset('assets/img/kuraw/nighters.jpg')}}">
+            <div class="home-single-slide" data-background="{{ asset('assets/img/kuraw/nighters.jpg') }}">
                 <div class="home-single-slide-overlay"></div>
-                <div class="home-single-slide-inner">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <div class="home-single-slide-dec">
-                                    <!--
-                              <h4>USTP - FIC</h4>
-                              <h2></h2>
-                              <p>optimizing resource value through innovation <br>and diversification</p>
-                              -->
-                                    <div class="home-single-slide-button mt-4">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-            <!-- end single slider -->
-            <div class="home-single-slide" data-background="{{ asset('assets/img/kuraw/7.jpg')}}">
+            <div class="home-single-slide" data-background="{{ asset('assets/img/kuraw/7.jpg') }}">
                 <div class="home-single-slide-overlay"></div>
-                <div class="home-single-slide-inner">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <div class="home-single-slide-dec">
-                                    <!--
-                              <h4>USTP - FIC</h4>
-                              <h2></h2>
-                              <p>optimizing resource value through innovation <br>and diversification</p>
-                              -->
-                                    <div class="home-single-slide-button mt-4">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-            <!-- end single slider -->
         </div>
     </section>
     <!-- END SLIDER SECTION -->
@@ -661,6 +598,45 @@
     <script src="{{ asset('assets/bootstrap/js/popper.min.js') }}"></script>
     <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('assets/js/scripts.js') }}"></script>
+    <script src="{{ asset('assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.home-slides').owlCarousel({
+                items: 1,                 // Number of items to display
+                loop: true,               // Enable looping of slides
+                autoplay: true,           // Enable autoplay
+                autoplayTimeout: 3000,    // Delay between slides (in ms)
+                autoplayHoverPause: true, // Pause on hover
+                nav: true,                // Enable navigation arrows
+                dots: true,               // Enable dots
+                navText: ["<", ">"],      // Customize navigation arrows
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    600: {
+                        items: 1
+                    },
+                    1000: {
+                        items: 1
+                    }
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const slides = document.querySelectorAll(".home-single-slide");
+            slides.forEach(slide => {
+                const backgroundImage = slide.getAttribute("data-background");
+                if (backgroundImage) {
+                    slide.style.backgroundImage = `url(${backgroundImage})`;
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

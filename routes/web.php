@@ -13,22 +13,45 @@ use App\Http\Controllers\{
     OrderController,
     GalleryController,
     CartController,
+    RewardController,
     AdminController,
     ProfileController,
     SettingsController,
     ContactController,
     AnalyticsController,
+    ReportController,
     UserProfileController,
     AuthController
 };
 
-// Contact Page and Form Submission
+// ----------------------------
+// Public Routes
+// ----------------------------
+Route::get('/', fn(): View => view('frontend.home'))->name('home');
+Route::get('/about', fn(): View => view('frontend.about'))->name('about');
+
+// Contact Page
 Route::controller(ContactController::class)->group(function () {
     Route::get('/contact', 'index')->name('contact'); // Display contact form
     Route::post('/contact', 'store')->name('contact.process'); // Handle form submission
 });
 
+// Menu
+Route::get('/menu', function () {
+    $products = \App\Models\Product::with('variations')->get(); // Eager load variations
+    return view('frontend.menu', compact('products'));
+})->name('menu');
+
+// Gallery
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
+
+// Public Reservation Page
+Route::get('/reservation', [ReservationController::class, 'showReservationPage'])->name('reservation.page');
+Route::post('/reservation', [ReservationController::class, 'store'])->name('reservation.store');
+
+// ----------------------------
 // Authentication Routes
+// ----------------------------
 Route::controller(AuthController::class)->group(function () {
     Route::get('/login-signup', fn(): Factory|View => view('auth.login-signup'))->name('login-signup.form');
     Route::post('/register', 'register')->name('register');
@@ -36,52 +59,68 @@ Route::controller(AuthController::class)->group(function () {
     Route::middleware('auth')->post('/logout', 'logoutAccount')->name('logout');
 });
 
-// Frontend Routes
-Route::get('/', fn(): View => view('frontend.home'))->name('home');
-Route::get('/about', fn(): View => view('frontend.about'))->name('about');
+// ----------------------------
+// Notification Routes
+// ----------------------------
+Route::post('/notifications/mark-read', function () {
+    auth()->user()->unreadNotifications->markAsRead();
+    return back();
+})->name('notifications.mark-read');
 
-// Menu Route
-Route::get('/menu', function () {
-    $products = \App\Models\Product::with('variations')->get(); // Eager load variations
-    return view('frontend.menu', compact('products'));
-})->name('menu');
-
-// Cart Routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
-    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('order.store');
-});
-
-Route::post('/clear-order-session', function () {
-    session()->forget('order');
-    return response()->json(['status' => 'success']);
-})->name('clear.order.session');
-
-Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
-Route::get('/contact', fn(): View => view('frontend.contact'))->name('contact');
-
-// Public Reservation Page
-Route::get('/reservation', [ReservationController::class, 'showReservationPage'])->name('reservation.page');
-Route::post('/reservation', [ReservationController::class, 'store'])->name('reservation.store');
-
-// User Profile
-Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [UserProfileController::class, 'show'])->name('profile');
-    Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile/update', [UserProfileController::class, 'update'])->name('profile.update');
-    Route::post('/logout', [AuthController::class, 'logoutAccount'])->name('logout');
-});
-
+// ----------------------------
+// Analytics Routes
+// ----------------------------
 Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 
+// ----------------------------
+// Cart and Orders (Frontend)
+// ----------------------------
+Route::middleware(['auth'])->group(function () {
+    // Cart
+    Route::prefix('cart')->controller(CartController::class)->group(function () {
+        Route::get('/', 'index')->name('cart.index');
+        Route::post('/add', 'add')->name('cart.add');
+        Route::post('/update', 'update')->name('cart.update');
+        Route::delete('/remove', 'remove')->name('cart.remove');
+        Route::post('/redeem', 'redeemPoints')->name('cart.redeem');
+        Route::post('/checkout', 'checkout')->name('order.store');
+    });
+
+    // Orders
+    Route::prefix('orders')->controller(OrderController::class)->group(function () {
+        Route::get('/', 'myOrders')->name('orders.index');
+        Route::get('/{order}', 'show')->name('order.show');
+    });
+});
+
+// ----------------------------
+// Rewards (Frontend)
+// ----------------------------
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('rewards')->controller(RewardController::class)->group(function () {
+        Route::get('/', 'show')->name('rewards');
+        Route::post('/redeem', 'redeemPoints')->name('rewards.redeem');
+    });
+});
+
+// ----------------------------
+// User Profile
+// ----------------------------
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('profile')->controller(UserProfileController::class)->group(function () {
+        Route::get('/', 'show')->name('profile');
+        Route::get('/edit', 'edit')->name('profile.edit');
+        Route::put('/update', 'update')->name('profile.update');
+    });
+});
+
+// ----------------------------
 // Admin Dashboard Routes
+// ----------------------------
 Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
-    // Category Routes
+    // Categories
     Route::prefix('category')->controller(CategoryController::class)->name('dashboard.category')->group(function () {
         Route::get('/', 'index')->name('.index');
         Route::get('/create', 'create')->name('.create');
@@ -92,7 +131,7 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
         Route::delete('/{id}/destroy', 'destroy')->name('.destroy');
     });
 
-    // Product Routes
+    // Products
     Route::prefix('products')->controller(ProductController::class)->name('dashboard.products')->group(function () {
         Route::get('/', 'index')->name('.index');
         Route::get('/add', 'showAdd')->name('.showAdd');
@@ -103,66 +142,76 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
         Route::delete('/{id}/delete', 'destroy')->name('.destroy');
     });
 
-    // Order Routes
-    Route::prefix('orders')
-        ->controller(OrderController::class)
-        ->name('dashboard.orders.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index'); // List all orders
-            Route::get('/create', 'create')->name('create'); // Create order form
-            Route::post('/', 'store')->name('store'); // Store new order
-            Route::get('/{order}', 'show')->name('show'); // Show specific order details
-            Route::get('/{order}/edit', 'edit')->name('edit'); // Edit order form
-            Route::put('/{order}', 'update')->name('update'); // Update order details
-            Route::delete('/{order}', 'destroy')->name('destroy'); // Delete order
-        });
-
-
-
-    // Inventory Routes
-    Route::prefix('inventory')->controller(InventoryController::class)->group(function () {
-        Route::get('/', 'index')->name('dashboard.inventory.index');
-        Route::get('/create', 'create')->name('dashboard.inventory.create');
-        Route::post('/store', 'store')->name('dashboard.inventory.store');
-        Route::get('/{id}/edit', 'edit')->name('dashboard.inventory.edit');
-        Route::put('/{id}/update', 'update')->name('dashboard.inventory.update');
-        Route::delete('/{id}/destroy', 'destroy')->name('dashboard.inventory.destroy');
-        Route::get('/{id}', 'show')->name('dashboard.inventory.show');
-    });
-
-    // Supplier Routes
-    Route::prefix('supplier')->controller(SupplierController::class)->name('dashboard.supplier.')->group(function () {
+    // Orders
+    Route::prefix('orders')->controller(OrderController::class)->name('dashboard.orders.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/create', 'create')->name('create');
-        Route::post('/store', 'store')->name('store');
-        Route::get('/{supplier}/edit', 'edit')->name('edit');
-        Route::put('/{supplier}/update', 'update')->name('update');
-        Route::delete('/{supplier}/destroy', 'destroy')->name('destroy');
+        Route::post('/', 'store')->name('store');
+        Route::get('/{order}', 'show')->name('show');
+        Route::get('/{order}/edit', 'edit')->name('edit');
+        Route::put('/{order}/status', 'updateStatus')->name('updateStatus');
+        Route::put('/{order}', 'update')->name('update');
+        Route::delete('/{order}', 'destroy')->name('destroy');
     });
 
-    // Reservations Routes (Admin)
-    Route::prefix('reservations')->group(function () {
-        Route::get('/', [ReservationController::class, 'index'])->name('dashboard.reservations.index');
-        Route::get('/create', [ReservationController::class, 'create'])->name('dashboard.reservations.create');
-        Route::post('/store', [ReservationController::class, 'store'])->name('dashboard.reservations.store');
-        Route::get('/{id}/edit', [ReservationController::class, 'edit'])->name('dashboard.reservations.edit');
-        Route::put('/{id}/update', [ReservationController::class, 'update'])->name('dashboard.reservations.update');
-        Route::delete('/{id}/destroy', [ReservationController::class, 'destroy'])->name('dashboard.reservations.destroy');
-        Route::get('/{id}', [ReservationController::class, 'show'])->name('dashboard.reservations.show');
+    // Inventory
+    Route::prefix('inventory')->controller(InventoryController::class)->name('dashboard.inventory')->group(function () {
+        Route::get('/', 'index')->name('.index');
+        Route::get('/create', 'create')->name('.create');
+        Route::post('/store', 'store')->name('.store');
+        Route::get('/{id}/edit', 'edit')->name('.edit');
+        Route::put('/{id}/update', 'update')->name('.update');
+        Route::delete('/{id}/destroy', 'destroy')->name('.destroy');
     });
 
-    // Profile Routes
-    Route::prefix('profile')->group(function () {
-        Route::get('/', [ProfileController::class, 'index'])->name('dashboard.profile.index');
-        Route::get('/{id}/edit', [ProfileController::class, 'edit'])->name('dashboard.profile.edit');
-        Route::put('/{id}', [ProfileController::class, 'update'])->name('dashboard.profile.update');
+    // Suppliers
+    Route::prefix('supplier')->controller(SupplierController::class)->name('dashboard.supplier')->group(function () {
+        Route::get('/', 'index')->name('.index');
+        Route::get('/create', 'create')->name('.create');
+        Route::post('/store', 'store')->name('.store');
+        Route::get('/{supplier}/edit', 'edit')->name('.edit');
+        Route::put('/{supplier}/update', 'update')->name('.update');
+        Route::delete('/{supplier}/destroy', 'destroy')->name('.destroy');
     });
 
-    // Settings Routes
+    // Reservations
+    Route::prefix('reservations')->controller(ReservationController::class)->name('dashboard.reservations')->group(function () {
+        Route::get('/', 'index')->name('.index');
+        Route::get('/create', 'create')->name('.create');
+        Route::post('/store', 'store')->name('.store');
+        Route::get('/{id}', 'show')->name('.show'); // Added 'show' route
+        Route::get('/{id}/edit', 'edit')->name('.edit');
+        Route::patch('/{id}/status', 'updateStatus')->name('.update-status');
+        Route::put('/{id}/update', 'update')->name('.update');
+        Route::delete('/{id}/destroy', 'destroy')->name('.destroy');
+    });
+
+    // Profile
+    Route::prefix('profile')->controller(ProfileController::class)->name('dashboard.profile')->group(function () {
+        Route::get('/', 'index')->name('.index');
+        Route::get('/{id}/edit', 'edit')->name('.edit');
+        Route::put('/{id}', 'update')->name('.update');
+    });
+
+    // Settings
     Route::prefix('pages')->group(function () {
         Route::get('/settings', [SettingsController::class, 'index'])->name('dashboard.pages.settings');
     });
+
+    // Generating Reports
+    Route::prefix('reports')->name('dashboard.reports.')->group(function () {
+        Route::get('/orders', [ReportController::class, 'orders'])->name('orders');
+        Route::get('/reservations', [ReportController::class, 'reservations'])->name('reservations');
+    });    
 });
 
-// Fallback Route
+// ----------------------------
+// Utility Routes
+// ----------------------------
+Route::post('/clear-order-session', function () {
+    session()->forget('order');
+    return response()->json(['status' => 'success']);
+})->name('clear.order.session');
+
+// Fallback
 Route::fallback(fn() => view('errors.404'))->name('fallback');

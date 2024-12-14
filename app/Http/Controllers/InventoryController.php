@@ -65,7 +65,7 @@ class InventoryController extends Controller
     $inventory = Inventory::create($validated);
 
     // Optionally redirect to another page or return a response
-    return redirect()->route('dashboard.inventory.index')->with('success', 'Inventory item added successfully');
+    return redirect()->route('dashboard.inventory.index')->with(['success' => 'Inventory item added successfully', 'alert' => 'alert-success']);
 }
 
 
@@ -98,7 +98,7 @@ class InventoryController extends Controller
             ]));
 
             return redirect()->route('dashboard.inventory.index')
-                ->with('success', 'Inventory item updated successfully.');
+                ->with(['success'=> 'Inventory item updated successfully.', 'alert' => 'alert-success']);
         } catch (\Exception $e) {
             Log::error("Failed to update inventory item: ", ['error' => $e->getMessage()]);
             return redirect()->back()->withErrors('Failed to update inventory item.');
@@ -113,7 +113,7 @@ class InventoryController extends Controller
             $inventory->delete();
 
             return redirect()->route('dashboard.inventory.index')
-                ->with('success', 'Inventory item deleted successfully.');
+                ->with(['success' => 'Inventory item deleted successfully.', 'alert' => 'alert-danger']);
         } catch (\Exception $e) {
             Log::error("Failed to delete inventory item: ", ['error' => $e->getMessage()]);
             return redirect()->back()->withErrors('Failed to delete inventory item.');

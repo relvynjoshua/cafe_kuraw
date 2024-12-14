@@ -24,6 +24,7 @@ class ProductController extends Controller
                         $q->where('name', 'like', "%$search%");
                     });
             })
+            ->orderBy('created_at', 'desc')
             ->paginate(10); // Display 10 products per page
 
         return view('dashboard.products.index', compact('products'));
@@ -76,7 +77,7 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.products.index')->with('message', 'Product added successfully!');
+        return redirect()->route('dashboard.products.index')->with(['message' => 'Product added successfully!', 'alert' => 'alert-success']);
     }
 
     // Show the form to edit an existing product
@@ -127,7 +128,7 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.products.index')->with('message', 'Product updated successfully!');
+        return redirect()->route('dashboard.products.index')->with(['message' => 'Product updated successfully!', 'alert' => 'alert-success']);
     }
 
     // Delete a product from the database
@@ -145,7 +146,7 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return redirect()->route('dashboard.products.index')->with(['message' => 'Product deleted successfully!', 'alert' => 'alert-success']);
+        return redirect()->route('dashboard.products.index')->with(['message' => 'Product deleted successfully!', 'alert' => 'alert-danger']);
     }
 }
 ;

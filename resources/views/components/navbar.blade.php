@@ -101,6 +101,7 @@
                                 @if(Auth::check())
                                     <li class="dropdown-header">Hello, {{ Auth::user()->firstname }}</li>
                                     <li><a class="dropdown-item" href="{{ route('profile') }}">My Profile</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('rewards') }}">My Rewards</a></li>
                                     <li>
                                         <form action="{{ route('logout') }}" method="POST" class="dropdown-item">
                                             @csrf

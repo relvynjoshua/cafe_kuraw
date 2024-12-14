@@ -33,4 +33,14 @@ class Order extends Model
             return $product->pivot->quantity * $product->pivot->price;
         });
     }
+
+    public function getFinalAmountAttribute()
+    {
+        return max(0, $this->total_amount - $this->discount);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

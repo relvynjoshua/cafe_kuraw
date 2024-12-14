@@ -3,15 +3,24 @@
 @section('content')
 
 @include('components.alert')
+<style>
+    /* Solid border */
+    hr.solid {
+        border-top: 5px solid #000000;
+    }
+</style>
 
 <a href="{{ route('dashboard.products.index') }}" class="btn btn-secondary mb-3">Back to Products</a>
 
 <div class="card shadow p-4">
     <h2 class="mb-4">Add Product</h2>
+
+    <hr class="solid">
+    
     <form action="{{ route('dashboard.products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group mb-3">
-            <label for="name" class="form-label">Product Name</label>
+            <label for="name" class="form-label fw-bold">Product Name</label>
             <input type="text" name="name" class="form-control" id="name" required>
             @error('name')
                 <span class="text-danger">{{ $message }}</span>
@@ -19,7 +28,7 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="category_id" class="form-label">Category</label>
+            <label for="category_id" class="form-label fw-bold">Category</label>
             <select name="category_id" class="form-control" required>
                 <option value="" disabled selected>Select a Category</option>
                 @foreach($categories as $category)
@@ -32,7 +41,7 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="price" class="form-label">Base Price</label>
+            <label for="price" class="form-label fw-bold">Base Price</label>
             <input type="text" name="price" class="form-control" id="price" required>
             @error('price')
                 <span class="text-danger">{{ $message }}</span>
@@ -40,7 +49,7 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label fw-bold">Description</label>
             <textarea name="description" class="form-control" id="description" required></textarea>
             @error('description')
                 <span class="text-danger">{{ $message }}</span>
@@ -48,14 +57,15 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="image" class="form-label">Product Image</label>
+            <label for="image" class="form-label fw-bold">Product Image</label>
             <input type="file" name="image" id="image" class="form-control">
             @error('image')
                 <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
 
-        <!-- Product Variations -->
+        <hr class="solid">
+
         <div id="variations-container">
             <h4 class="mt-4">Product Variations</h4>
             <div class="variation-row row mb-3">
@@ -70,8 +80,10 @@
                 </div>
             </div>
         </div>
-        <button type="button" class="btn btn-secondary" id="add-variation-btn">Add Variation</button>
 
+        <hr class="solid">
+
+        <button type="button" class="btn btn-secondary" id="add-variation-btn">Add Variation</button>
         <button type="submit" class="btn btn-primary">Add Product</button>
     </form>
 </div>

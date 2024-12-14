@@ -17,9 +17,9 @@ class Inventory extends Model
         'unit',
         'price',
         'expiry_date',
-        'supplier_id', // Corrected
+        'supplier_id',
         'description',
-        'category_id', // Corrected
+        'category_id', 
         'location',
     ];
 

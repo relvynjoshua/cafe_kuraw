@@ -17,7 +17,9 @@ class CategoryController extends Controller
         // Fetch categories with optional search filter
         $categories = Category::when($search, function ($query, $search) {
             $query->where('name', 'like', "%$search%");
-        })->paginate(10); // Adjust pagination as needed
+        })
+        ->orderBy('created_at', 'desc')
+        ->paginate(10); // Adjust pagination as needed
 
         return view('dashboard.category.index', compact('categories'));
     }

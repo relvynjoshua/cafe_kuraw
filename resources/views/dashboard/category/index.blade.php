@@ -5,53 +5,63 @@
 @include('components.alert')
 
 <style>
-    /* Styling for pagination */
+    /* Pagination container */
     .pagination {
         display: flex;
         justify-content: center;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        /* Centered and smaller vertical margin */
+        align-items: center;
+        margin-top: 20px;
     }
 
-    .pagination .page-link {
-        font-size: 12px;
-        /* Smaller font size */
-        padding: 4px 8px;
-        /* Adjust padding for compact size */
+    /* Pagination list */
+    .pagination ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+    }
+
+    /* Pagination items */
+    .pagination li {
+        margin: 0 5px;
+    }
+
+    /* Pagination links */
+    .pagination a {
+        display: inline-block;
+        padding: 6px 12px; /* Adjusted padding for better button size */
         color: #007bff;
-        /* Default Bootstrap link color */
-        border: 1px solid #dee2e6;
-        /* Border for pagination buttons */
-        border-radius: 4px;
-        /* Rounded corners for buttons */
-        transition: all 0.3s ease-in-out;
-        /* Smooth hover effect */
-    }
-
-    .pagination .page-link:hover {
-        color: #0056b3;
-        /* Darker link on hover */
-        background-color: #f0f8ff;
-        /* Light background on hover */
         text-decoration: none;
-        /* Remove underline */
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background-color: #fff;
+        transition: background-color 0.3s, color 0.3s;
+        font-size: 1rem; /* Adjusted font size for page numbers */
+        line-height: 1.5;
     }
 
-    .pagination .page-item.active .page-link {
+    /* Hover and active state */
+    .pagination a:hover, .pagination .active a {
         background-color: #007bff;
-        /* Active background color */
-        color: #fff;
-        /* Active text color */
-        border-color: #007bff;
-        /* Active border color */
-        font-weight: bold;
-        /* Highlight the active link */
+        color: white;
     }
 
-    .pagination .page-item {
-        margin: 0 2px;
-        /* Reduce spacing between buttons */
+    /* Disabled state */
+    .pagination .disabled a {
+        color: #ccc;
+        pointer-events: none;
+    }
+
+    /* Arrow buttons */
+    .pagination .arrow {
+        font-size: 1.2rem; /* Make the arrows a bit bigger */
+        padding: 6px 10px;
+    }
+
+    /* Arrow hover effect */
+    .pagination .arrow:hover {
+        background-color: #007bff;
+        color: white;
     }
 
     /* Adjust spacing and layout for responsiveness */
@@ -136,9 +146,28 @@
     </table>
 
     <!-- Pagination Links -->
-    <div class="d-flex justify-content-center mt-3">
-        {{ $categories->links() }}
+    <div class="pagination">
+            <!-- Previous arrow -->
+            <a href="#" class="arrow" onclick="changePage('prev')">«</a>
+            
+            <!-- Page Numbers -->
+            <span>Page {{ $categories->currentPage() }} of {{ $categories->lastPage() }}</span>
+
+            <!-- Next arrow -->
+            <a href="#" class="arrow" onclick="changePage('next')">»</a>
+        </div>
     </div>
 </div>
+
+<script>
+    // Function to change pages
+    function changePage(direction) {
+        const currentPage = {{ $categories->currentPage() }};
+        let newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
+        if (newPage < 1) newPage = 1;
+        if (newPage > {{ $categories->lastPage() }}) newPage = {{ $categories->lastPage() }};
+        window.location.href = '{{ route('dashboard.category.index') }}?page=' + newPage;
+    }
+</script>
 
 @endsection

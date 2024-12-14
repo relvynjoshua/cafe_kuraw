@@ -34,10 +34,16 @@ class ReservationController extends Controller
         return view('dashboard.reservations.index', compact('reservations'));
     }
 
+    // Create reservation
+    public function create()
+    {
+        return view('dashboard.reservations.create');
+    }
+
     // Store reservation
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone_number' => 'required|string|max:15',
@@ -59,7 +65,28 @@ class ReservationController extends Controller
             'status' => $request->input('status', 'pending'),
         ]);
 
-        return redirect()->route('reservation.page')->with(['success' => 'Your reservation has been submitted successfully!']);
+        // Create a reservation
+        $reservation = Reservation::create(array_merge($validated, ['status' => $request->input('status', 'pending')]));
+
+        // Notify admins only if the reservation is created from the frontend
+        if ($request->is('reservations/store')) {
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new \App\Notifications\NewReservationNotification($reservation));
+            }
+
+            return redirect()->route('reservation.page')->with(['success' => 'Your reservation has been submitted successfully!']);
+        }
+
+        // Redirect to admin dashboard if the reservation is created by an admin
+        return redirect()->route('dashboard.reservations.index')->with(['message' => 'Reservation created successfully.', 'alert' => 'alert-success']);
+    }
+
+    // Show reservation
+    public function show($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        return view('dashboard.reservations.show', compact('reservation'));
     }
 
     // Edit reservation
@@ -99,12 +126,28 @@ class ReservationController extends Controller
         return redirect()->route('dashboard.reservations.index')->with(['message' => 'Reservation updated successfully.', 'alert' => 'alert-success']);
     }
 
+    // Update reservation status
+    public function updateStatus(Request $request, $id)
+    {
+        $reservation = Reservation::findOrFail($id);
+
+        $validated = $request->validate([
+            'status' => 'required|string|in:pending,confirmed,cancelled',
+        ]);
+
+        $reservation->update(['status' => $validated['status']]);
+
+        return redirect()->route('dashboard.reservations.index')
+            ->with(['message' => 'Reservation status updated successfully.', 'alert' => 'alert-success']);
+    }
+
+
     // Delete reservation
     public function destroy($id)
     {
         $reservation = Reservation::findOrFail($id);
         $reservation->delete();
 
-        return redirect()->route('dashboard.reservations.index')->with(['message' => 'Reservation deleted successfully.', 'alert' => 'alert-success']);
+        return redirect()->route('dashboard.reservations.index')->with(['message' => 'Reservation deleted successfully.', 'alert' => 'alert-danger']);
     }
 }
