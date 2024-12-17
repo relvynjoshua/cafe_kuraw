@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\OrderStatusNotification;
+use App\Models\PointsHistory;
+use Illuminate\Support\Facades\Storage;
 use DB;
 
 class OrderController extends Controller
@@ -14,13 +16,17 @@ class OrderController extends Controller
     public function myOrders()
     {
         $orders = Auth::user()->orders()->with('products')->orderBy('created_at', 'desc')->get();
+
+        if (request()->is('api/*')) {
+            return response()->json(['orders' => $orders], 200);
+        }
+
         return view('frontend.orders', compact('orders'));
     }
+
     public function index(Request $request)
     {
         $search = $request->input('search');
-
-        // Fetch orders with associated products
         $orders = Order::with('products')
             ->when($search, function ($query, $search) {
                 $query->where('customer_name', 'like', "%$search%")
@@ -33,17 +39,18 @@ class OrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
+        if (request()->is('api/*')) {
+            return response()->json(['orders' => $orders], 200);
+        }
+
         return view('dashboard.orders.index', compact('orders'));
     }
 
     public function create()
     {
-        // Fetch all products and their variations
         $products = Product::with('variations')->get();
-
         return view('dashboard.orders.create', compact('products'));
     }
-
 
     public function store(Request $request)
     {
@@ -51,14 +58,19 @@ class OrderController extends Controller
             'customer_name' => 'required|string|max:255',
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
-            'status' => 'required|string|in:pending,completed,cancelled',
-            'payment_method' => 'required|string|max:255',
-            'delivery_method' => 'required|string|max:255',
+            'address' => 'required_if:delivery_method,delivery|string|max:255',
+            'payment_method' => 'required|string|in:GCash',
+            'reference_number' => 'required_if:payment_method,GCash|string|max:50',
+            'proof_of_payment' => 'required_if:payment_method,GCash|image|max:2048',
             'products' => 'required|array|min:1',
             'products.*.product_id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.quantity' => 'required|integer|min:1|max:10',
             'products.*.variation' => 'nullable|string|max:255',
         ]);
+
+        if (array_sum(array_column($validated['products'], 'quantity')) > 10) {
+            return back()->withErrors(['error' => 'Orders exceeding 10 items must be placed directly with the business.']);
+        }
 
         DB::beginTransaction();
         try {
@@ -66,39 +78,52 @@ class OrderController extends Controller
             $discount = $redeemedPoints;
             $totalAmount = max(0, $this->calculateTotalAmount($validated['products']) - $discount);
 
-            // Create the order and associate it with the authenticated user
+            $proofPath = null;
+            if ($request->hasFile('proof_of_payment')) {
+                $proofPath = $request->file('proof_of_payment')->store('proofs', 'public');
+            }
+
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'customer_name' => $validated['customer_name'],
                 'email' => $validated['email'],
                 'phone' => $validated['phone'],
-                'status' => $validated['status'],
+                'address' => $validated['address'] ?? null,
+                'status' => 'Preparing',
                 'payment_method' => $validated['payment_method'],
-                'delivery_method' => $validated['delivery_method'],
+                'delivery_method' => $validated['delivery_method'] ?? null,
+                'reference_number' => $validated['reference_number'] ?? null,
+                'proof_of_payment' => $proofPath,
                 'total_amount' => $totalAmount,
                 'discount' => $discount,
             ]);
 
-            // Attach products to the order
             foreach ($validated['products'] as $product) {
                 $order->products()->attach($product['product_id'], [
                     'quantity' => $product['quantity'],
-                    'price' => Product::find($product['product_id'])->price,
+                    'price' => Product::findOrFail($product['product_id'])->price,
                     'variation' => $product['variation'] ?? null,
                 ]);
             }
 
-            // Deduct redeemed points from user
+            $user = Auth::user();
             if ($redeemedPoints > 0) {
-                $user = Auth::user();
                 $user->decrement('reward_points', $redeemedPoints);
+                PointsHistory::create([
+                    'user_id' => $user->id,
+                    'activity' => 'Redeemed points for order discount',
+                    'points' => -$redeemedPoints,
+                ]);
             }
 
-            // Reward points logic for completed orders
             if ($order->status === 'completed') {
-                $user = Auth::user();
                 $earnedPoints = $this->calculateRewardPoints($totalAmount);
                 $user->increment('reward_points', $earnedPoints);
+                PointsHistory::create([
+                    'user_id' => $user->id,
+                    'activity' => 'Earned points for completed order',
+                    'points' => $earnedPoints,
+                ]);
             }
 
             session()->forget('redeemed_points');
@@ -112,22 +137,16 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['products.variations']); // Eager-load variations for each product
-
-        return view('dashboard.orders.show', compact('order'));
+        $order->load(['products.variations', 'products']);
+        return view('frontend.order_show', compact('order'));
     }
 
     public function edit(Order $order)
     {
-        // Load the order's products and their variations
         $order->load(['products.variations']);
-
-        // Fetch all products and their variations for selection
         $products = Product::with('variations')->get();
-
         return view('dashboard.orders.edit', compact('order', 'products'));
     }
-
 
     public function update(Request $request, Order $order)
     {
@@ -138,7 +157,6 @@ class OrderController extends Controller
             'status' => 'required|in:pending,completed,cancelled',
             'payment_method' => 'required|string|max:255',
             'delivery_method' => 'required|string|max:255',
-            // Only validate products if provided
             'products' => 'nullable|array|min:1',
             'products.*.product_id' => 'required_with:products|exists:products,id',
             'products.*.quantity' => 'required_with:products|integer|min:1',
@@ -147,7 +165,6 @@ class OrderController extends Controller
 
         DB::beginTransaction();
         try {
-            // Update the general order details
             $order->update([
                 'customer_name' => $validated['customer_name'],
                 'email' => $validated['email'],
@@ -158,18 +175,8 @@ class OrderController extends Controller
                 'total_amount' => $this->calculateTotalAmount($validated['products']),
             ]);
 
-            // Only sync products if provided in the request
             if (isset($validated['products'])) {
-                $productDetails = [];
-                foreach ($validated['products'] as $product) {
-                    $productDetails[$product['product_id']] = [
-                        'quantity' => $product['quantity'],
-                        'price' => Product::findOrFail($product['product_id'])->price,
-                        'variation' => $product['variation'] ?? null,
-                    ];
-                }
-
-                // Sync products with the order
+                $productDetails = $this->getProductDetails($validated['products']);
                 $order->products()->sync($productDetails);
             }
 
@@ -190,21 +197,26 @@ class OrderController extends Controller
         DB::beginTransaction();
         try {
             $oldStatus = $order->status;
-
-            // Update the status only
             $order->update(['status' => $validated['status']]);
 
-            // Handle reward points and notifications
             $user = $order->user;
             if ($user) {
                 $earnedPoints = $this->calculateRewardPoints($order->total_amount);
 
                 if ($oldStatus !== 'completed' && $order->status === 'completed') {
                     $user->increment('reward_points', $earnedPoints);
-                    $user->notify(new OrderStatusNotification($order));
+                    PointsHistory::create([
+                        'user_id' => $user->id,
+                        'activity' => 'Earned points for status update to completed',
+                        'points' => $earnedPoints,
+                    ]);
                 } elseif ($oldStatus === 'completed' && $order->status !== 'completed') {
                     $user->decrement('reward_points', $earnedPoints);
-                    $user->notify(new OrderStatusNotification($order));
+                    PointsHistory::create([
+                        'user_id' => $user->id,
+                        'activity' => 'Deducted points due to status change',
+                        'points' => -$earnedPoints,
+                    ]);
                 }
             }
 
@@ -216,27 +228,37 @@ class OrderController extends Controller
         }
     }
 
-
     public function destroy(Order $order)
     {
         DB::beginTransaction();
         try {
-            $order->products()->detach(); // Detach all products from the order
-
+            $order->products()->detach();
             if ($order->status === 'completed') {
                 $user = Auth::user();
                 $earnedPoints = $this->calculateRewardPoints($order->total_amount);
                 $user->decrement('reward_points', $earnedPoints);
             }
-
             $order->delete();
-
             DB::commit();
             return redirect()->route('dashboard.orders.index')->with(['success' => 'Order deleted successfully!', 'alert' => 'alert-danger']);
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to delete order: ' . $e->getMessage()]);
         }
+    }
+
+    public function cancel(Order $order)
+    {
+        if (Auth::id() !== $order->user_id) {
+            return redirect()->route('orders.index')->with('error', 'You do not have permission to cancel this order.');
+        }
+
+        if (!$order->isCancelable()) {
+            return redirect()->route('orders.index')->with('error', 'This order has already been accepted and cannot be canceled.');
+        }
+
+        $order->update(['status' => 'cancelled']);
+        return redirect()->route('orders.index')->with('success', 'Your order has been successfully canceled.');
     }
 
     private function calculateTotalAmount($products)
@@ -250,7 +272,6 @@ class OrderController extends Controller
 
     private function calculateRewardPoints($totalAmount)
     {
-        // Example: 1 point for every $10 spent
         return floor($totalAmount / 50);
     }
 

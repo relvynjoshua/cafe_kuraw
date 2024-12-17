@@ -108,20 +108,19 @@
                             </div>
                         @endif
 
-                        <!-- Add to Cart Form -->
-                        <form action="{{ route('cart.add') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                            <input type="hidden" id="selected_variation_{{ $product->id }}" name="variation_id" value="">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <label for="quantity_{{ $product->id }}" class="form-label">Quantity</label>
-                                    <input type="number" id="quantity_{{ $product->id }}" name="quantity" value="1" min="1"
-                                        class="form-control w-75">
-                                </div>
-                                <button type="submit" class="btn btn-primary rounded-pill">Add to Cart</button>
+                        <!-- Add to Cart Button -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <label for="quantity_{{ $product->id }}" class="form-label">Quantity</label>
+                                <input type="number" id="quantity_{{ $product->id }}" name="quantity" value="1" min="1"
+                                    class="form-control w-75">
                             </div>
-                        </form>
+                            <button type="button"
+                                onclick="addToCart({{ $product->id }}, {{ $product->variations->first()->id ?? 0 }})"
+                                class="btn btn-primary rounded-pill">
+                                Add to Cart
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -129,7 +128,60 @@
     </div>
 </div>
 
-<!-- Custom Script for Variations -->
+<!-- Add to Cart Notification Modal -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">Item Added to Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                <p>Your item has been successfully added to the cart!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Shopping</button>
+                <a href="{{ url('/cart') }}" class="btn btn-primary">Go to Cart</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    function addToCart(productId, variationId) {
+        const quantity = document.querySelector(`#quantity_${productId}`).value || 1;
+
+        fetch('{{ route('cart.add') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                variation_id: variationId,
+                quantity: quantity,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update Cart Badge
+                    document.querySelector('#cart-badge').innerText = data.cart_count;
+
+                    // Show Modal
+                    const addToCartModal = new bootstrap.Modal(document.getElementById('addToCartModal'));
+                    addToCartModal.show();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Ensure the hidden input is updated when the variation dropdown changes
@@ -148,5 +200,4 @@
         });
     });
 </script>
-
 @endsection

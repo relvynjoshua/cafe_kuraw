@@ -36,7 +36,15 @@
 
         <div class="form-group mb-3">
             <label for="unit" class="form-label fw-bold">Unit</label>
-            <input type="text" name="unit" class="form-control" id="unit" required>
+            <select name="unit" class="form-control" id="unit" required>
+                <option value="" disabled selected>Select a Unit</option>
+                <option value="kilograms">Kilograms</option>
+                <option value="pieces">Pieces</option>
+                <option value="liters">Liters</option>
+                <option value="grams">Grams</option>
+                <option value="boxes">Boxes</option>
+                <option value="bags">Bags</option>
+            </select>
             @error('unit')
                 <span class="text-danger">{{ $message }}</span>
             @enderror

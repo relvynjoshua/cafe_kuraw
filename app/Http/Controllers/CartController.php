@@ -35,7 +35,7 @@ class CartController extends Controller
 
         // Validation: Ensure product and variation exist
         if (!$product || !$variation) {
-            return redirect()->route('menu')->withErrors('Product or variation not found. Please select a valid option.');
+            return response()->json(['status' => 'error', 'message' => 'Invalid product or variation.'], 400);
         }
 
         // Fetch existing cart or initialize it
@@ -52,7 +52,7 @@ class CartController extends Controller
                 'name' => $product->name,
                 'image' => $product->image,
                 'price' => $variation->price, // Use variation price
-                'variation' => "{$variation->type} - {$variation->value}", // Display variation details
+                'variation' => "{$variation->type} - {$variation->value}",
                 'quantity' => $quantity,
             ];
         }
@@ -60,7 +60,10 @@ class CartController extends Controller
         // Save updated cart to session
         session()->put('cart', $cart);
 
-        return redirect()->route('menu')->with('success', 'Product added to cart!');
+        // Update the cart count in session
+        session()->put('cart_count', collect($cart)->sum('quantity'));
+
+        return response()->json(['status' => 'success', 'message' => 'Product added to cart!', 'cart_count' => session('cart_count')]);
     }
 
     public function update(Request $request)
@@ -118,10 +121,12 @@ class CartController extends Controller
         }
 
         $order = Order::create([
+            'user_id' => $user->id,
             'customer_name' => $validated['customer_name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
-            'total_amount' => $totalAmount,
+            'total_amount' => $finalAmount,
+            'discount' => $discount,
             'status' => 'pending',
             'payment_method' => $validated['payment_method'],
             'delivery_method' => $validated['delivery_method'],
@@ -156,22 +161,4 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', 'Order placed successfully!');
     }
 
-    public function redeemPoints(Request $request)
-    {
-        $user = Auth::user();
-
-        $request->validate([
-            'points' => 'required|integer|min:1|max:' . $user->reward_points,
-        ]);
-
-        $pointsToRedeem = $request->input('points');
-
-        if (session()->has('cart_discount')) {
-            return back()->withErrors(['error' => 'You have already redeemed points.']);
-        }
-
-        session(['cart_discount' => $pointsToRedeem]);
-
-        return redirect()->route('cart.index')->with('success', "$pointsToRedeem points have been applied to your cart.");
-    }
 }

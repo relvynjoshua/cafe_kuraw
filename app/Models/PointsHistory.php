@@ -5,6 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
 class PointsHistory extends Model
 {
     use HasFactory;
@@ -15,9 +20,7 @@ class PointsHistory extends Model
         'points',
     ];
 
-    /**
-     * Relationship with the User model.
-     */
+    // Define relationship with User model
     public function user()
     {
         return $this->belongsTo(User::class);

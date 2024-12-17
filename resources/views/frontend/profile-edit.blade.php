@@ -29,9 +29,19 @@
                                 required>
                         </div>
                         <div class="mb-2">
+                            <label for="current_password" class="form-label">Current Password <small
+                                    class="text-muted">(Required to change password)</small></label>
+                            <input type="password" name="current_password" id="current_password" class="form-control">
+                        </div>
+                        <div class="mb-2">
                             <label for="password" class="form-label">New Password <small class="text-muted">(Leave blank
                                     to keep current password)</small></label>
                             <input type="password" name="password" id="password" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label for="password_confirmation" class="form-label">Confirm New Password</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation"
+                                class="form-control">
                         </div>
                         <button type="submit" class="btn bg-success w-100">Save Changes</button>
                     </form>

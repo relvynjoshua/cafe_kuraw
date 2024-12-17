@@ -9,17 +9,20 @@ class Order extends Model
 {
     use HasFactory;
 
-    // Fillable properties to allow mass assignment
+    // Allow mass assignment
     protected $fillable = [
+        'user_id', // Include user_id if orders are associated with users
         'customer_name', 
         'email', 
         'phone', 
         'total_amount', 
-        'status',
+        'status', 
         'payment_method', 
-        'delivery_method'  // Ensure both fields are fillable
+        'delivery_method', 
+        'discount', // Include discount if it's used
     ];
 
+    // Define relationship with Product model
     public function products()
     {
         return $this->belongsToMany(Product::class)
@@ -27,6 +30,13 @@ class Order extends Model
                     ->withTimestamps();
     }
 
+    // Define relationship with User model
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Calculate total cost (sum of product quantities * prices)
     public function getTotalCostAttribute()
     {
         return $this->products->sum(function ($product) {
@@ -34,13 +44,15 @@ class Order extends Model
         });
     }
 
+    // Calculate the final amount after applying discounts
     public function getFinalAmountAttribute()
     {
-        return max(0, $this->total_amount - $this->discount);
+        return max(0, $this->total_amount - ($this->discount ?? 0));
     }
 
-    public function user()
+    public function isCancelable()
     {
-        return $this->belongsTo(User::class);
+        return $this->status === 'pending';
     }
+
 }

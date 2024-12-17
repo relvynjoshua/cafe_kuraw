@@ -170,7 +170,8 @@
                             class="d-inline">
                             @csrf
                             @method('PATCH')
-                            <select name="status" class="form-select status-dropdown" onchange="this.form.submit()"  data-status="{{ $reservation->status }}">
+                            <select name="status" class="form-select status-dropdown" onchange="this.form.submit()"
+                                data-status="{{ $reservation->status }}" {{ in_array($reservation->status, ['confirmed', 'cancelled']) ? 'disabled' : '' }}>
                                 <option value="pending" {{ $reservation->status == 'pending' ? 'selected' : '' }}>Pending
                                 </option>
                                 <option value="confirmed" {{ $reservation->status == 'confirmed' ? 'selected' : '' }}>
@@ -181,11 +182,6 @@
                         </form>
                     </td>
                     <td>
-                        <!-- Edit Button -->
-                        <a href="{{ route('dashboard.reservations.edit', $reservation->id) }}"
-                            class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
 
                         <!-- Delete Form -->
                         <form action="{{ route('dashboard.reservations.destroy', $reservation->id) }}" method="POST"

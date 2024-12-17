@@ -87,6 +87,12 @@
 					<span class="text">Inventory</span>
 				</a>
 			</li>
+			<li class="{{ request()->routeIs('dashboard.gallery.*') ? 'active' : '' }}">
+				<a href="{{ route('dashboard.gallery.index') }}">
+					<i class="fas fa-images"></i>
+					<span class="text">Gallery Management</span>
+				</a>
+			</li>
 			<li class="{{ request()->routeIs('dashboard.profile.*') ? 'active' : '' }}">
 				<a href="{{ route('dashboard.profile.index') }}">
 					<i class="fas fa-user"></i>
@@ -102,8 +108,8 @@
 				</a>
 			</li>
 			<li>
-				<form action="{{ route('logout') }}" method="POST" style="display: inline;">
-					@csrf
+			<form action="{{ route('logout.admin') }}" method="POST" class="dropdown-item">
+			@csrf
 					<button type="submit" class="logout" style="border: none; background: none; cursor: pointer;">
 						<i class="fas fa-sign-out-alt"></i>
 						<span class="text">Logout</span>

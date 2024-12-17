@@ -62,12 +62,18 @@
                                 class="nav-link {{ Request::is('about') ? 'active' : '' }}">About Us</a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('gallery.index') }}"
+                                class="nav-link {{ request()->routeIs('gallery.index') ? 'active' : '' }}">
+                                Gallery
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ url('/menu') }}"
                                 class="nav-link {{ Request::is('menu') ? 'active' : '' }}">Menu</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ url('/gallery') }}"
-                                class="nav-link {{ Request::is('gallery') ? 'active' : '' }}">Gallery</a>
+                            <a href="{{ url('/orders') }}"
+                                class="nav-link {{ Request::is('order') ? 'active' : '' }}">Order</a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ url('/reservation') }}"
@@ -87,8 +93,13 @@
                         </a>
 
                         <!-- Cart Icon -->
-                        <a href="{{ url('/cart') }}" class="header-cart me-3">
+                        <a href="{{ url('/cart') }}" class="header-cart me-3 position-relative">
                             <i class="fas fa-shopping-cart"></i>
+                            <!-- Badge for Cart Count -->
+                            <span id="cart-badge"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ session('cart_count', 0) }}
+                            </span>
                         </a>
 
                         <!-- Profile Dropdown -->
@@ -97,20 +108,30 @@
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user"></i>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <ul class="dropdown-menu dropdown-menu-end bg-white shadow border-0"
+                                aria-labelledby="profileDropdown" style="width: 200px;">
                                 @if(Auth::check())
-                                    <li class="dropdown-header">Hello, {{ Auth::user()->firstname }}</li>
-                                    <li><a class="dropdown-item" href="{{ route('profile') }}">My Profile</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('rewards') }}">My Rewards</a></li>
+                                    <li class="dropdown-header bg-black text-white py-3 px-3">
+                                        <strong style="font-size: 1.25rem; font-family: 'Arial', sans-serif;">
+                                            Hello, {{ Auth::user()->firstname }}
+                                        </strong>
+                                    </li>
                                     <li>
-                                        <form action="{{ route('logout') }}" method="POST" class="dropdown-item">
+                                        <hr class="dropdown-divider my-1">
+                                    </li>
+                                    <li><a class="dropdown-item text-dark" href="{{ route('profile') }}">My Profile</a></li>
+                                    <li><a class="dropdown-item text-dark" href="{{ route('rewards') }}">My Rewards</a></li>
+                                    <li class="dropdown-item text-dark">
+                                        <form action="{{ route('logout.user') }}" method="POST"
+                                            class="dropdown-item m-0 p-0">
                                             @csrf
-                                            <button type="submit" class="btn btn-link p-0 text-dark">Logout</button>
+                                            <button type="submit" class="btn btn-link text-dark p-0 m-0">Logout</button>
                                         </form>
                                     </li>
                                 @else
-                                    <li><a class="dropdown-item" href="{{ url('/login-signup') }}">Login</a></li>
-                                    <li><a class="dropdown-item" href="{{ url('/login-signup') }}">Register</a></li>
+                                    <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Login</a></li>
+                                    <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Register</a>
+                                    </li>
                                 @endif
                             </ul>
                         </div>

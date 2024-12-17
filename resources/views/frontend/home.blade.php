@@ -173,7 +173,7 @@
                             <h4>Premium Equipment Investment</h4>
                             <p>Kuraw Coffee Shop takes pride in using high-quality Italian coffee equipment, ensuring
                                 consistency and excellence in every cup.</p>
-                            <a class="thm-btn" href="{{ route('gallery') }}">READ MORE</a>
+                            <a class="thm-btn" href="{{ route('gallery.index') }}">READ MORE</a>
                         </div>
                     </div>
                 </div>

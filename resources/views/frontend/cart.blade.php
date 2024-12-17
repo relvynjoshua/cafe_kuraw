@@ -7,16 +7,16 @@
 <div class="container py-5">
     <h1 class="text-center mb-4"><i class="fas fa-shopping-cart"></i> My Cart</h1>
 
+    <!-- Toggle Buttons -->
     <div class="text-center mb-4">
-        <!-- Toggle Buttons -->
-        <button id="cartTab" class="btn btn-primary">View Cart</button>
-        <button id="orderHistoryTab" class="btn btn-secondary">View Order History</button>
+        <button data-toggle="cartSection" class="btn btn-primary">View Cart</button>
+        <button data-toggle="orderHistorySection" class="btn btn-secondary">View Order History</button>
     </div>
 
     <!-- Cart Section -->
-    <div id="cartSection">
+    <div id="cartSection" class="toggle-section">
         @if ($cart && count($cart) > 0)
-            <!-- Table Section -->
+            <!-- Cart Items Table -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-dark">
                     <h4 class="mb-0 text-white">Your Cart Items</h4>
@@ -37,11 +37,10 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="cart-item-image">
-                                                <img src="{{ asset('storage/' . ($item['image'] ?? 'default.jpg')) }}"
-                                                    alt="{{ $item['name'] }}" class="img-thumbnail me-3"
-                                                    style="width: 60px; height: 60px;">
-                                            </div>
+                                            <img src="{{ asset('storage/' . ($item['image'] ?? 'default.jpg')) }}" 
+                                                 alt="{{ $item['name'] }}" 
+                                                 class="img-thumbnail me-3" 
+                                                 style="width: 60px; height: 60px;">
                                             <div>
                                                 <p class="mb-0 fw-bold">{{ $item['name'] }}</p>
                                                 @if (!empty($item['variation']))
@@ -56,7 +55,7 @@
                                             @csrf
                                             <input type="hidden" name="item_id" value="{{ $id }}">
                                             <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1"
-                                                class="form-control form-control-sm d-inline w-auto">
+                                                   class="form-control form-control-sm w-auto d-inline">
                                             <button type="submit" class="btn btn-sm btn-primary mt-1">Update</button>
                                         </form>
                                     </td>
@@ -78,80 +77,63 @@
                 </div>
             </div>
 
-            <!-- Total Price Section -->
-            <!-- Total Price Section -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-secondary text-white">
-                <h4 class="mb-0 text-white">Order Summary</h4>
-            </div>
-            <div class="card-body">
-                <!-- Total and Discount Section -->
-                <h5 class="text-center">Total Price: ₱<span id="totalPrice">{{ number_format($totalPrice, 2) }}</span></h5>
-                <div class="text-center mt-3">
-                    <label for="discountInput" class="form-label me-2">Apply Reward Points:</label>
-                    <input type="number" id="discountInput" class="form-control d-inline w-25" 
-                        min="0" max="{{ auth()->user()->reward_points }}" placeholder="Enter points">
-                    <h5 class="text-danger mt-3">Discount Applied: ₱<span id="discountDisplay">{{ number_format($discount, 2) }}</span></h5>
-                    <h5 class="text-success mt-3">Final Price: ₱<span id="finalPrice">{{ number_format($finalPrice, 2) }}</span></h5>
+            <!-- Order Summary -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">Order Summary</h4>
                 </div>
-
-                <!-- Reward Points Information -->
-                <div class="text-center mt-3">
+                <div class="card-body text-center">
+                    <h5>Total Price: ₱<span id="totalPrice">{{ number_format($totalPrice, 2) }}</span></h5>
+                    <div class="mt-3">
+                        <label for="discountInput" class="form-label">Apply Reward Points:</label>
+                        <input type="number" id="discountInput" class="form-control d-inline w-25" 
+                               min="0" max="{{ auth()->user()->reward_points }}" placeholder="Enter points">
+                        <h5 class="text-danger mt-3">Discount Applied: ₱<span id="discountDisplay">{{ number_format($discount, 2) }}</span></h5>
+                        <h5 class="text-success mt-3">Final Price: ₱<span id="finalPrice">{{ number_format($finalPrice, 2) }}</span></h5>
+                    </div>
                     <p><strong>Available Reward Points:</strong> {{ auth()->user()->reward_points }}</p>
-                </div>
 
-                <!-- Checkout Form -->
-                <form action="{{ route('order.store') }}" method="POST" class="mt-3">
-                    @csrf
-                    <input type="hidden" name="applied_points" id="appliedPoints" value="0"> <!-- Hidden field for applied points -->
-                    <div class="mb-3">
-                        <label for="customer_name" class="form-label">Name</label>
-                        <input type="text" name="customer_name" id="customer_name" class="form-control"
-                            value="{{ auth()->user()->firstname }}" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" value="{{ auth()->user()->email }}"
-                            readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="phone" class="form-label">Phone</label>
-                        <input type="text" name="phone" id="phone" class="form-control"
-                            placeholder="Enter your phone number" required>
-                    </div>
-                    <!-- Payment Method -->
-                    <div class="mb-3">
-                        <label for="payment_method" class="form-label">Payment Method</label>
-                        <select name="payment_method" id="payment_method" class="form-select" required>
-                            <option value="" disabled selected>Select a payment method</option>
-                            <option value="credit_card">Credit Card</option>
-                            <option value="paypal">Paypal</option>
-                            <option value="cash">Cash</option>
-                        </select>
-                    </div>
-                    <!-- Delivery Method -->
-                    <div class="mb-3">
-                        <label for="delivery_method" class="form-label">Delivery Method</label>
-                        <select name="delivery_method" id="delivery_method" class="form-select" required>
-                            <option value="" disabled selected>Select a delivery method</option>
-                            <option value="pickup">Pick-Up</option>
-                            <option value="delivery">Delivery</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100">Place Order</button>
-                </form>
+                    <!-- Checkout Form -->
+                    <form action="{{ route('order.store') }}" method="POST" class="mt-3">
+                        @csrf
+                        <input type="hidden" name="applied_points" id="appliedPoints" value="0">
+                        <input type="hidden" name="customer_name" value="{{ auth()->user()->firstname }}">
+                        <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="text" name="phone" id="phone" class="form-control" placeholder="Enter your phone number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="payment_method" class="form-label">Payment Method</label>
+                            <select name="payment_method" id="payment_method" class="form-select" required>
+                                <option value="" disabled selected>Select a payment method</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="paypal">Paypal</option>
+                                <option value="cash">GCash</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="delivery_method" class="form-label">Delivery Method</label>
+                            <select name="delivery_method" id="delivery_method" class="form-select" required>
+                                <option value="" disabled selected>Select a delivery method</option>
+                                <option value="pickup">Pick-Up</option>
+                                <option value="delivery">Delivery</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Place Order</button>
+                    </form>
+                </div>
             </div>
-        </div>
         @else
             <div class="alert alert-warning text-center">
                 <h4>Your cart is empty.</h4>
-                <p>Go back to the <a href="{{ route('menu') }}" class="text-primary">menu</a> to add products to your cart.</p>
+                <p><a href="{{ route('menu') }}" class="btn btn-primary mt-3">Browse Menu</a></p>
             </div>
         @endif
     </div>
 
     <!-- Order History Section -->
-    <div id="orderHistorySection" class="d-none">
+    <div id="orderHistorySection" class="toggle-section d-none">
         @if ($orders->isNotEmpty())
             <div class="card shadow-sm">
                 <div class="card-header bg-dark text-white">
@@ -172,11 +154,7 @@
                                 <tr>
                                     <td>{{ $order->id }}</td>
                                     <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $order->status === 'completed' ? 'success' : ($order->status === 'pending' ? 'warning' : 'danger') }}">
-                                            {{ ucfirst($order->status) }}
-                                        </span>
-                                    </td>
+                                    <td><span class="badge bg-{{ $order->status === 'completed' ? 'success' : ($order->status === 'pending' ? 'warning' : 'danger') }}">{{ ucfirst($order->status) }}</span></td>
                                     <td>₱{{ number_format($order->total_amount, 2) }}</td>
                                 </tr>
                             @endforeach
@@ -187,36 +165,34 @@
         @else
             <div class="alert alert-warning text-center">
                 <h4>No orders found.</h4>
-                <p>You have not placed any orders yet. <a href="{{ route('menu') }}" class="text-primary">Start shopping</a>.</p>
+                <p><a href="{{ route('menu') }}" class="btn btn-primary mt-3">Start Shopping</a></p>
             </div>
         @endif
     </div>
 </div>
 
-<!-- Add Custom JavaScript -->
+<!-- JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const cartTab = document.getElementById('cartTab');
-        const orderHistoryTab = document.getElementById('orderHistoryTab');
-        const cartSection = document.getElementById('cartSection');
-        const orderHistorySection = document.getElementById('orderHistorySection');
-
-        cartTab.addEventListener('click', () => {
-            cartSection.classList.remove('d-none');
-            orderHistorySection.classList.add('d-none');
-            cartTab.classList.add('btn-primary');
-            cartTab.classList.remove('btn-secondary');
-            orderHistoryTab.classList.add('btn-secondary');
-            orderHistoryTab.classList.remove('btn-primary');
+        const toggleButtons = document.querySelectorAll('[data-toggle]');
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-toggle');
+                document.querySelectorAll('.toggle-section').forEach(section => section.classList.add('d-none'));
+                document.getElementById(targetId).classList.remove('d-none');
+                toggleButtons.forEach(btn => btn.classList.remove('btn-primary'));
+                this.classList.add('btn-primary');
+            });
         });
 
-        orderHistoryTab.addEventListener('click', () => {
-            orderHistorySection.classList.remove('d-none');
-            cartSection.classList.add('d-none');
-            orderHistoryTab.classList.add('btn-primary');
-            orderHistoryTab.classList.remove('btn-secondary');
-            cartTab.classList.add('btn-secondary');
-            cartTab.classList.remove('btn-primary');
+        const discountInput = document.getElementById('discountInput');
+        const discountDisplay = document.getElementById('discountDisplay');
+        const totalPrice = parseFloat(document.getElementById('totalPrice').textContent.replace(',', ''));
+        const finalPrice = document.getElementById('finalPrice');
+        discountInput.addEventListener('input', function () {
+            const points = Math.min(parseInt(this.value, 10) || 0, {{ auth()->user()->reward_points }});
+            discountDisplay.textContent = points.toFixed(2);
+            finalPrice.textContent = (totalPrice - points).toFixed(2);
         });
     });
 </script>

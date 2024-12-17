@@ -39,10 +39,7 @@ class ContactController extends Controller
         $data = $request->only('name', 'email', 'phone', 'subject', 'message');
 
         try {
-            // Send the email to the intended recipient
             Mail::to('kurawcoffee@gmail.com')->send(new ContactMessage($data));
-
-            // Redirect back with a success message
             return redirect()->route('contact')->with('success', 'Your message has been sent successfully!');
         } catch (\Exception $e) {
             \Log::error('Mail sending failed: ' . $e->getMessage());

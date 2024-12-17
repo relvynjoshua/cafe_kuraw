@@ -21,7 +21,10 @@ use App\Http\Controllers\{
     AnalyticsController,
     ReportController,
     UserProfileController,
-    AuthController
+    AuthController,
+    LoginController,
+    RegisterController,
+    OTPController,
 };
 
 // ----------------------------
@@ -43,7 +46,8 @@ Route::get('/menu', function () {
 })->name('menu');
 
 // Gallery
-Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/gallery/{galleryItem}', [GalleryController::class, 'show'])->name('gallery.show');
 
 // Public Reservation Page
 Route::get('/reservation', [ReservationController::class, 'showReservationPage'])->name('reservation.page');
@@ -55,8 +59,27 @@ Route::post('/reservation', [ReservationController::class, 'store'])->name('rese
 Route::controller(AuthController::class)->group(function () {
     Route::get('/login-signup', fn(): Factory|View => view('auth.login-signup'))->name('login-signup.form');
     Route::post('/register', 'register')->name('register');
-    Route::post('/login', 'login')->name('login');
-    Route::middleware('auth')->post('/logout', 'logoutAccount')->name('logout');
+    // Form for entering email
+    Route::get('/register', function () {
+        return view('register');
+    });
+
+    // Endpoint for sending OTP
+    Route::post('/send-otp', [OTPController::class, 'sendOTP']);
+
+    // Route for OTP verification
+    Route::post('/verify-otp', [OTPController::class, 'verifyOTP']);
+
+    // Login Route
+    Route::post('/login-signup', [LoginController::class, 'login'])->name('login');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register');
+    Route::get('/', fn() => view('frontend.home'))->name('home');
+    
+    // User Logout
+    Route::post('/logout-user', 'logoutUser')->name('logout.user')->middleware('auth:web');
+    
+    // Admin Logout
+    Route::post('/logout-admin', 'logoutAdmin')->name('logout.admin')->middleware('auth:admin');
 });
 
 // ----------------------------
@@ -89,7 +112,8 @@ Route::middleware(['auth'])->group(function () {
     // Orders
     Route::prefix('orders')->controller(OrderController::class)->group(function () {
         Route::get('/', 'myOrders')->name('orders.index');
-        Route::get('/{order}', 'show')->name('order.show');
+        Route::get('/{order}', 'show')->name('orders.show');
+        Route::post('/{order}/cancel', 'cancel')->name('orders.cancel');
     });
 });
 
@@ -98,8 +122,9 @@ Route::middleware(['auth'])->group(function () {
 // ----------------------------
 Route::middleware(['auth'])->group(function () {
     Route::prefix('rewards')->controller(RewardController::class)->group(function () {
-        Route::get('/', 'show')->name('rewards');
-        Route::post('/redeem', 'redeemPoints')->name('rewards.redeem');
+        Route::get('/', 'show')->name('rewards'); // Display rewards page
+        Route::post('/redeem', 'redeemPoints')->name('rewards.redeem'); // Redeem points
+        Route::post('/apply-to-cart', 'applyPointsToCart')->name('rewards.apply'); // Apply points to cart
     });
 });
 
@@ -186,11 +211,22 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
         Route::delete('/{id}/destroy', 'destroy')->name('.destroy');
     });
 
-    // Profile
+    // Backend Gallery Management
+    Route::prefix('gallery')->controller(App\Http\Controllers\GalleryItemController::class)->name('dashboard.gallery.')->group(function () {
+        Route::get('/', 'index')->name('index'); // This resolves to 'dashboard.gallery.index'
+        Route::get('/create', 'create')->name('create'); // This resolves to 'dashboard.gallery.create'
+        Route::post('/store', 'store')->name('store');
+        Route::get('/{galleryItem}/edit', 'edit')->name('edit');
+        Route::put('/{galleryItem}', 'update')->name('update');
+        Route::delete('/{galleryItem}', 'destroy')->name('destroy');
+    });
+
+    // Profile Management
     Route::prefix('profile')->controller(ProfileController::class)->name('dashboard.profile')->group(function () {
         Route::get('/', 'index')->name('.index');
-        Route::get('/{id}/edit', 'edit')->name('.edit');
-        Route::put('/{id}', 'update')->name('.update');
+        Route::patch('/{user}/disable', 'disable')->name('.disable');
+        Route::patch('/{user}/enable', 'enable')->name('.enable');
+        Route::post('/{user}/restore', 'restore')->name('.restore');
     });
 
     // Settings

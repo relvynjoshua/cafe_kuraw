@@ -5,8 +5,8 @@
 @include('components.alert')
 
 <style>
-     /* Pagination container */
-     .pagination {
+    /* Pagination container */
+    .pagination {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -29,19 +29,22 @@
     /* Pagination links */
     .pagination a {
         display: inline-block;
-        padding: 6px 12px; /* Adjusted padding for better button size */
+        padding: 6px 12px;
+        /* Adjusted padding for better button size */
         color: #007bff;
         text-decoration: none;
         border: 1px solid #ddd;
         border-radius: 3px;
         background-color: #fff;
         transition: background-color 0.3s, color 0.3s;
-        font-size: 1rem; /* Adjusted font size for page numbers */
+        font-size: 1rem;
+        /* Adjusted font size for page numbers */
         line-height: 1.5;
     }
 
     /* Hover and active state */
-    .pagination a:hover, .pagination .active a {
+    .pagination a:hover,
+    .pagination .active a {
         background-color: #007bff;
         color: white;
     }
@@ -54,7 +57,8 @@
 
     /* Arrow buttons */
     .pagination .arrow {
-        font-size: 1.2rem; /* Make the arrows a bit bigger */
+        font-size: 1.2rem;
+        /* Make the arrows a bit bigger */
         padding: 6px 10px;
     }
 
@@ -72,7 +76,8 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    h1, h6 {
+    h1,
+    h6 {
         color: #333;
     }
 </style>
@@ -84,9 +89,30 @@
     <h6>List of all user profiles</h6>
 
     <!-- Search Bar -->
-    <form action="{{ route('dashboard.profile.index') }}" method="GET" class="d-flex mb-3">
-        <input type="text" name="search" class="form-control me-2" placeholder="Search by Name or Email" value="{{ request('search') }}">
-        <button class="btn btn-outline-primary" type="submit">Search</button>
+    <form method="GET" action="{{ route('dashboard.profile.index') }}" class="mb-3">
+        <div class="d-flex">
+            <input type="text" name="search" class="form-control me-2" placeholder="Search by Name or Email"
+                value="{{ request('search') }}">
+
+            <select name="status" class="form-control me-2">
+                <option value="">All</option>
+                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+            </select>
+
+            <select name="sort" class="form-control me-2">
+                <option value="id">ID</option>
+                <option value="firstname">Name</option>
+                <option value="email">Email</option>
+            </select>
+
+            <select name="direction" class="form-control me-2">
+                <option value="asc" {{ request('direction') == 'asc' ? 'selected' : '' }}>Ascending</option>
+                <option value="desc" {{ request('direction') == 'desc' ? 'selected' : '' }}>Descending</option>
+            </select>
+
+            <button type="submit" class="btn btn-outline-primary">Filter</button>
+        </div>
     </form>
 
     <div class="card shadow">
@@ -107,9 +133,26 @@
                             <td>{{ $user->firstname }}</td>
                             <td>{{ $user->email }}</td>
                             <td>
-                                <a href="{{ route('dashboard.profile.edit', $user->id) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
+                                @if ($user->is_active)
+                                    <form action="{{ route('dashboard.profile.disable', $user->id) }}" method="POST"
+                                        style="display: inline;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-ban"></i> Disable
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('dashboard.profile.enable', $user->id) }}" method="POST"
+                                        style="display: inline;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i> Enable
+                                        </button>
+                                    </form>
+                                @endif
+
                             </td>
                         </tr>
                     @empty
@@ -122,18 +165,18 @@
         </div>
     </div>
 
-  <!-- Pagination Links -->
-  <div class="pagination">
-            <!-- Previous arrow -->
-            <a href="#" class="arrow" onclick="changePage('prev')">«</a>
-            
-            <!-- Page Numbers -->
-            <span>Page {{ $users->currentPage() }} of {{ $users->lastPage() }}</span>
+    <!-- Pagination Links -->
+    <div class="pagination">
+        <!-- Previous arrow -->
+        <a href="#" class="arrow" onclick="changePage('prev')">«</a>
 
-            <!-- Next arrow -->
-            <a href="#" class="arrow" onclick="changePage('next')">»</a>
-        </div>
+        <!-- Page Numbers -->
+        <span>Page {{ $users->currentPage() }} of {{ $users->lastPage() }}</span>
+
+        <!-- Next arrow -->
+        <a href="#" class="arrow" onclick="changePage('next')">»</a>
     </div>
+</div>
 </div>
 
 <script>
