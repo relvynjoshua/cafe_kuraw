@@ -73,7 +73,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="{{ url('/orders') }}"
-                                class="nav-link {{ Request::is('order') ? 'active' : '' }}">Order</a>
+                                class="nav-link {{ Request::is('orders') ? 'active' : '' }}">Order</a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ url('/reservation') }}"

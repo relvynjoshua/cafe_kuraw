@@ -11,9 +11,10 @@ class GalleryController extends Controller
 {
     public function index()
     {
-        $galleryItems = GalleryItem::all();
+        $galleryItems = GalleryItem::paginate(10); // Fetch 10 items per page
         return view('frontend.gallery.index', compact('galleryItems'));
     }
+
 
     public function show(GalleryItem $galleryItem)
     {

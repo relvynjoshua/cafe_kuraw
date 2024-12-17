@@ -74,10 +74,10 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/login-signup', [LoginController::class, 'login'])->name('login');
     Route::post('/register', [RegisterController::class, 'register'])->name('register');
     Route::get('/', fn() => view('frontend.home'))->name('home');
-    
+
     // User Logout
     Route::post('/logout-user', 'logoutUser')->name('logout.user')->middleware('auth:web');
-    
+
     // Admin Logout
     Route::post('/logout-admin', 'logoutAdmin')->name('logout.admin')->middleware('auth:admin');
 });
@@ -212,9 +212,9 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     });
 
     // Backend Gallery Management
-    Route::prefix('gallery')->controller(App\Http\Controllers\GalleryItemController::class)->name('dashboard.gallery.')->group(function () {
-        Route::get('/', 'index')->name('index'); // This resolves to 'dashboard.gallery.index'
-        Route::get('/create', 'create')->name('create'); // This resolves to 'dashboard.gallery.create'
+    Route::prefix('dashboard/gallery')->controller(App\Http\Controllers\GalleryItemController::class)->name('dashboard.gallery.')->group(function () {
+        Route::get('/', 'index')->name('index'); // dashboard.gallery.index
+        Route::get('/create', 'create')->name('create'); // dashboard.gallery.create
         Route::post('/store', 'store')->name('store');
         Route::get('/{galleryItem}/edit', 'edit')->name('edit');
         Route::put('/{galleryItem}', 'update')->name('update');
@@ -238,7 +238,7 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     Route::prefix('reports')->name('dashboard.reports.')->group(function () {
         Route::get('/orders', [ReportController::class, 'orders'])->name('orders');
         Route::get('/reservations', [ReportController::class, 'reservations'])->name('reservations');
-    });    
+    });
 });
 
 // ----------------------------

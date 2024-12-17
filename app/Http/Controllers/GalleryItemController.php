@@ -9,9 +9,17 @@ use Illuminate\Support\Str;
 
 class GalleryItemController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $galleryItems = GalleryItem::all();
+        $search = $request->input('search');
+
+        $galleryItems = GalleryItem::when($search, function ($query, $search) {
+            $query->where('title', 'like', "%$search%")
+                ->orWhere('category', 'like', "%$search%");
+        })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10); // Use paginate instead of get()
+
         return view('dashboard.gallery.index', compact('galleryItems'));
     }
 

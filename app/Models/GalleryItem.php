@@ -13,10 +13,10 @@ class GalleryItem extends Model
         'title', 'description', 'category', 'image', 'slug',
     ];
 
-    // Add slug for URL routing
+    // Ensure 'id' is used as the route key
     public function getRouteKeyName()
     {
-        return 'slug'; // This will allow route model binding based on the slug
+        return 'id';
     }
 }
 
