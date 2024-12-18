@@ -60,6 +60,8 @@
 
         <div class="form-group mb-3">
             <label for="expiry_date" class="form-label fw-bold">Expiry Date</label>
+            <label><input type="checkbox" name="is_expirable" id="is_expirable" onchange="toggleExpiryDate()" {{ old('is_expirable', $item->is_expirable ?? false) ? 'checked' : '' }}>
+            Has Expiry Date</label>
             <input type="date" name="expiry_date" class="form-control" id="expiry_date">
             @error('expiry_date')
                 <span class="text-danger">{{ $message }}</span>
@@ -107,6 +109,18 @@
                 <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
+
+        <div class="form-group mb-3">
+            <label for="low_stock_threshold" class="form-label fw-bold">Low Stock Threshold</label>
+            <input type="number" name="low_stock_threshold" class="form-control"
+                value="{{ old('low_stock_threshold', $inventory->low_stock_threshold ?? 5) }}">
+        </div>
+
+        <script>
+            function toggleExpiryDate() {
+                document.getElementById('expiry_date').disabled = !document.getElementById('is_expirable').checked;
+            }
+        </script>
 
         <button type="submit" class="btn btn-primary">Add Item</button>
     </form>

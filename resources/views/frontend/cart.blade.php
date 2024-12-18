@@ -16,7 +16,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico') }}" />
 
     <!--Page Title-->
-    <title>Cart</title>
+    <title>Kuraw - Cart</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -43,12 +43,6 @@
 
 <div class="container py-5">
     <h1 class="text-center mb-4"><i class="fas fa-shopping-cart"></i> My Cart</h1>
-
-    <!-- Toggle Buttons -->
-    <div class="text-center mb-4">
-        <button data-toggle="cartSection" class="btn btn-primary">View Cart</button>
-        <button data-toggle="orderHistorySection" class="btn btn-secondary">View Order History</button>
-    </div>
 
     <!-- Cart Section -->
     <div id="cartSection" class="toggle-section">

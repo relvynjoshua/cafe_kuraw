@@ -5,8 +5,8 @@
 @include('components.alert')
 
 <style>
-     /* Pagination container */
-     .pagination {
+    /* Pagination container */
+    .pagination {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -29,19 +29,22 @@
     /* Pagination links */
     .pagination a {
         display: inline-block;
-        padding: 6px 12px; /* Adjusted padding for better button size */
+        padding: 6px 12px;
+        /* Adjusted padding for better button size */
         color: #007bff;
         text-decoration: none;
         border: 1px solid #ddd;
         border-radius: 3px;
         background-color: #fff;
         transition: background-color 0.3s, color 0.3s;
-        font-size: 1rem; /* Adjusted font size for page numbers */
+        font-size: 1rem;
+        /* Adjusted font size for page numbers */
         line-height: 1.5;
     }
 
     /* Hover and active state */
-    .pagination a:hover, .pagination .active a {
+    .pagination a:hover,
+    .pagination .active a {
         background-color: #007bff;
         color: white;
     }
@@ -54,7 +57,8 @@
 
     /* Arrow buttons */
     .pagination .arrow {
-        font-size: 1.2rem; /* Make the arrows a bit bigger */
+        font-size: 1.2rem;
+        /* Make the arrows a bit bigger */
         padding: 6px 10px;
     }
 
@@ -63,7 +67,7 @@
         background-color: #007bff;
         color: white;
     }
-    
+
     /* Adjust spacing and layout for responsiveness */
     @media (max-width: 768px) {
         .pagination .page-link {
@@ -88,7 +92,11 @@
     }
 </style>
 
-<div class="container mt-4">
+<div class="container mt-4" style="max-width: 100%; width: 90%;">
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
     <h1>
         <i class="fas fa-warehouse"></i> Inventory
     </h1>
@@ -110,12 +118,16 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Item Name</th>
+                <th scope="col">Description</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Unit</th>
                 <th scope="col">Price</th>
                 <th scope="col">Category</th>
-                <th scope="col">Supplier</th>
-                <th scope="col">Location</th>
+                <th scope="col">Supplier of Item</th>
+                <th scope="col">Bought Location</th>
+                <th scope="col">Actions</th>
+                <th scope="col">Stock Level</th>
+                <th scope="col">Stock Adjustment</th>
             </tr>
         </thead>
         <tbody>
@@ -123,6 +135,7 @@
                 <tr>
                     <td>{{ $inventory->id }}</td>
                     <td>{{ $inventory->item_name }}</td>
+                    <td>{{ $inventory->description }}</td>
                     <td>{{ $inventory->quantity }}</td>
                     <td>{{ $inventory->unit }}</td>
                     <td>{{ $inventory->price }}</td>
@@ -142,6 +155,44 @@
                             </button>
                         </form>
                     </td>
+                    <td>
+                        @if ($inventory->quantity <= $inventory->low_stock_threshold)
+                            <span class="badge badge-warning" style="color: red; font-size: 1.0em;">Low Stock</span>
+                        @endif
+                    </td>
+                    <td>
+                        <!-- Display current quantity -->
+                        <div style="margin-bottom: 10px;">
+                            <label for="current_quantity_{{ $inventory->id }}" class="font-weight-bold">Current
+                                Quantity:</label>
+                            <input type="number" id="current_quantity_{{ $inventory->id }}"
+                                value="{{ $inventory->quantity }}" class="form-control text-center" readonly
+                                style="background-color: #f8f9fa; border: 1px solid #ced4da; width: 100px; margin-bottom: 5px;">
+                        </div>
+
+                        <!-- Form for Add/Subtract -->
+                        <form action="{{ route('dashboard.inventory.updateQuantity', $inventory->id) }}" method="POST">
+                            @csrf
+                            <div class="input-group" style="max-width: 300px;">
+                                <!-- Dropdown for Add/Subtract -->
+                                <select name="change_type" class="form-control" style="width: 40%;" required>
+                                    <option value="add">Add Item</option>
+                                    <option value="subtract">Subtract Item</option>
+                                </select>
+
+                                <!-- Input field for quantity -->
+                                <input type="number" name="quantity" class="form-control text-center"
+                                    placeholder="Enter Quantity" min="1" required style="width: 50%;">
+
+                                <!-- Submit Button -->
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
                 </tr>
             @empty
                 <tr>
@@ -151,18 +202,18 @@
         </tbody>
     </table>
 
-   <!-- Pagination Links -->
-   <div class="pagination">
-            <!-- Previous arrow -->
-            <a href="#" class="arrow" onclick="changePage('prev')">«</a>
-            
-            <!-- Page Numbers -->
-            <span>Page {{ $inventories->currentPage() }} of {{ $inventories->lastPage() }}</span>
+    <!-- Pagination Links -->
+    <div class="pagination">
+        <!-- Previous arrow -->
+        <a href="#" class="arrow" onclick="changePage('prev')">«</a>
 
-            <!-- Next arrow -->
-            <a href="#" class="arrow" onclick="changePage('next')">»</a>
-        </div>
+        <!-- Page Numbers -->
+        <span>Page {{ $inventories->currentPage() }} of {{ $inventories->lastPage() }}</span>
+
+        <!-- Next arrow -->
+        <a href="#" class="arrow" onclick="changePage('next')">»</a>
     </div>
+</div>
 </div>
 
 <script>

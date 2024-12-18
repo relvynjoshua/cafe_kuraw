@@ -122,84 +122,57 @@
 
 <!-- Scripts -->
 <script>
-    // Get booked dates passed from the backend
     let bookedDates = @json($bookedDates);
-
-    // Current date information
     let currentDate = new Date();
     let currentMonth = currentDate.getMonth();
     let currentYear = currentDate.getFullYear();
 
-    /**
-     * Generate the calendar for the given month and year
-     */
     function generateCalendar(month, year) {
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
         const startingDay = firstDay.getDay();
         const totalDays = lastDay.getDate();
-
         const tbody = document.getElementById("calendar-body");
-        tbody.innerHTML = ''; // Clear the calendar body
-
+        tbody.innerHTML = '';
         let date = 1;
-        let today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-
+        let today = new Date().toISOString().split('T')[0];
         const rowCount = Math.ceil((totalDays + startingDay) / 7);
 
         for (let i = 0; i < rowCount; i++) {
             let row = document.createElement("tr");
-
             for (let j = 0; j < 7; j++) {
                 let cell = document.createElement("td");
-
-                // Empty cells before the first day of the month or after the last day
                 if ((i === 0 && j < startingDay) || date > totalDays) {
                     row.appendChild(cell);
                 } else {
                     let fullDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
                     cell.textContent = date;
-
-                    // Disable past dates
                     if (new Date(fullDate) < new Date(today)) {
                         cell.classList.add('past-date');
                         cell.title = "Past dates cannot be reserved";
-                    }
-                    // Disable already booked dates
-                    else if (bookedDates.includes(fullDate)) {
+                    } else if (bookedDates.includes(fullDate)) {
                         cell.classList.add('booked-date');
                         cell.title = "This date is already booked";
-                    }
-                    // Available dates
-                    else {
+                    } else {
                         cell.classList.add('available-date');
                         cell.onclick = () => {
                             document.getElementById("reservationDate").value = fullDate;
                         };
                     }
-
                     row.appendChild(cell);
                     date++;
                 }
             }
             tbody.appendChild(row);
         }
-
         document.getElementById("currentMonth").textContent = `${getMonthName(month)} ${year}`;
     }
 
-    /**
-     * Get the month name for a given month number
-     */
     function getMonthName(month) {
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"];
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         return monthNames[month];
     }
 
-    /**
-     * Navigate to the previous month
-     */
     document.getElementById("prevMonth").addEventListener("click", () => {
         currentMonth--;
         if (currentMonth < 0) {
@@ -209,9 +182,6 @@
         generateCalendar(currentMonth, currentYear);
     });
 
-    /**
-     * Navigate to the next month
-     */
     document.getElementById("nextMonth").addEventListener("click", () => {
         currentMonth++;
         if (currentMonth > 11) {
@@ -221,9 +191,32 @@
         generateCalendar(currentMonth, currentYear);
     });
 
-    // Initialize the calendar
+    document.getElementById("reservationTime").addEventListener("change", (e) => {
+        const selectedDate = document.getElementById("reservationDate").value;
+        const selectedTime = e.target.value;
+        const dayOfWeek = new Date(selectedDate).getDay();
+
+        const storeHours = {
+            0: { open: "13:00", close: "20:00" },
+            1: { open: "12:00", close: "21:00" },
+            2: { open: "12:00", close: "21:00" },
+            3: { open: "12:00", close: "21:00" },
+            4: { open: "12:00", close: "21:00" },
+            5: { open: "12:00", close: "21:00" },
+            6: { open: "12:00", close: "21:00" },
+        };
+
+        const { open, close } = storeHours[dayOfWeek];
+
+        if (selectedTime < open || selectedTime > close) {
+            alert(`Please select a time between ${open} and ${close}.`);
+            e.target.value = "";
+        }
+    });
+
     generateCalendar(currentMonth, currentYear);
 </script>
+
 
 <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('assets/bootstrap/js/popper.min.js') }}"></script>

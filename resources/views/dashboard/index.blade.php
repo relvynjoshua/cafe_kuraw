@@ -4,376 +4,291 @@
 
 @section('content')
 
+<!-- Dashboard Styles -->
 <style>
-    .dashboard-overview {
-        background-color: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        ;
-    }
-
-    .dashboard-overview h1 {
-        font-size: 2rem;
-        color: #333;
-        margin-bottom: 20px;
-    }
-
-    .dashboard-overview h3 {
-        font-size: 1.5rem;
-        margin-bottom: 15px;
+    .dashboard-title {
         text-align: center;
-        color: #333;
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 20px 0;
+        color: #222;
     }
 
-    .stats {
+    /* Grid Layout */
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+    }
+
+    /* Left Section */
+    .left-section {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .kpi-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 15px;
     }
 
-    .stat-card {
-        flex: 1 1 calc(33% - 10px); /* Three cards per row */
-        padding: 15px;
-        text-align: center;
+    .kpi-card {
+        background-color: #ffffff;
         border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #fff;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease-in-out;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        padding: 20px;
+        transition: transform 0.3s ease-in-out;
     }
 
-    .stat-card:hover {
+    .kpi-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .stat-card i {
-        font-size: 36px;
-        color: #007bff;
+    .kpi-icon {
+        font-size: 2.5rem;
         margin-bottom: 10px;
+        color: #000;
+        /* Changed to black */
     }
 
-    .stat-card h2 {
-        font-size: 1.2rem;
-        margin-bottom: 5px;
-        color: #333;
+    .kpi-value {
+        font-size: 2rem;
+        font-weight: bold;
     }
 
-    .stat-card p {
-        font-size: 1rem;
+    .kpi-title {
         color: #555;
     }
 
-    @media (max-width: 768px) {
-        .dashboard-overview {
-            flex: 1 1 100%; /* Stacks horizontally on smaller screens */
-        }
-
-        .stat-card {
-            flex: 1 1 calc(50% - 10px); /* Two cards per row */
-        }
+    .table-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 15px;
     }
 
-    @media (max-width: 576px) {
-        .stat-card {
-            flex: 1 1 100%; /* Single column on very small screens */
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
     }
 
-    .clickable-card {
-        transition: all 0.3s ease-in-out;
-        cursor: pointer;
-        border: 1px solid #dee2e6;
-        border-radius: 0.5rem;
+    table th,
+    table td {
+        text-align: center;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
     }
 
-    .clickable-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-title {
-        font-weight: bold;
-        margin-bottom: 1rem;
-    }
-
-    .btn-outline-primary,
-    .btn-outline-success {
-        font-size: 14px;
-        font-weight: 500;
-        padding: 10px 20px;
-        border-radius: 0.5rem;
-    }
-
-    .btn-outline-primary:hover,
-    .btn-outline-success:hover {
+    table th {
+        background-color: #000;
+        /* Black color */
         color: #fff;
     }
 
-    .card {
+    /* Right Section */
+    .right-section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .chart-card {
+        background-color: #ffffff;
         border-radius: 10px;
-        transition: transform 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        text-align: center;
     }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-title {
+    .chart-title {
         font-weight: bold;
         margin-bottom: 10px;
+        color: #222;
     }
 
-    .card-text {
-        font-size: 16px;
+    /* Generate Reports */
+    .report-container {
+        margin-top: 20px;
+        text-align: center;
+        background-color: #000;
+        /* Black */
+        padding: 20px;
+        border-radius: 10px;
+        color: #fff;
+    }
+
+    .btn-report {
+        padding: 10px 20px;
+        margin: 5px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        background-color: #333;
+        /* Dark black-gray */
+        color: #fff;
+        transition: 0.3s;
+    }
+
+    .btn-report:hover {
+        background-color: #000;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .dashboard-container {
+            grid-template-columns: 1fr;
+        }
+
+        .right-section {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
-<div class="dashboard-overview">
-    <h1>Welcome to the Dashboard!</h1>
-</div>
+<div class="container mt-4" style="max-width: 100%; width: 95%;">
+    <!-- Dashboard Title -->
+    <div class="dashboard-title">Admin Dashboard</div>
 
-<div class="dashboard-overview">
-    <h1>analytics here</h1>
-    <h3>work in progress!!</h3>
-    <h5>- suki/points rewards loyalty</h5>
-    <h5>- statistics</h5>
-    <h5>- overall sales?</h5>
-</div>
-
-<div class="dashboard-overview">
-    <h1 class="mb-4 text-center">Dashboard Analytics</h1>
-    
-    <!-- Analytics Section -->
-    <div class="row">
-        <!-- Total Users -->
-        <div class="col-md-4">
-            <div class="card text-center shadow-sm mb-4">
-                <div class="card-body">
-                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                    <h5 class="card-title">Total Users</h5>
-                    <p class="card-text display-6">{{ $totalCustomers ?? 0 }}</p>
+    <!-- Dashboard Grid -->
+    <div class="dashboard-container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <!-- KPI Cards -->
+            <div class="kpi-container">
+                <div class="kpi-card">
+                    <i class="fas fa-dollar-sign kpi-icon"></i>
+                    <div class="kpi-value">₱{{ number_format($salesData ?? 150000, 2) }}</div>
+                    <div class="kpi-title">Overall Sales</div>
+                </div>
+                <div class="kpi-card">
+                    <i class="fas fa-shopping-cart kpi-icon"></i>
+                    <div class="kpi-value">{{ $totalOrders ?? 340 }}</div>
+                    <div class="kpi-title">Total Orders</div>
+                </div>
+                <div class="kpi-card">
+                    <i class="fas fa-users kpi-icon"></i>
+                    <div class="kpi-value">{{ $totalUsers ?? 150 }}</div>
+                    <div class="kpi-title">Total Users</div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Total Sales -->
-        <div class="col-md-4">
-            <div class="card text-center shadow-sm mb-4">
-                <div class="card-body">
-                    <i class="fas fa-coins fa-3x text-success mb-3"></i>
-                    <h5 class="card-title">Total Sales</h5>
-                    <p class="card-text display-6">₱{{ number_format($totalProducts ?? 0, 2) }}</p>
-                </div>
+
+            <!-- Incoming Orders -->
+            <div class="table-card">
+                <h4>Incoming Orders</h4>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Order Count</th>
+                        <th>Last Order</th>
+                    </tr>
+                    <tr>
+                        <td>John Doe</td>
+                        <td>5</td>
+                        <td>2024-01-15</td>
+                    </tr>
+                    <tr>
+                        <td>Jane Smith</td>
+                        <td>8</td>
+                        <td>2024-01-14</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Incoming Reservations -->
+            <div class="table-card">
+                <h4>Incoming Reservations</h4>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Reservation Count</th>
+                        <th>Last Reservation</th>
+                    </tr>
+                    <tr>
+                        <td>Sarah Brown</td>
+                        <td>3</td>
+                        <td>2024-01-12</td>
+                    </tr>
+                    <tr>
+                        <td>Mark Lee</td>
+                        <td>4</td>
+                        <td>2024-01-10</td>
+                    </tr>
+                </table>
             </div>
         </div>
 
-        <!-- Total Orders -->
-        <div class="col-md-4">
-            <div class="card text-center shadow-sm mb-4">
-                <div class="card-body">
-                    <i class="fas fa-shopping-cart fa-3x text-warning mb-3"></i>
-                    <h5 class="card-title">Total Orders</h5>
-                    <p class="card-text display-6">{{ $totalOrders ?? 0 }}</p>
-                </div>
+        <!-- Right Section -->
+        <div class="right-section">
+            <div class="chart-card">
+                <div class="chart-title">Orders by Time</div>
+                <div id="ordersByTimeChart"></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Inventory Overview</div>
+                <div id="inventoryChart"></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Reward System</div>
+                <div id="rewardSystemChart"></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Customer Growth</div>
+                <div id="customerGrowthChart"></div>
             </div>
         </div>
     </div>
 
-    <!-- Loyalty Program Section -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-gift text-primary"></i> Suki/Points Loyalty Program</h5>
-            <p class="card-text">Engage with customers through a rewards-based loyalty program. Customers earn points for their purchases, which can be redeemed for discounts or special offers.</p>
-            <button class="btn btn-outline-primary">View Loyalty Program</button>
-        </div>
-    </div>
-
-    <!-- Sales and Orders Chart -->
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-chart-line text-success"></i> Sales and Orders Overview</h5>
-            <canvas id="salesOrdersChart"></canvas>
-        </div>
-    </div>
-</div>
-
-<div class="dashboard-overview">
-    <h3 class="mb-4">Generate Reports</h3>
-
-    <div class="row">
-        <!-- Orders Reports -->
-        <div class="col-md-6">
-            <div class="card shadow-sm mb-4 clickable-card">
-                <div class="card-body text-center">
-                    <i class="fas fa-shopping-cart fa-2x text-primary mb-3"></i>
-                    <h5 class="card-title">Orders Report</h5>
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('dashboard.reports.orders', ['time_frame' => 'daily']) }}"
-                            class="btn btn-outline-primary">
-                            Daily Report
-                        </a>
-                        <a href="{{ route('dashboard.reports.orders', ['time_frame' => 'weekly']) }}"
-                            class="btn btn-outline-primary">
-                            Weekly Report
-                        </a>
-                        <a href="{{ route('dashboard.reports.orders', ['time_frame' => 'monthly']) }}"
-                            class="btn btn-outline-primary">
-                            Monthly Report
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reservations Reports -->
-        <div class="col-md-6">
-            <div class="card shadow-sm mb-4 clickable-card">
-                <div class="card-body text-center">
-                    <i class="fas fa-calendar-alt fa-2x text-success mb-3"></i>
-                    <h5 class="card-title">Reservations Report</h5>
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('dashboard.reports.reservations', ['time_frame' => 'daily']) }}"
-                            class="btn btn-outline-success">
-                            Daily Report
-                        </a>
-                        <a href="{{ route('dashboard.reports.reservations', ['time_frame' => 'monthly']) }}"
-                            class="btn btn-outline-success">
-                            Monthly Report
-                        </a>
-                        <a href="{{ route('dashboard.reports.reservations', ['time_frame' => 'yearly']) }}"
-                            class="btn btn-outline-success">
-                            Yearly Report
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Generate Reports -->
+    <div class="report-container">
+        <h3>Generate Reports</h3>
+        <button class="btn-report">Daily Orders</button>
+        <button class="btn-report">Weekly Orders</button>
+        <button class="btn-report">Monthly Orders</button>
+        <button class="btn-report">Daily Reservations</button>
+        <button class="btn-report">Weekly Reservations</button>
+        <button class="btn-report">Monthly Reservations</button>
     </div>
 </div>
 
-<div class="dashboard-container">
-    <!-- Food Ordering System Overview -->
-    <div class="dashboard-overview">
-        <h3>Food Ordering System</h3>
-        <div class="stats">
-            <!-- Categories Card -->
-            <div class="stat-card">
-                <i class="fas fa-list-alt"></i>
-                <h2>Categories</h2>
-                <p>{{ $totalCategories }} categories</p>
-            </div>
-            <!-- Products Card -->
-            <div class="stat-card">
-                <i class="fas fa-boxes"></i>
-                <h2>Products</h2>
-                <p>{{ $totalProducts }} items</p>
-            </div>
-            <!-- Inventory Card -->
-            <div class="stat-card">
-                <i class="fas fa-warehouse"></i>
-                <h2>Inventory</h2>
-                <p>{{ $totalInventory }} items in stock</p>
-            </div>
-        </div>
-    </div>
 
-    <!-- Customer Details Overview -->
-    <div class="dashboard-overview">
-        <h3>Customer Details</h3>
-        <div class="stats">
-            <!-- Customers Card -->
-            <div class="stat-card">
-                <i class="fas fa-users"></i>
-                <h2>Customers</h2>
-                <p>{{ $totalCustomers }} people</p>
-            </div>
-            <!-- Orders Card -->
-            <div class="stat-card">
-                <i class="fas fa-shopping-cart"></i>
-                <h2>Orders</h2>
-                <p>{{ $totalOrders }} orders</p>
-            </div>
-            <!-- Reservations Card -->
-            <div class="stat-card">
-                <i class="fas fa-calendar-check"></i>
-                <h2>Reservations</h2>
-                <p>{{ $totalReservations }} reservations</p>
-            </div>
-            <!-- Suppliers Card -->
-            <div class="stat-card">
-                <i class="fas fa-truck"></i>
-                <h2>Suppliers</h2>
-                <p>{{ $totalSuppliers }} suppliers</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Include Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Include ApexCharts -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    const ctx = document.getElementById('salesOrdersChart').getContext('2d');
-    const salesOrdersChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: @json($chartLabels ?? ['January', 'February', 'March']), // Dynamic months or periods
-            datasets: [
-                {
-                    label: 'Total Sales',
-                    data: @json($salesData ?? [10000, 15000, 20000]), // Example data
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    fill: true,
-                    tension: 0.4
-                },
-                {
-                    label: 'Total Orders',
-                    data: @json($ordersData ?? [50, 75, 100]), // Example data
-                    borderColor: 'rgba(255, 206, 86, 1)',
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                    fill: true,
-                    tension: 0.4
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
-            },
-            interaction: {
-                mode: 'nearest',
-                axis: 'x',
-                intersect: false
-            },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Months'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Values'
-                    },
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+    // Orders by Time
+    new ApexCharts(document.querySelector("#ordersByTimeChart"), {
+        series: [{ name: "Orders", data: [120, 150, 180] }],
+        chart: { type: "bar", height: 300 },
+        xaxis: { categories: ["Daily", "Weekly", "Monthly"] },
+        colors: ["#000"]
+    }).render();
+
+    // Inventory Overview
+    new ApexCharts(document.querySelector("#inventoryChart"), {
+        series: [40, 30, 30],
+        chart: { type: "pie", height: 300 },
+        labels: ["Available", "Sold", "Reserved"],
+        colors: ["#000", "#555", "#888"]
+    }).render();
+
+    // Customer Growth
+    new ApexCharts(document.querySelector("#customerGrowthChart"), {
+        series: [{ name: "Growth", data: [10, 20, 30, 40] }],
+        chart: { type: "area", height: 300 },
+        colors: ["#000"]
+    }).render();
+
+    // Reward System
+    new ApexCharts(document.querySelector("#rewardSystemChart"), {
+        series: [40, 35, 25],
+        chart: { type: "donut", height: 300 },
+        labels: ["Earned", "Used", "Expired"],
+        colors: ["#000", "#555", "#888"]
+    }).render();
 </script>
 
 @endsection

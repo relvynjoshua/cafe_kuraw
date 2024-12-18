@@ -62,6 +62,26 @@ class ReservationController extends Controller
             'status' => 'nullable|string|in:pending,confirmed,cancelled',
         ]);
 
+        // Validate store hours
+        $dayOfWeek = date('w', strtotime($validated['reservation_date'])); // 0 = Sunday, ..., 6 = Saturday
+        $storeHours = [
+            0 => ['open' => '13:00', 'close' => '20:00'], // Sunday
+            1 => ['open' => '12:00', 'close' => '21:00'], // Monday
+            2 => ['open' => '12:00', 'close' => '21:00'], // Tuesday
+            3 => ['open' => '12:00', 'close' => '21:00'], // Wednesday
+            4 => ['open' => '12:00', 'close' => '21:00'], // Thursday
+            5 => ['open' => '12:00', 'close' => '21:00'], // Friday
+            6 => ['open' => '12:00', 'close' => '21:00'], // Saturday
+        ];
+
+        $storeOpen = $storeHours[$dayOfWeek]['open'];
+        $storeClose = $storeHours[$dayOfWeek]['close'];
+
+        if ($validated['reservation_time'] < $storeOpen || $validated['reservation_time'] > $storeClose) {
+            return redirect()->route('reservation.page')
+                ->withErrors("Please select a time between $storeOpen and $storeClose.");
+        }
+
         // Check if a reservation with the same date and time already exists
         $existingReservation = Reservation::where('reservation_date', $validated['reservation_date'])
             ->where('reservation_time', $validated['reservation_time'])
@@ -98,7 +118,6 @@ class ReservationController extends Controller
             ->with('alert', 'alert-success');
     }
 
-
     // Show reservation details
     public function show($id)
     {
@@ -111,15 +130,14 @@ class ReservationController extends Controller
         return view('dashboard.reservations.show', compact('reservation'));
     }
 
-    // Update reservation
-
+    // Edit reservation
     public function edit($id)
     {
         $reservation = Reservation::findOrFail($id);
         return view('dashboard.reservations.edit', compact('reservation'));
     }
 
-
+    // Update reservation
     public function update(Request $request, $id)
     {
         $reservation = Reservation::findOrFail($id);
@@ -154,12 +172,6 @@ class ReservationController extends Controller
     {
         $reservation = Reservation::findOrFail($id);
 
-        // Restrict updates if the status is already 'completed' or 'cancelled'
-        if (in_array($reservation->status, ['confirmed', 'cancelled'])) {
-            return redirect()->route('dashboard.reservations.index')
-                ->with(['message' => 'Cannot change the status of a confirmed or cancelled reservation.', 'alert' => 'alert-warning']);
-        }
-        
         $validated = $request->validate([
             'status' => 'required|string|in:pending,confirmed,cancelled',
         ]);

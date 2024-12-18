@@ -78,6 +78,28 @@
     </table>
 </div>
 
+<h3>Change Log</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Change Type</th>
+            <th>Quantity Changed</th>
+            <th>Remaining Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($item->logs as $log)
+            <tr>
+                <td>{{ $log->created_at }}</td>
+                <td>{{ $log->change_type }}</td>
+                <td>{{ $log->quantity_changed }}</td>
+                <td>{{ $log->remaining_quantity }}</td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+
 <a href="{{ route('inventory.index') }}" class="btn btn-secondary">Back to Inventory</a>
 
 @endsection

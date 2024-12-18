@@ -4,23 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Inventory extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'inventories';
 
     protected $fillable = [
         'item_name',
+        'category_id',
+        'supplier_id',
         'quantity',
         'unit',
         'price',
         'expiry_date',
-        'supplier_id',
         'description',
-        'category_id', 
         'location',
+        'is_expirable',
+        'low_stock_threshold'
     ];
 
 
@@ -33,5 +36,10 @@ class Inventory extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(Log::class, 'item_id');
     }
 }

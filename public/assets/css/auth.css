@@ -1,17 +1,17 @@
 :root {
-    --primary-color: #000000; /* Black */
-    --secondary-color: #757575; /* Gray */
-    --error-color: #ff0000; /* Red for errors */
-    --hover-color: #efefef; /* Light gray on hover */
+    --primary-color: #000000; /* Black for contrast */
+    --secondary-color: #333333; /* Dark Gray */
+    --error-color: #e74c3c; /* Red for errors */
+    --hover-color: #f0f0f0; /* Light Gray for hover */
     --black: #000000;
     --white: #ffffff;
-    --gray: #efefef;
-    --gray-2: #757575;
+    --gray: #f0f0f0; /* Light Gray */
+    --gray-2: #b0b0b0; /* Medium Gray */
 
-    --facebook-color: #4267B2;
-    --google-color: #DB4437;
-    --twitter-color: #1DA1F2;
-    --insta-color: #E1306C;
+    --facebook-color: #3b5998;
+    --google-color: #db4437;
+    --twitter-color: #1da1f2;
+    --insta-color: #e1306c;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
@@ -23,17 +23,12 @@
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     height: 100vh;
     overflow: hidden;
+    background-color: var(--white); /* White background */
 }
 
-.container {
-    position: relative;
-    min-height: 100vh;
-    overflow: hidden;
-}
 
 .row {
     display: flex;
@@ -42,7 +37,7 @@ body {
 }
 
 .col {
-    width: 50%;
+    width: 40%;
 }
 
 .align-items-center {
@@ -55,63 +50,73 @@ body {
 .form-wrapper {
     width: 100%;
     max-width: 28rem;
+    margin: 0 auto;
 }
 
 .form {
-    padding: 1rem;
+    padding: 1.5rem;
     background-color: var(--white);
     border-radius: 1.5rem;
     width: 100%;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: scale(0);
-    transition: .5s ease-in-out;
+    transition: 0.5s ease-in-out;
     transition-delay: 1s;
 }
 
 .input-group {
     position: relative;
     width: 100%;
-    margin: 1rem 0;
+    margin: 1.2rem 0;
 }
 
 .input-group i {
     position: absolute;
     top: 50%;
-    left: 1rem;
+    left: 1.2rem;
     transform: translateY(-50%);
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     color: var(--gray-2);
 }
 
 .input-group input {
     width: 100%;
-    padding: 1rem 3rem;
-    font-size: 1rem;
+    padding: 1rem 3.5rem;
+    font-size: 1.1rem;
     background-color: var(--gray);
-    border-radius: .5rem;
+    border-radius: .8rem;
     border: 0.125rem solid var(--white);
     outline: none;
+    transition: all 0.3s ease-in-out;
 }
 
 .input-group input:focus {
     border: 0.125rem solid var(--primary-color);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
 }
 
 .form button {
     cursor: pointer;
     width: 100%;
-    padding: .6rem 0;
+    padding: 1rem 0;
     border-radius: .5rem;
     border: none;
     background-color: var(--primary-color);
     color: var(--white);
     font-size: 1.2rem;
     outline: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.form button:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
 }
 
 .form p {
     margin: 1rem 0;
-    font-size: .7rem;
+    font-size: .9rem;
+    color: var(--secondary-color);
 }
 
 .flex-col {
@@ -123,21 +128,25 @@ body {
     padding: 1rem;
     border-radius: 1.5rem;
     width: 100%;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: scale(0);
-    transition: .5s ease-in-out;
+    transition: 0.5s ease-in-out;
     transition-delay: 1.2s;
 }
 
 .social-list>div {
     color: var(--white);
     margin: 0 .5rem;
-    padding: .7rem;
+    padding: .8rem;
     cursor: pointer;
     border-radius: .5rem;
-    cursor: pointer;
     transform: scale(0);
-    transition: .5s ease-in-out;
+    transition: 0.4s ease-in-out;
+}
+
+.social-list>div:hover {
+    transform: scale(1.1);
+    background-color: var(--hover-color);
 }
 
 .social-list>div:nth-child(1) {
@@ -158,27 +167,11 @@ body {
 
 .social-list>div>i {
     font-size: 1.5rem;
-    transition: .4s ease-in-out;
+    transition: 0.4s ease-in-out;
 }
 
 .social-list>div:hover i {
     transform: scale(1.5);
-}
-
-.facebook-bg {
-    background-color: var(--facebook-color);
-}
-
-.google-bg {
-    background-color: var(--google-color);
-}
-
-.twitter-bg {
-    background-color: var(--twitter-color);
-}
-
-.insta-bg {
-    background-color: var(--insta-color);
 }
 
 .pointer {
@@ -205,7 +198,7 @@ body {
 
 .text {
     margin: 4rem;
-    color: var(--white);
+    color: var(--black);
 }
 
 .text h2 {
@@ -249,7 +242,6 @@ body {
 }
 
 /* BACKGROUND */
-
 .container::before {
     content: "";
     position: absolute;
@@ -259,7 +251,7 @@ body {
     background-image: linear-gradient(-45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     transition: 1s ease-in-out;
     z-index: 6;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .container.sign-in::before {
@@ -273,7 +265,6 @@ body {
 }
 
 /* RESPONSIVE */
-
 @media only screen and (max-width: 425px) {
 
     .container::before,
@@ -286,10 +277,6 @@ body {
         transform: none;
         right: 0;
     }
-
-    /* .container.sign-in .col.sign-up {
-        transform: translateY(100%);
-    } */
 
     .container.sign-in .col.sign-in,
     .container.sign-up .col.sign-up {
@@ -341,3 +328,152 @@ body {
         font-size: 2rem;
     }
 }
+
+/* MODAL */
+.modal {
+    display: none;  /* Initially hidden */
+    background-color: rgba(0, 0, 0, 0.7); /* Dark background */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    width: 350px;
+    max-width: 100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+#otp-timer {
+    margin-top: 15px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4cae4c;
+}
+
+.cancel-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.cancel-btn:hover {
+    background-color: darkred;
+}
+
+/* Forgot password link styling */
+.forgot-password {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.forgot-password a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+    color: var(--secondary-color);
+}
+
+/* Buttons */
+button {
+    margin-top: 15px;
+    padding: 12px 25px;
+    background-color: #5cb85c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #4cae4c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    background-color: #449d44;
+    transform: translateY(0);
+}
+
+/* Cancel button styling */
+.cancel-btn {
+    background-color: #e74c3c; /* Red background */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cancel-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.cancel-btn:active {
+    background-color: #9b2d20;
+    transform: translateY(0);
+}
+
+/* Focus effect for inputs and buttons */
+input:focus, button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Common button styling for both Verify and Resend OTP */
+.btn-otp {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn-otp:hover {
+    background-color: #45a049;
+}
+
+.btn-otp:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+

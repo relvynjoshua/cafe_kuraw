@@ -91,8 +91,10 @@ class ProductController extends Controller
     // Update an existing product in the database
     public function update(Request $request, $id)
     {
+        // Find the product by ID
         $product = Product::findOrFail($id);
 
+        // Validate the input
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
@@ -104,31 +106,47 @@ class ProductController extends Controller
             'variations.*.price' => 'required|numeric|min:0',
         ]);
 
+        // Retain the existing image path
         $imagePath = $product->image;
 
+        // Handle the image upload
         if ($request->hasFile('image')) {
-            if ($product->image) {
+            // Delete the old image if it exists
+            if ($product->image && \Storage::exists('public/' . $product->image)) {
                 \Storage::delete('public/' . $product->image);
             }
 
+            // Store the new image
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
         // Update the product
-        $product->update(array_merge(
-            $request->only('name', 'price', 'description', 'category_id'),
-            ['image' => $imagePath]
-        ));
+        $product->update([
+            'name' => $request->input('name'),
+            'price' => $request->input('price'),
+            'description' => $request->input('description'),
+            'category_id' => $request->input('category_id'),
+            'image' => $imagePath, // Use new image path or retain old one
+        ]);
 
-        // Update variations
+        // Handle variations
         if ($request->has('variations')) {
-            $product->variations()->delete(); // Remove existing variations
-            foreach ($request->variations as $variation) {
-                $product->variations()->create($variation); // Recreate variations
+            // Delete existing variations
+            $product->variations()->delete();
+
+            // Recreate variations
+            foreach ($request->input('variations') as $variation) {
+                $product->variations()->create([
+                    'type' => $variation['type'],
+                    'value' => $variation['value'],
+                    'price' => $variation['price'],
+                ]);
             }
         }
 
-        return redirect()->route('dashboard.products.index')->with(['message' => 'Product updated successfully!', 'alert' => 'alert-success']);
+        // Redirect with success message
+        return redirect()->route('dashboard.products.index')
+            ->with(['message' => 'Product updated successfully!', 'alert' => 'alert-success']);
     }
 
     // Delete a product from the database

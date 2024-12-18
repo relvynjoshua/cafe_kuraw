@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -15,16 +16,25 @@ class LoginController extends Controller
             'password' => 'required|min:5',
         ]);
 
-        // Attempt to authenticate user
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            // Authentication successful
-            return redirect()->route('home')->with('success', 'Logged in successfully!');
+        // Check if the email exists
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // Email does not exist
+            return back()
+                ->withErrors(['email' => 'Account does not exist.']) // Show error for non-existent email
+                ->withInput();
         }
 
-        // Authentication failed
-        return back()
-            ->withErrors(['email' => 'Invalid credentials. Please try again.']) // Pass error message
-            ->withInput() // Retain input for email field
-            ->with('form', 'signin'); // Add form identifier for Blade handling
+        // Check for valid password
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            // Invalid password
+            return back()
+                ->withErrors(['password' => 'Invalid password.']) // Show error for invalid password
+                ->withInput();
+        }
+
+        // Redirect only when login is successful
+        return redirect()->intended(route('home'))->with('success', 'Logged in successfully!');
     }
 }

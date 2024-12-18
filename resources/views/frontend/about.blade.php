@@ -51,15 +51,15 @@
    </div>
    <!-- END PRELOADER -->
 
-   <!-- START PAGEBREDCUMS -->
-   <div class="page-banner page-banner-overlay" data-background="{{ asset('/assets/img/white.png') }}">
+   <!-- START PAGE BREADCRUMBS -->
+   <div class="page-banner page-banner-overlay" style="background-image: url('{{ asset('assets/img/white.png') }}');">
       <div class="container h-100">
          <div class="row h-100">
             <div class="col-lg-12 my-auto">
                <div class="page-banner-content text-center">
                   <h2 class="page-banner-title">About Us</h2>
                   <div class="page-banner-breadcrumb">
-                     <p><a href="{{ url('/') }}">Home</a> About</p>
+                     <p><a href="{{ route('home') }}">Home</a> About</p>
                   </div>
                </div>
             </div>
@@ -67,36 +67,131 @@
       </div>
       <div class="page-banner-shape"></div>
    </div>
-   <!-- END PAGEBREDCUMS -->
+   <!-- END PAGE BREADCRUMBS -->
 
    <!-- START ABOUT PAGE WELCOME SECTION -->
    <section id="pabout" class="about-wel-padding">
-      <div class="auto-container">
+      <div class="container">
          <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-lg-0 mb-lg-0 mb-5">
-               <img class="img-fluid" src="{{ asset('assets/img/kuraw/day.jpg') }}" alt="">
+            <!-- Image -->
+            <div class="col-lg-6 col-md-6 mb-5">
+               <img class="img-fluid" src="{{ asset('assets/img/kuraw/day.jpg') }}" alt="Kuraw Coffee Shop Day">
             </div>
-            <!-- end col -->
-            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+            <!-- Text Content -->
+            <div class="col-lg-6 col-md-6">
                <div class="welcome-section-title">
                   <h6 class="theme-color">Welcome To</h6>
                   <h2>Kuraw Coffee Shop</h2>
                   <p>
-                     Kuraw Coffee Shop, a micro, small, and medium-sized enterprise (MSME), was established on
-                     March 8, 2024, as a sole proprietorship owned by Sir Rolan Lutrania. Despite its sole
-                     proprietorship status, the business is collaboratively managed with Sir William, showcasing
-                     a shared passion for delivering exceptional coffee and service. Situated in a cozy
-                     residential area in Capsinon, Kauswagan, Cagayan de Oro City, the shop provides a welcoming
-                     ambiance for customers. While space and parking are limited, the shop accommodates
-                     reservations for meetings, ensuring a personalized and convenient experience.<br>
+                     Kuraw Coffee Shop, a micro, small, and medium-sized enterprise (MSME), was established on March 8,
+                     2024, as a sole proprietorship owned by Sir Rolan Lutrania. Despite its sole proprietorship status,
+                     the business is collaboratively managed with Sir William, showcasing a shared passion for
+                     delivering exceptional coffee and service.
+                  </p>
+                  <p>
+                     Situated in a cozy residential area in Capsinon, Kauswagan, Cagayan de Oro City, the shop provides
+                     a welcoming ambiance for customers. While space and parking are limited, the shop accommodates
+                     reservations for meetings, ensuring a personalized and convenient experience.
                   </p>
                </div>
             </div>
-            <!-- end col -->
          </div>
       </div>
    </section>
    <!-- END ABOUT PAGE WELCOME SECTION -->
+
+   <!-- START MEET THE OWNERS SECTION -->
+   <section class="py-5">
+      <div class="container">
+         <div class="row">
+            <div class="col-lg-6">
+               <div class="welcome-section-title">
+                  <h2>Meet The Owners</h2>
+                  <p>
+                     Kuraw Coffee Shop is proudly owned and operated by Sir Rolan Lutrania, whose passion for coffee and
+                     entrepreneurship brought the shop to life. While officially registered under his name, the business
+                     flourishes through the dedicated partnership of Sir William Gaabucayan.
+                  </p>
+                  <p>
+                     Together, they share a vision of creating a welcoming space where every customer can enjoy
+                     exceptional coffee experiences and outstanding service. Their partnership ensures the shop meets
+                     the highest standards and remains a cherished community hub.
+                  </p>
+               </div>
+            </div>
+            <div class="col-lg-6">
+               <img class="img-fluid" src="{{ asset('assets/img/kuraw/owners.jpg') }}" alt="Owners">
+            </div>
+         </div>
+      </div>
+   </section>
+   <!-- END MEET THE OWNERS SECTION -->
+
+   <!-- START SERVICES TAB SECTION -->
+   <section id="servicetab" class="section-padding">
+      <div class="container">
+         <div class="section-title text-center mb-5">
+            <h2>Our Services</h2>
+            <p>At Kuraw Coffee Shop, we offer a range of services to cater to your needs:</p>
+         </div>
+         <div class="row">
+            <div class="col-lg-3">
+               <ul id="tabsJustified" class="nav nav-tabs">
+                  <li class="nav-item"><a href="#" data-target="#one" data-toggle="tab" class="nav-link">Deliveries</a>
+                  </li>
+                  <li class="nav-item"><a href="#" data-target="#two" data-toggle="tab" class="nav-link active">Meeting
+                        Reservations</a></li>
+                  <li class="nav-item"><a href="#" data-target="#three" data-toggle="tab" class="nav-link">Dine-in
+                        Services</a></li>
+               </ul>
+            </div>
+            <div class="col-lg-9">
+               <div class="tab-content">
+                  <!-- Deliveries -->
+                  <div id="one" class="tab-pane animated fadeInUp">
+                     <div class="row">
+                        <div class="col-md-6">
+                           <h4>Deliveries</h4>
+                           <p>Enjoy the taste of Kuraw Coffee Shop from the comfort of your home or office. We offer
+                              convenient delivery services for our coffee, beverages, and snacks.</p>
+                        </div>
+                        <div class="col-md-6">
+                           <img class="img-fluid" src="{{ asset('assets/img/service/delivery.jpg') }}" alt="Deliveries">
+                        </div>
+                     </div>
+                  </div>
+                  <!-- Meeting Reservations -->
+                  <div id="two" class="tab-pane active animated fadeInUp">
+                     <div class="row">
+                        <div class="col-md-6">
+                           <h4>Meeting Reservations</h4>
+                           <p>Host your small meetings or gatherings in our cozy space. We provide a welcoming
+                              environment perfect for productive discussions or intimate celebrations.</p>
+                        </div>
+                        <div class="col-md-6">
+                           <img class="img-fluid" src="{{ asset('assets/img/service/meeting.jpg') }}" alt="Meetings">
+                        </div>
+                     </div>
+                  </div>
+                  <!-- Dine-in Services -->
+                  <div id="three" class="tab-pane animated fadeInUp">
+                     <div class="row">
+                        <div class="col-md-6">
+                           <h4>Dine-in Services</h4>
+                           <p>Relax and savor our menu in the inviting atmosphere of Kuraw Coffee Shop. From signature
+                              coffee to delicious snacks, we provide a delightful dine-in experience.</p>
+                        </div>
+                        <div class="col-md-6">
+                           <img class="img-fluid" src="{{ asset('assets/img/service/dinein.jpg') }}" alt="Dine-In">
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </section>
+   <!-- END SERVICES TAB SECTION -->
 
    <!-- Latest jQuery -->
    <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>

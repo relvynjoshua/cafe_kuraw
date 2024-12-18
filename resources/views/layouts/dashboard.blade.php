@@ -99,6 +99,12 @@
 					<span class="text">User Management</span>
 				</a>
 			</li>
+			<li class="{{ request()->routeIs('dashboard.logs.*') ? 'active' : '' }}">
+				<a href="{{ route('dashboard.logs.index') }}">
+					<i class="fas fa-history"></i>
+					<span class="text">View Logs</span>
+				</a>
+			</li>
 		</ul>
 		<ul class="side-menu">
 			<li class="{{ request()->routeIs('dashboard.pages.settings') ? 'active' : '' }}">
@@ -108,8 +114,8 @@
 				</a>
 			</li>
 			<li>
-			<form action="{{ route('logout.admin') }}" method="POST" class="dropdown-item">
-			@csrf
+				<form action="{{ route('logout.admin') }}" method="POST" class="dropdown-item">
+					@csrf
 					<button type="submit" class="logout" style="border: none; background: none; cursor: pointer;">
 						<i class="fas fa-sign-out-alt"></i>
 						<span class="text">Logout</span>

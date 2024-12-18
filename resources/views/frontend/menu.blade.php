@@ -90,6 +90,14 @@
          color: #ffff;
          background-color: #333;
       }
+
+      .modal {
+         z-index: 1050;
+      }
+
+      .modal-backdrop {
+         z-index: 1040;
+      }
    </style>
 </head>
 
@@ -208,7 +216,7 @@
                // Update Cart Badge
                document.querySelector('#cart-badge').innerText = data.cart_count;
 
-               // Show Modal
+               // Show Modal Explicitly
                const addToCartModal = new bootstrap.Modal(document.getElementById('addToCartModal'));
                addToCartModal.show();
             } else {

@@ -71,7 +71,7 @@
     }
 </style>
 
-<div class="container mt-4">
+<div class="container mt-4" style="max-width: 100%; width: 90%;">
     <h1>
         <i class="fas fa-images"></i> Gallery Management
     </h1>

@@ -26,7 +26,9 @@ use App\Http\Controllers\{
     RegisterController,
     OTPController,
     CashierController,
-    HistoryController
+    HistoryController,
+    LogController,
+    CustomForgotPasswordController,
 };
 
 // ----------------------------
@@ -82,6 +84,14 @@ Route::controller(AuthController::class)->group(function () {
 
     // Admin Logout
     Route::post('/logout-admin', 'logoutAdmin')->name('logout.admin')->middleware('auth:admin');
+
+    // ----------------------------
+    // Password Reset Routes
+    // ----------------------------
+    Route::get('password/reset', [CustomForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('password/email', [CustomForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('password/reset/{token}', [CustomForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('password/reset', [CustomForgotPasswordController::class, 'reset'])->name('password.update');
 });
 
 // ----------------------------
@@ -236,6 +246,7 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
         Route::get('/{id}/edit', 'edit')->name('.edit');
         Route::put('/{id}/update', 'update')->name('.update');
         Route::delete('/{id}/destroy', 'destroy')->name('.destroy');
+        Route::post('/{id}/update-quantity', 'updateQuantity')->name('.updateQuantity');
     });
 
     // Suppliers
@@ -287,6 +298,12 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     Route::prefix('reports')->name('dashboard.reports.')->group(function () {
         Route::get('/orders', [ReportController::class, 'orders'])->name('orders');
         Route::get('/reservations', [ReportController::class, 'reservations'])->name('reservations');
+    });
+
+    // Logs
+    Route::prefix('logs')->name('dashboard.logs.')->group(function () {
+        Route::get('/', [LogController::class, 'index'])->name('index');
+        Route::get('/export-pdf/{timeframe?}', [LogController::class, 'exportPdf'])->name('pdf');
     });
 });
 
