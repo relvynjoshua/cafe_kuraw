@@ -111,86 +111,88 @@ class CartController extends Controller
      * Checkout the cart and create an order.
      */
     public function checkout(Request $request)
-    {
-        // Validate incoming request data 
-        $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'phone' => 'required|string|max:15',
-            'payment_method' => 'required|string',
-            'delivery_method' => 'required|string',
-            'gcash_reference_number' => 'nullable|string|size:13', // Ensure reference number is exactly 13 characters
-            'gcash_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048', // Validate proof file upload
-        ]);
+{
+    // Validate incoming request data
+    $validated = $request->validate([
+        'customer_name' => 'required|string|max:255',
+        'email' => 'required|email',
+        'phone' => 'required|string|max:15',
+        'payment_method' => 'required|string',
+        'delivery_method' => 'required|string',
+        'address' => 'required_if:delivery_method,delivery|string|max:255',
+        'gcash_reference_number' => 'nullable|string|size:13', // Ensure reference number is exactly 13 characters
+        'gcash_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048', // Validate proof file upload
+    ]);
 
-        // Fetch the cart and calculate the total
-        $cart = session()->get('cart', []);
-        $discount = session('cart_discount', 0);
+    // Fetch the cart and calculate the total
+    $cart = session()->get('cart', []);
+    $discount = session('cart_discount', 0);
 
-        if (empty($cart)) {
-            return redirect()->route('cart.index')->withErrors('Your cart is empty.');
-        }
-
-        $totalAmount = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-        $finalAmount = max(0, $totalAmount - $discount);
-
-        // Get the authenticated user
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->route('login')->withErrors('You must be logged in to place an order.');
-        }
-
-        // Handle file upload for GCash proof (if applicable)
-        $gcashProofPath = null;
-        if ($request->payment_method === 'gcash' && $request->hasFile('gcash_proof')) {
-            // Store the proof file
-            $gcashProofPath = $request->file('gcash_proof')->store('gcash_proofs');
-        }
-
-        // Create the order
-        $order = Order::create([
-            'user_id' => $user->id,
-            'customer_name' => $validated['customer_name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'total_amount' => $finalAmount,
-            'discount' => $discount,
-            'status' => 'pending',
-            'payment_method' => $validated['payment_method'],
-            'delivery_method' => $validated['delivery_method'],
-            'gcash_reference_number' => $validated['gcash_reference_number'] ?? null,
-            'gcash_proof' => $gcashProofPath, // Store the path to the proof of payment file
-        ]);
-
-        // Attach products to the order
-        foreach ($cart as $key => $item) {
-            [$productId, $variationId] = explode('-', $key);
-            $order->products()->attach($productId, [
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'variation' => $item['variation'] ?? null,
-            ]);
-        }
-
-        // If there are any reward points used, log them
-        if ($discount > 0) {
-            \App\Models\PointsHistory::create([
-                'user_id' => $user->id,
-                'activity' => 'Redeemed points for cart checkout',
-                'points' => -$discount,
-            ]);
-        }
-
-        // Optionally notify the admins about the new order
-        $admins = User::where('role', 'admin')->get();
-        foreach ($admins as $admin) {
-            $admin->notify(new NewOrderPlaced($order));
-            \Log::info("Notification sent to admin: {$admin->id} for order: {$order->id}");
-        }
-
-        // Clear the session cart and discount after the order is placed
-        session()->forget(['cart', 'cart_discount']);
-
-        return redirect()->route('cart.index')->with('success', 'Order placed successfully!');
+    if (empty($cart)) {
+        return redirect()->route('cart.index')->withErrors('Your cart is empty.');
     }
+
+    $totalAmount = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+    $finalAmount = max(0, $totalAmount - $discount);
+
+    // Get the authenticated user
+    $user = Auth::user();
+    if (!$user) {
+        return redirect()->route('login')->withErrors('You must be logged in to place an order.');
+    }
+
+    // Handle file upload for GCash proof (if applicable)
+    $gcashProofPath = null;
+    if ($request->payment_method === 'gcash' && $request->hasFile('gcash_proof')) {
+        // Store the proof file
+        $gcashProofPath = $request->file('gcash_proof')->store('gcash_proofs');
+    }
+
+    // Create the order
+    $order = Order::create([
+        'user_id' => $user->id,
+        'customer_name' => $validated['customer_name'],
+        'email' => $validated['email'],
+        'phone' => $validated['phone'],
+        'total_amount' => $finalAmount,
+        'discount' => $discount,
+        'status' => 'pending',
+        'payment_method' => $validated['payment_method'],
+        'delivery_method' => $validated['delivery_method'],
+        'address' => $validated['address'] ?? null,
+        'gcash_reference_number' => $validated['gcash_reference_number'] ?? null,
+        'gcash_proof' => $gcashProofPath, // Store the path to the proof of payment file
+    ]);
+
+    // Attach products to the order
+    foreach ($cart as $key => $item) {
+        [$productId, $variationId] = explode('-', $key);
+        $order->products()->attach($productId, [
+            'quantity' => $item['quantity'],
+            'price' => $item['price'],
+            'variation' => $item['variation'] ?? null,
+        ]);
+    }
+
+    // If there are any reward points used, log them
+    if ($discount > 0) {
+        \App\Models\PointsHistory::create([
+            'user_id' => $user->id,
+            'activity' => 'Redeemed points for cart checkout',
+            'points' => -$discount,
+        ]);
+    }
+
+    // Optionally notify the admins about the new order
+    $admins = User::where('role', 'admin')->get();
+    foreach ($admins as $admin) {
+        $admin->notify(new NewOrderPlaced($order));
+        \Log::info("Notification sent to admin: {$admin->id} for order: {$order->id}");
+    }
+
+    // Clear the session cart and discount after the order is placed
+    session()->forget(['cart', 'cart_discount']);
+
+    return redirect()->route('cart.index')->with('success', 'Order placed successfully!');
+}
 }

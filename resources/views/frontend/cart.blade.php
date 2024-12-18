@@ -180,9 +180,9 @@
                         </div>
 
                         <!-- Delivery Address (Initially Hidden) -->
-                        <div id="addressField" class="mb-3" style="display:none;">
-                            <label for="delivery_address" class="form-label">Delivery Address</label>
-                            <textarea name="delivery_address" id="delivery_address" class="form-control" rows="3"
+                        <div id="address" class="mb-3" style="display:none;">
+                            <label for="address" class="form-label">Delivery Address</label>
+                            <textarea name="address" id="address" class="form-control" rows="3"
                                 placeholder="Enter your delivery address"></textarea>
                         </div>
 
@@ -206,7 +206,7 @@
         const gcashDetailsSection = document.getElementById('gcashDetails');
         const referenceNumberInput = document.getElementById('gcash_reference_number');
         const deliveryMethodSelect = document.getElementById('delivery_method');
-        const addressField = document.getElementById('addressField');
+        const addressField = document.getElementById('address');
         const form = document.querySelector('form'); // The checkout form
 
         // Show/Hide the GCash details section when the payment method is changed

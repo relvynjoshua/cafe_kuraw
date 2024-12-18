@@ -14,7 +14,8 @@ class Order extends Model
         'user_id', // Include user_id if orders are associated with users
         'customer_name', 
         'email', 
-        'phone', 
+        'phone',
+        'address', 
         'total_amount', 
         'status', 
         'payment_method', 

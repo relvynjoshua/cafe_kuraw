@@ -124,7 +124,8 @@
                     <th scope="col">Products</th>
                     <th scope="col">Status</th>
                     <th scope="col">Payment</th>
-                    <th scope="col">Delivery</th>
+                    <th scope="col">Order Type</th>
+                    <th scope="col">Delivery Address</th>
                     <th scope="col">Reference Number</th> <!-- New Column -->
                     <th scope="col">Proof of Payment</th> <!-- New Column -->
                     <th scope="col">Actions</th>
@@ -184,6 +185,7 @@
 
                         <td>{{ ucfirst($order->payment_method) }}</td>
                         <td>{{ ucfirst($order->delivery_method) }}</td>
+                        <td>{{ ucfirst($order->address) }}</td>
 
                         <!-- Display Reference Number -->
                         <td>{{ $order->gcash_reference_number ?? 'N/A' }}</td>
@@ -208,7 +210,8 @@
                                 <i class="fas fa-edit"></i> Edit
                             </a>
                             <form action="{{ route('dashboard.orders.destroy', $order->id) }}" method="POST"
-                                style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                style="display:inline;"
+                                onsubmit="return confirm('Are you sure you want to delete this order?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip"
