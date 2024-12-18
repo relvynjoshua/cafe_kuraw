@@ -20,7 +20,10 @@ class Order extends Model
         'payment_method', 
         'delivery_method', 
         'discount', // Include discount if it's used
+        'gcash_reference_number', 
+        'gcash_proof'
     ];
+
 
     // Define relationship with Product model
     public function products()

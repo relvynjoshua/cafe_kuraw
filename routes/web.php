@@ -25,6 +25,8 @@ use App\Http\Controllers\{
     LoginController,
     RegisterController,
     OTPController,
+    CashierController,
+    HistoryController
 };
 
 // ----------------------------
@@ -81,6 +83,53 @@ Route::controller(AuthController::class)->group(function () {
     // Admin Logout
     Route::post('/logout-admin', 'logoutAdmin')->name('logout.admin')->middleware('auth:admin');
 });
+
+// ----------------------------
+// Cashier POS Routes
+// ----------------------------
+// Route to display the Cashier POS page
+Route::get('/cashier', function () {
+    return view('pos.cashierPOS');
+})->name('cashier.index');
+
+Route::get('/pos', function () {
+    return view('pos.POS'); // This will render the POS.blade.php file
+})->name('pos');
+
+Route::get('/transactions', function () {
+    return view('pos.transaction'); // Points to transaction.blade.php
+})->name('transactions.index');
+
+Route::get('/master-items', function () {
+    return view('pos.masteritem'); // Points to masteritem.blade.php
+})->name('masteritem.index');
+
+Route::get('/cashier-reservation', function () {
+    $bookedDates = ['2024-04-10', '2024-04-15']; // Example booked dates
+    return view('pos.cashierReservation', ['bookedDates' => $bookedDates]);
+})->name('cashierReservation.index');
+
+Route::post('/cashier-reservation/store', function (\Illuminate\Http\Request $request) {
+    // Reservation form processing logic
+    return back()->with('success', 'Reservation submitted successfully!');
+})->name('cashierReservation.store');
+
+
+Route::get('/cashier-history', function () {
+    return view('pos.cashier-order-history');
+})->name('cashierHistory.index');
+
+Route::get('/cashier-manage', function () {
+    return view('pos.cashierManage');
+})->name('cashierManage.index');
+
+Route::get('/cashier/profile', [CashierController::class, 'profile'])->name('cashierProfile.index');
+
+// Route to view settings page
+Route::get('/cashier/settings', [CashierController::class, 'settings'])->name('cashierSettings.index');
+
+// Route to update settings
+Route::post('/cashier/settings', [CashierController::class, 'updateSettings'])->name('cashierSettings.update');
 
 // ----------------------------
 // Notification Routes

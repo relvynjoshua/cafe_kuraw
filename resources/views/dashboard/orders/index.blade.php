@@ -7,9 +7,7 @@
 <style>
     .status-dropdown {
         background-color: #f0f0f0;
-        /* Default color */
         color: #000;
-        /* Default text color */
         border: 1px solid #ccc;
         padding: 5px;
         border-radius: 5px;
@@ -17,23 +15,17 @@
 
     .status-dropdown[data-status="pending"] {
         background-color: #ffc107;
-        /* Yellow for pending */
         color: #000;
-        /* Black text for pending */
     }
 
     .status-dropdown[data-status="completed"] {
         background-color: #28a745;
-        /* Green for completed */
         color: #fff;
-        /* White text for completed */
     }
 
     .status-dropdown[data-status="cancelled"] {
         background-color: #dc3545;
-        /* Red for cancelled */
         color: #fff;
-        /* White text for cancelled */
     }
 
     /* Pagination container */
@@ -61,7 +53,6 @@
     .pagination a {
         display: inline-block;
         padding: 6px 12px;
-        /* Adjusted padding for better button size */
         color: #007bff;
         text-decoration: none;
         border: 1px solid #ddd;
@@ -69,7 +60,6 @@
         background-color: #fff;
         transition: background-color 0.3s, color 0.3s;
         font-size: 1rem;
-        /* Adjusted font size for page numbers */
         line-height: 1.5;
     }
 
@@ -89,7 +79,6 @@
     /* Arrow buttons */
     .pagination .arrow {
         font-size: 1.2rem;
-        /* Make the arrows a bit bigger */
         padding: 6px 10px;
     }
 
@@ -97,16 +86,6 @@
     .pagination .arrow:hover {
         background-color: #007bff;
         color: white;
-    }
-
-    /* Adjust spacing and layout for responsiveness */
-    @media (max-width: 768px) {
-        .pagination .page-link {
-            font-size: 10px;
-            /* Smaller font size on smaller screens */
-            padding: 3px 6px;
-            /* Adjust padding for compact display */
-        }
     }
 </style>
 
@@ -142,10 +121,12 @@
                     <th scope="col">Email</th>
                     <th scope="col">Phone</th>
                     <th scope="col">Total Amount</th>
-                    <th scope="col">Products</th> <!-- Column for products -->
+                    <th scope="col">Products</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Payment</th> <!-- Column for Payment -->
-                    <th scope="col">Delivery</th> <!-- Column for Delivery -->
+                    <th scope="col">Payment</th>
+                    <th scope="col">Delivery</th>
+                    <th scope="col">Reference Number</th> <!-- New Column -->
+                    <th scope="col">Proof of Payment</th> <!-- New Column -->
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -204,6 +185,20 @@
                         <td>{{ ucfirst($order->payment_method) }}</td>
                         <td>{{ ucfirst($order->delivery_method) }}</td>
 
+                        <!-- Display Reference Number -->
+                        <td>{{ $order->gcash_reference_number ?? 'N/A' }}</td>
+
+                        <!-- Display Proof of Payment -->
+                        <td>
+                            @if ($order->gcash_proof)
+                                <a href="{{ Storage::url($order->gcash_proof) }}" class="btn btn-info btn-sm" target="_blank">
+                                    <i class="fas fa-eye"></i> View Proof
+                                </a>
+                            @else
+                                <span>No Proof</span>
+                            @endif
+                        </td>
+
                         <td class="d-flex">
                             <a href="{{ route('dashboard.orders.show', $order->id) }}" class="btn btn-info btn-sm">
                                 <i class="fas fa-eye"></i> View
@@ -213,8 +208,7 @@
                                 <i class="fas fa-edit"></i> Edit
                             </a>
                             <form action="{{ route('dashboard.orders.destroy', $order->id) }}" method="POST"
-                                style="display:inline;"
-                                onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this order?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip"
@@ -226,22 +220,16 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="10" class="text-center">No orders found.</td>
+                        <td colspan="11" class="text-center">No orders found.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
 
-
         <!-- Pagination Links -->
         <div class="pagination">
-            <!-- Previous arrow -->
             <a href="#" class="arrow" onclick="changePage('prev')">«</a>
-
-            <!-- Page Numbers -->
             <span>Page {{ $orders->currentPage() }} of {{ $orders->lastPage() }}</span>
-
-            <!-- Next arrow -->
             <a href="#" class="arrow" onclick="changePage('next')">»</a>
         </div>
     </div>
@@ -250,16 +238,13 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const dropdowns = document.querySelectorAll('.status-dropdown');
-
         dropdowns.forEach(dropdown => {
             dropdown.addEventListener('change', function () {
                 this.dataset.status = this.value; // Update the data-status attribute
             });
         });
     });
-</script>
-<script>
-    // Function to change pages
+
     function changePage(direction) {
         const currentPage = {{ $orders->currentPage() }};
         let newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
@@ -268,4 +253,5 @@
         window.location.href = '{{ route('dashboard.orders.index') }}?page=' + newPage;
     }
 </script>
+
 @endsection
