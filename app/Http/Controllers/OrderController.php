@@ -3,54 +3,74 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Mail\OrderStatusMail;
+use Illuminate\Support\Facades\Mail;
 use App\Notifications\OrderStatusNotification;
-use App\Models\PointsHistory;
-use Illuminate\Support\Facades\Storage;
-use DB;
+use App\Mail\OrderCompletedMail;
 
 class OrderController extends Controller
 {
     public function myOrders()
-    {
-        $orders = Auth::user()->orders()->with('products')->orderBy('created_at', 'desc')->get();
+{
+    
+    session(['notification_count' => 0]);
 
-        if (request()->is('api/*')) {
-            return response()->json(['orders' => $orders], 200);
-        }
+    // Fetch the user's orders
+    $orders = Auth::user()->orders()->with('products')->orderBy('created_at', 'desc')->get();
 
-        return view('frontend.orders', compact('orders'));
-    }
+    // Update the session with the latest unread notifications count
+    session(['notification_count' => auth()->user()->unreadNotifications()->count()]);
 
-    public function index(Request $request)
-    {
-        $search = $request->input('search');
-        $orders = Order::with('products')
-            ->when($search, function ($query, $search) {
-                $query->where('customer_name', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%")
-                    ->orWhere('phone', 'like', "%$search%")
-                    ->orWhere('status', 'like', "%$search%")
-                    ->orWhere('payment_method', 'like', "%$search%")
-                    ->orWhere('delivery_method', 'like', "%$search%");
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+    return view('frontend.orders', compact('orders'));
+}
 
-        if (request()->is('api/*')) {
-            return response()->json(['orders' => $orders], 200);
-        }
+    
+    
+public function index(Request $request)
+{
+    $search = $request->input('search');
 
-        return view('dashboard.orders.index', compact('orders'));
-    }
+    
+    session(['notification_count' => 0]);
+
+    // Fetch orders with associated products
+    $orders = Order::with('products')
+        ->when($search, function ($query, $search) {
+            $query->where('customer_name', 'like', "%$search%")
+                ->orWhere('email', 'like', "%$search%")
+                ->orWhere('phone', 'like', "%$search%")
+                ->orWhere('status', 'like', "%$search%")
+                ->orWhere('payment_method', 'like', "%$search%")
+                ->orWhere('delivery_method', 'like', "%$search%");
+        })
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
+
+    // Update the session with the latest unread notifications count
+    session(['notification_count' => auth()->user()->unreadNotifications()->count()]);
+
+    // Fetch unread notifications for the logged-in user
+    $user = auth()->user();
+    $notifications = $user ? $user->unreadNotifications : [];
+
+    // Return the view with the orders and notifications
+    return view('dashboard.orders.index', compact('orders', 'notifications'));
+}
 
     public function create()
     {
+        // Fetch all products and their variations
         $products = Product::with('variations')->get();
+
         return view('dashboard.orders.create', compact('products'));
     }
+
 
     public function store(Request $request)
     {
@@ -58,46 +78,35 @@ class OrderController extends Controller
             'customer_name' => 'required|string|max:255',
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
-            'address' => 'required_if:delivery_method,delivery|string|max:255',
-            'payment_method' => 'required|string|in:GCash',
-            'reference_number' => 'required_if:payment_method,GCash|string|max:50',
-            'proof_of_payment' => 'required_if:payment_method,GCash|image|max:2048',
+            'status' => 'required|string|in:pending,completed,cancelled',
+            'payment_method' => 'required|string|max:255',
+            'delivery_method' => 'required|string|max:255',
             'products' => 'required|array|min:1',
             'products.*.product_id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1|max:10',
+            'products.*.quantity' => 'required|integer|min:1',
             'products.*.variation' => 'nullable|string|max:255',
         ]);
-
-        if (array_sum(array_column($validated['products'], 'quantity')) > 10) {
-            return back()->withErrors(['error' => 'Orders exceeding 10 items must be placed directly with the business.']);
-        }
-
+    
         DB::beginTransaction();
+    
         try {
-            $redeemedPoints = session()->get('redeemed_points', 0);
-            $discount = $redeemedPoints;
-            $totalAmount = max(0, $this->calculateTotalAmount($validated['products']) - $discount);
-
-            $proofPath = null;
-            if ($request->hasFile('proof_of_payment')) {
-                $proofPath = $request->file('proof_of_payment')->store('proofs', 'public');
-            }
-
+            // Calculate total amount
+            $totalAmount = $this->calculateTotalAmount($validated['products']);
+            $discount = 0; // Assume no discount initially
+    
+            // Create the order
             $order = Order::create([
-                'user_id' => Auth::id(),
                 'customer_name' => $validated['customer_name'],
                 'email' => $validated['email'],
                 'phone' => $validated['phone'],
-                'address' => $validated['address'] ?? null,
-                'status' => 'Preparing',
+                'status' => $validated['status'],
                 'payment_method' => $validated['payment_method'],
-                'delivery_method' => $validated['delivery_method'] ?? null,
-                'reference_number' => $validated['reference_number'] ?? null,
-                'proof_of_payment' => $proofPath,
+                'delivery_method' => $validated['delivery_method'],
                 'total_amount' => $totalAmount,
                 'discount' => $discount,
             ]);
-
+    
+            // Attach products to the order
             foreach ($validated['products'] as $product) {
                 $order->products()->attach($product['product_id'], [
                     'quantity' => $product['quantity'],
@@ -105,48 +114,45 @@ class OrderController extends Controller
                     'variation' => $product['variation'] ?? null,
                 ]);
             }
-
-            $user = Auth::user();
-            if ($redeemedPoints > 0) {
-                $user->decrement('reward_points', $redeemedPoints);
-                PointsHistory::create([
-                    'user_id' => $user->id,
-                    'activity' => 'Redeemed points for order discount',
-                    'points' => -$redeemedPoints,
-                ]);
-            }
-
-            if ($order->status === 'completed') {
-                $earnedPoints = $this->calculateRewardPoints($totalAmount);
-                $user->increment('reward_points', $earnedPoints);
-                PointsHistory::create([
-                    'user_id' => $user->id,
-                    'activity' => 'Earned points for completed order',
-                    'points' => $earnedPoints,
-                ]);
-            }
-
-            session()->forget('redeemed_points');
+    
+            // Notify the customer
+            Mail::to($order->email)->send(new OrderStatusMail($order, $order->status));
+    
             DB::commit();
-            return redirect()->route('dashboard.orders.index')->with(['success' => 'Order created successfully!', 'alert' => 'alert-success']);
+    
+            return redirect()->route('dashboard.orders.index')
+                ->with('success', 'Order created successfully and notification sent!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to create order: ' . $e->getMessage()]);
         }
     }
+    
 
-    public function show(Order $order)
+    public function show($orderId)
     {
-        $order->load(['products.variations', 'products']);
-        return view('frontend.order_show', compact('order'));
+        // Retrieve the order with products, variations, and user relationships
+        $order = Order::with(['products.variations', 'user'])->findOrFail($orderId);
+    
+        // Debug: Check if the user is loaded correctly
+        $user = $order->user;
+        logger('Order user ID: ' . optional($user)->id);
+    
+        // Pass the order to the view
+        return view('dashboard.orders.show', compact('order'));
     }
-
+    
     public function edit(Order $order)
     {
+        // Load the order's products and their variations
         $order->load(['products.variations']);
+
+        // Fetch all products and their variations for selection
         $products = Product::with('variations')->get();
+
         return view('dashboard.orders.edit', compact('order', 'products'));
     }
+
 
     public function update(Request $request, Order $order)
     {
@@ -157,6 +163,7 @@ class OrderController extends Controller
             'status' => 'required|in:pending,completed,cancelled',
             'payment_method' => 'required|string|max:255',
             'delivery_method' => 'required|string|max:255',
+            // Only validate products if provided
             'products' => 'nullable|array|min:1',
             'products.*.product_id' => 'required_with:products|exists:products,id',
             'products.*.quantity' => 'required_with:products|integer|min:1',
@@ -165,6 +172,7 @@ class OrderController extends Controller
 
         DB::beginTransaction();
         try {
+            // Update the general order details
             $order->update([
                 'customer_name' => $validated['customer_name'],
                 'email' => $validated['email'],
@@ -175,8 +183,18 @@ class OrderController extends Controller
                 'total_amount' => $this->calculateTotalAmount($validated['products']),
             ]);
 
+            // Only sync products if provided in the request
             if (isset($validated['products'])) {
-                $productDetails = $this->getProductDetails($validated['products']);
+                $productDetails = [];
+                foreach ($validated['products'] as $product) {
+                    $productDetails[$product['product_id']] = [
+                        'quantity' => $product['quantity'],
+                        'price' => Product::findOrFail($product['product_id'])->price,
+                        'variation' => $product['variation'] ?? null,
+                    ];
+                }
+
+                // Sync products with the order
                 $order->products()->sync($productDetails);
             }
 
@@ -197,26 +215,21 @@ class OrderController extends Controller
         DB::beginTransaction();
         try {
             $oldStatus = $order->status;
+
+            // Update the status only
             $order->update(['status' => $validated['status']]);
 
+            // Handle reward points and notifications
             $user = $order->user;
             if ($user) {
                 $earnedPoints = $this->calculateRewardPoints($order->total_amount);
-
+            
                 if ($oldStatus !== 'completed' && $order->status === 'completed') {
                     $user->increment('reward_points', $earnedPoints);
-                    PointsHistory::create([
-                        'user_id' => $user->id,
-                        'activity' => 'Earned points for status update to completed',
-                        'points' => $earnedPoints,
-                    ]);
+                    $user->notify(new OrderStatusNotification($order, 'completed'));
                 } elseif ($oldStatus === 'completed' && $order->status !== 'completed') {
                     $user->decrement('reward_points', $earnedPoints);
-                    PointsHistory::create([
-                        'user_id' => $user->id,
-                        'activity' => 'Deducted points due to status change',
-                        'points' => -$earnedPoints,
-                    ]);
+                    $user->notify(new OrderStatusNotification($order, $order->status)); // Pass the current status
                 }
             }
 
@@ -228,39 +241,32 @@ class OrderController extends Controller
         }
     }
 
-    public function destroy(Order $order)
+
+    public function destroy($id)
     {
         DB::beginTransaction();
+    
         try {
+            $order = Order::findOrFail($id);
+    
+            // Detach products
             $order->products()->detach();
-            if ($order->status === 'completed') {
-                $user = Auth::user();
-                $earnedPoints = $this->calculateRewardPoints($order->total_amount);
-                $user->decrement('reward_points', $earnedPoints);
-            }
+    
+            // Delete related notifications
+            DB::table('notifications')->where('notifiable_id', $id)->delete();
+    
             $order->delete();
+    
             DB::commit();
-            return redirect()->route('dashboard.orders.index')->with(['success' => 'Order deleted successfully!', 'alert' => 'alert-danger']);
+    
+            return redirect()->route('dashboard.orders.index')
+                ->with('success', 'Order deleted successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to delete order: ' . $e->getMessage()]);
         }
     }
-
-    public function cancel(Order $order)
-    {
-        if (Auth::id() !== $order->user_id) {
-            return redirect()->route('orders.index')->with('error', 'You do not have permission to cancel this order.');
-        }
-
-        if (!$order->isCancelable()) {
-            return redirect()->route('orders.index')->with('error', 'This order has already been accepted and cannot be canceled.');
-        }
-
-        $order->update(['status' => 'cancelled']);
-        return redirect()->route('orders.index')->with('success', 'Your order has been successfully canceled.');
-    }
-
+    
     private function calculateTotalAmount($products)
     {
         $total = 0;
@@ -272,6 +278,7 @@ class OrderController extends Controller
 
     private function calculateRewardPoints($totalAmount)
     {
+        // Example: 1 point for every $10 spent
         return floor($totalAmount / 50);
     }
 
@@ -287,4 +294,74 @@ class OrderController extends Controller
         }
         return $details;
     }
+
+    public function updateOrderStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:pending,completed,cancelled',
+        ]);
+    
+        $order = Order::findOrFail($id); // Find the order by its ID
+        $oldStatus = $order->status;
+        $order->status = $validated['status'];
+        $order->save();
+    
+        // Send email to the customer
+        if ($order->email) {
+            Mail::to($order->email)->send(new OrderStatusMail($order, $validated['status']));
+        }
+    
+        // Add a database notification for the order
+        DB::table('notifications')->insert([
+            'type' => \App\Notifications\OrderStatusNotification::class,
+            'notifiable_type' => 'App\Models\Order',
+            'notifiable_id' => $order->id,
+            'data' => json_encode([
+                'order_id' => $order->id,
+                'status' => $validated['status'],
+                'customer_name' => $order->customer_name,
+                'message' => "Your order #{$order->id} has been updated to '{$validated['status']}'!",
+            ]),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    
+        return redirect()->route('dashboard.orders.index')
+            ->with('success', 'Order status updated and customer notified.');
+    }
+    
+
+
+    public function notifications($orderId)
+    {
+        // Fetch unread notifications for the logged-in user
+        $userNotifications = Auth::user()->unreadNotifications;
+    
+        // Fetch notifications specific to the given order
+        $orderNotifications = DB::table('notifications')
+            ->where('notifiable_type', 'App\Models\Order')
+            ->where('notifiable_id', $orderId)
+            ->latest()
+            ->get();
+    
+        // Pass both user-specific unread notifications and order-specific notifications to the view
+        return view('frontend.notifications', compact('userNotifications', 'orderNotifications'));
+    }
+    
+    
+    
+    public function markNotificationsAsRead()
+    {
+        if (auth()->check()) {
+            auth()->user()->unreadNotifications->markAsRead();
+        }
+    
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Notifications marked as read.',
+            'notification_count' => auth()->user()->unreadNotifications()->count()
+        ]);
+    }
+  
+    
 }

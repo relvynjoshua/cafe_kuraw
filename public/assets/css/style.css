@@ -479,9 +479,6 @@ fieldset {
   background-color: #F7F9FB;
 }
 
-.bg-theme {
-  background-color: #967259;
-}
 
 .theme-color {
   color: black;
@@ -713,7 +710,7 @@ a.header-search {
 }
 
 .header-search-modal .header-search-btn {
-  background: #967259;
+  background: black;
   color: #ece0d1;
   border-radius: 50%;
   height: 60px;
@@ -887,6 +884,7 @@ a.header-search {
   visibility: hidden;
   padding: 0;
   top: 62px;
+  right: 0; /* Aligns the dropdown menu to the right of its parent */
   border-radius: 0;
   background-color: transparent;
   border: none;
@@ -896,6 +894,7 @@ a.header-search {
   -ms-transition: all 500ms ease;
   -o-transition: all 500ms ease;
 }
+
 
 .main-header .mainmenu-area .navbar .dropdown .dropdown-menu li>a {
   display: block;
@@ -970,7 +969,7 @@ a.header-search {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.main-header .mainmenu-area .navbar .dropdown:hover>.dropdown-menu {
+.main-header .mainmenu-area .navbar .dropdown:hover > .dropdown-menu {
   opacity: 1;
   top: 62px;
   visibility: visible;
@@ -1066,7 +1065,7 @@ a.header-search {
 /* mobile menu css */
 
 .mean-container .mean-bar {
-  background: #967259;
+  background: #000000;
 }
 
 .mainmenu-area.mean-container .mean-nav ul.navbar-nav li a {
@@ -2027,7 +2026,7 @@ a.header-search {
 
 .team-slides.owl-carousel.owl-theme .owl-dots .owl-dot:hover span,
 .team-slides.owl-carousel.owl-theme .owl-dot.active span {
-  background: #967259;
+  background: #0000;
 }
 
 .team-slides.owl-carousel .owl-nav button.owl-next,
@@ -2057,7 +2056,7 @@ a.header-search {
 }
 
 .tea-intro-img img {
-  box-shadow: 15px 15px 0px 0 #967259;
+  box-shadow: 15px 15px 0px 0 #000000;
   webkit-transition: all 0.4s ease 0s;
   -moz-transition: all 0.4s ease 0s;
   -o-transition: all 0.4s ease 0s;
@@ -2065,7 +2064,7 @@ a.header-search {
 }
 
 .tea-intro-img img:hover {
-  box-shadow: -15px -15px 0px 0 #967259;
+  box-shadow: -15px -15px 0px 0 #000000;
 }
 
 

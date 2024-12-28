@@ -15,5 +15,6 @@ class VerifyCsrfToken extends Middleware
         'dashboard/register',
         'dashboard/login',
         'dashboard/logout',
+        'notifications/mark-all-read',
     ];
 }

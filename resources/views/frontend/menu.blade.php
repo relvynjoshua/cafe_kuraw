@@ -27,7 +27,7 @@
    <!-- Font Awesome -->
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
    <!-- Meanmenu CSS -->
-   <link rel="stylesheet" href="{{ asset('assets/css/meanmenu.min.css') }}">
+   
    <!-- Owl Carousel CSS -->
    <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.carousel.min.css') }}">
    <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.theme.default.min.css') }}">
@@ -98,6 +98,33 @@
       .modal-backdrop {
          z-index: 1040;
       }
+
+      .container.my-4 {
+         display: flex;
+         justify-content: center;
+         margin-bottom: 20px;
+         gap: 10px;
+      }
+
+      .container.my-4 a {
+         text-decoration: none;
+         padding: 10px 15px;
+         border-radius: 20px;
+         background-color: #f8f9fa;
+         color: #000;
+         font-weight: 600;
+         transition: background-color 0.3s;
+      }
+
+      .container.my-4 a:hover {
+         background-color: #333;
+         color: #fff;
+      }
+
+      .container.my-4 a.active {
+         background-color: #333;
+         color: #fff;
+      }
    </style>
 </head>
 
@@ -118,58 +145,59 @@
    </div>
 </div>
 
+<!-- Menu Categories -->
+<div class="container my-4">
+   @php
+      $categories = [
+         1 => 'Espresso-Based Coffee',
+         2 => 'Milktea',
+         3 => 'Non-Coffee',
+         4 => 'Snacks',
+         5 => 'Waffle',
+         6 => 'Ramen'
+      ];
+   @endphp
+   <a href="{{ url('/menu') }}" class="{{ is_null($selectedCategory) ? 'active' : '' }}">All</a>
+   @foreach ($categories as $id => $name)
+      <a href="{{ url('/menu/category/' . $id) }}" class="{{ $id == $selectedCategory ? 'active' : '' }}">{{ $name }}</a>
+   @endforeach
+</div>
+
 <!-- Menu Section -->
 <div class="container my-5">
    <div class="row">
       @foreach ($products as $product)
-        <div class="col-md-4">
-          <div class="card product-card mb-4 shadow-sm">
-            <!-- Product Image -->
-            <div class="card-img-container">
-               <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top rounded-top"
-                 alt="{{ $product->name }}">
-            </div>
+         @if (is_null($selectedCategory) || $product->category_id == $selectedCategory)
+            <div class="col-md-4">
+               <div class="card product-card mb-4 shadow-sm">
+                  <!-- Product Image -->
+                  <div class="card-img-container">
+                     <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top rounded-top" alt="{{ $product->name }}">
+                  </div>
 
-            <!-- Product Details -->
-            <div class="card-body">
-               <h5 class="card-title text-center">{{ $product->name }}</h5>
-               <p class="card-text text-muted text-center">{{ $product->description }}</p>
-               <p class="card-text text-center">
-                 <strong>Base Price:</strong> ₱{{ number_format($product->price, 2) }}
-               </p>
+                  <!-- Product Details -->
+                  <div class="card-body">
+                     <h5 class="card-title text-center">{{ $product->name }}</h5>
+                     <p class="card-text text-muted text-center">{{ $product->description }}</p>
+                     <p class="card-text text-center">
+                        <strong>Base Price:</strong> ₱{{ number_format($product->price, 2) }}
+                     </p>
 
-               <!-- Product Variations -->
-               @if ($product->variations->count() > 0)
-               <div class="mb-3">
-                <label for="variation_{{ $product->id }}" class="form-label">Choose Variation</label>
-                <select class="form-select" id="variation_{{ $product->id }}" name="variation_id">
-                  @foreach ($product->variations as $variation)
-                 <option value="{{ $variation->id }}">
-                  {{ $variation->type }} - {{ $variation->value }}
-                  (₱{{ number_format($variation->price, 2) }})
-                 </option>
-              @endforeach
-                </select>
-               </div>
-            @endif
-
-               <!-- Add to Cart Button -->
-               <div class="d-flex justify-content-between align-items-center">
-                 <div>
-                   <label for="quantity_{{ $product->id }}" class="form-label">Quantity</label>
-                   <input type="number" id="quantity_{{ $product->id }}" name="quantity" value="1" min="1"
-                     class="form-control w-75">
-                 </div>
-                 <button type="button"
-                   onclick="addToCart({{ $product->id }}, {{ $product->variations->first()->id ?? 0 }})"
-                   class="btn btn-primary rounded-pill">
-                   Add to Cart
-                 </button>
+                     <!-- Add to Cart Button -->
+                     <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                           <label for="quantity_{{ $product->id }}" class="form-label">Quantity</label>
+                           <input type="number" id="quantity_{{ $product->id }}" name="quantity" value="1" min="1" class="form-control w-75">
+                        </div>
+                        <button type="button" onclick="addToCart({{ $product->id }}, {{ $product->variations->first()->id ?? 0 }})" class="btn btn-primary rounded-pill">
+                           Add to Cart
+                        </button>
+                     </div>
+                  </div>
                </div>
             </div>
-          </div>
-        </div>
-     @endforeach
+         @endif
+      @endforeach
    </div>
 </div>
 
@@ -193,7 +221,8 @@
    </div>
 </div>
 
-<!-- Latest jQuery -->
+<script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('assets/js/main.js') }}"></script>
 <script>
    function addToCart(productId, variationId) {
       const quantity = document.querySelector(`#quantity_${productId}`).value || 1;
@@ -227,44 +256,4 @@
    }
 </script>
 
-<script>
-   document.addEventListener('DOMContentLoaded', function () {
-      // Ensure the hidden input is updated when the variation dropdown changes
-      document.querySelectorAll('select[name="variation_id"]').forEach(select => {
-         select.addEventListener('change', function () {
-            const productId = this.id.split('_')[1];
-            const hiddenInput = document.getElementById('selected_variation_' + productId);
-
-            if (hiddenInput) {
-               hiddenInput.value = this.value; // Update hidden input with the selected variation ID
-            }
-         });
-
-         // Trigger change event on page load to set the initial value
-         select.dispatchEvent(new Event('change'));
-      });
-   });
-</script>
-
-<script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/bootstrap/js/popper.min.js') }}"></script>
-<script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/js/form-contact.js') }}"></script>
-<script src="{{ asset('assets/js/isotope.3.0.6.min.js') }}"></script>
-<script src="{{ asset('assets/js/jquery-2.2.4.min.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.appear.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.inview.min.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.meanmenu.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.sticky.js') }}"></script>
-<script src="{{ asset('assets/js/main.js') }}"></script>
-<script src="{{ asset('assets/js/modal.js') }}"></script>
-<script src="{{ asset('assets/js/order-summary.js') }}"></script>
-<script src="{{ asset('assets/js/ordermodal.js') }}"></script>
-<script src="{{ asset('assets/js/proceed.js') }}"></script>
-<script src="{{ asset('assets/js/redirectorder.js') }}"></script>
-<script src="{{ asset('assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
-<script src="{{ asset('assets/js/scripts.js') }}"></script>
-<script src="{{ asset('assets/js/scrolltopcontrol.js') }}"></script>
-<script src="{{ asset('assets/venobox/js/venobox.min.js') }}"></script>
-<script src="{{ asset('assets/js/wow.min.js') }}"></script>
 @endsection

@@ -1,5 +1,7 @@
 <!-- START HEADER SECTION -->
 <header class="main-header">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('assets/js/notifications.js') }}"></script>
     <!-- START LOGO AREA -->
     <div class="logo-area">
         <div class="auto-container">
@@ -86,11 +88,48 @@
                     </ul>
 
                     <div class="d-flex align-items-center">
-                        <!-- Search Icon -->
-                        <a href="#" class="header-search me-3" data-bs-toggle="modal"
-                            data-bs-target="#headerSearchModal">
-                            <i class="fas fa-search"></i>
-                        </a>
+                        
+                    <a href="#" class="header-notification me-3" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-bell"></i>
+    <span id="notification-badge" class="position-absolute top-20 translate-middle badge rounded-pill bg-danger">
+        {{ session('notification_count', auth()->user()->unreadNotifications()->count()) }}
+    </span>
+</a>
+
+<!-- Notifications dropdown -->
+<div class="dropdown-menu dropdown-menu-end bg-white shadow border-0" aria-labelledby="notificationDropdown" style="width: 350px; position: absolute; top: 60%; z-index: 1050;">
+    <div class="dropdown-item text-dark text-center" style="font-weight: bold; background-color: #f8f9fa;">
+        Notifications
+    </div>
+    
+    @foreach(auth()->user()->unreadNotifications as $notification)
+        @if($notification->type === 'App\Notifications\OrderStatusNotification')
+            <a class="dropdown-item text-dark notification-item" 
+               data-notification-id="{{ $notification->id }}" 
+               href="{{ url('/orders') }}"
+               onclick="markAsRead(event, {{ $notification->id }}, '{{ $notification->data['order_id'] }}')">
+                <strong>Order #{{ $notification->data['order_id'] }}</strong>: {{ $notification->data['message'] }}
+            </a>
+        @endif
+    @endforeach
+
+    @if(auth()->user()->unreadNotifications->isEmpty())
+        <p class="dropdown-item text-center">No new notifications</p>
+    @endif
+
+    
+
+    <!-- Mark All Read Button -->
+    <form id="mark-all-read-form" action="{{ route('notifications.mark-read') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+    <a href="#" id="see-all-notifications" class="dropdown-item text-dark text-center" style="font-weight: bold; margin-top: 20px; background-color: #B7C9E2;"
+                           onclick="markAllAndRedirect(event)">See All Notifications</a>
+                    </div>
+</div>
+
+
+
 
                         <!-- Cart Icon -->
                         <a href="{{ url('/cart') }}" class="header-cart me-3 position-relative">
@@ -141,6 +180,20 @@
             </nav>
         </div>
     </div>
+    
     <!-- END NAVIGATION AREA -->
 </header>
 <!-- END HEADER SECTION -->
+<script>
+    function markAllAndRedirect(event) {
+        event.preventDefault();
+
+        // Submit the form to mark all notifications as read
+        document.getElementById('mark-all-read-form').submit();
+
+        // Redirect to the /orders/ page after marking notifications as read
+        setTimeout(() => {
+            window.location.href = '/orders/';
+        }, 500); // Delay for 0.5 seconds to ensure the form submission is processed
+    }
+</script>

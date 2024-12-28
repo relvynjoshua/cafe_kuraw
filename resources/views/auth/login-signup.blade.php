@@ -21,13 +21,19 @@
                             <i class='bx bx-mail-send'></i>
                             <input type="email" name="email" id="email" placeholder="Enter your Email" value="{{ old('email') }}" required>
                         </div>
-                        <div class="input-group">
+                        <div class="input-group password-group">
                             <i class='bx bxs-lock-alt'></i>
-                            <input type="password" name="password" placeholder="Password" minlength="5" required>
+                            <input type="password" name="password" id="signup-password" placeholder="Password" minlength="5" required>
+                            <span class="toggle-password" onclick="togglePassword('signup-password', this)">
+                                <i class="bx bx-show"></i>
+                            </span>
                         </div>
-                        <div class="input-group">
+                        <div class="input-group password-group">
                             <i class='bx bxs-lock-alt'></i>
-                            <input type="password" name="password_confirmation" placeholder="Confirm password" minlength="5" required>
+                            <input type="password" name="password_confirmation" id="signup-password-confirmation" placeholder="Confirm password" minlength="5" required>
+                            <span class="toggle-password" onclick="togglePassword('signup-password-confirmation', this)">
+                                <i class="bx bx-show"></i>
+                            </span>
                         </div>
                         <!-- Hidden OTP field -->
                         <input type="hidden" id="otp-hidden" name="otp">
@@ -60,9 +66,12 @@
                             <i class='bx bx-mail-send'></i>
                             <input type="email" name="email" placeholder="Enter your Email" value="{{ old('email') }}" required>
                         </div>
-                        <div class="input-group">
+                        <div class="input-group password-group">
                             <i class='bx bxs-lock-alt'></i>
                             <input type="password" name="password" id="signin-password" placeholder="Password" minlength="5" required>
+                            <span class="toggle-password" onclick="togglePassword('signin-password', this)">
+                                <i class="bx bx-show"></i>
+                            </span>
                         </div>
                         <button type="submit">Sign in</button>
                     </form>
@@ -101,10 +110,26 @@
     </div>
 </div>
 
+
 <script>
 let timer;
 let countdownTime = 60;  // Initial countdown time (60 seconds)
 let otpSent = false; // Flag to track if OTP was sent
+
+
+// Function to toggle password visibility
+function togglePassword(inputId, toggleIcon) {
+    const inputField = document.getElementById(inputId);
+    const icon = toggleIcon.querySelector('i');
+
+    if (inputField.type === 'password') {
+        inputField.type = 'text';
+        icon.classList.replace('bx-show', 'bx-hide');
+    } else {
+        inputField.type = 'password';
+        icon.classList.replace('bx-hide', 'bx-show');
+    }
+}
 
     // Start the countdown timer
     function startTimer() {
@@ -301,7 +326,6 @@ async function sendOTP(event) {
     });
 }
 
-// Function to check email availability
 async function checkEmailAvailability(email) {
     try {
         const response = await fetch('/check-email', {
@@ -313,11 +337,15 @@ async function checkEmailAvailability(email) {
             body: JSON.stringify({ email: email })
         });
 
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const result = await response.json();
         return result.taken; // true if email is already taken
     } catch (error) {
         console.error("Error checking email availability:", error);
-        return true; // Assume taken if there's an error
+        return false; // Default to false when there's an error
     }
 }
 

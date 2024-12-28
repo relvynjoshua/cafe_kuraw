@@ -142,7 +142,7 @@
                                 <option value="" disabled selected>Select a payment method</option>
                                 <option value="credit_card">Credit Card</option>
                                 <option value="paypal">Paypal</option>
-                                <option value="gcash">GCash</option>
+                                <option value="Gcash">GCash</option>
                             </select>
                         </div>
 
@@ -153,14 +153,14 @@
                                 class="img-fluid mb-3 w-20 h-20 mx-auto" />
 
                             <div class="mb-3">
-                                <label for="gcash_reference_number" class="form-label">GCash Reference Number</label>
-                                <input type="text" name="gcash_reference_number" id="gcash_reference_number"
+                                <label for="reference_number" class="form-label">GCash Reference Number</label>
+                                <input type="text" name="reference_number" id="reference_number"
                                     class="form-control" placeholder="Enter your GCash reference number" />
                             </div>
 
                             <div class="mb-3">
-                                <label for="gcash_proof" class="form-label">Upload Proof of Payment</label>
-                                <input type="file" name="gcash_proof" id="gcash_proof" class="form-control" />
+                                <label for="proof_of_payment" class="form-label">Upload Proof of Payment</label>
+                                <input type="file" name="proof_of_payment" id="proof_of_payment" class="form-control" />
                             </div>
                         </div>
 
@@ -198,33 +198,36 @@
     document.addEventListener('DOMContentLoaded', function () {
         const paymentMethodSelect = document.getElementById('payment_method');
         const gcashDetailsSection = document.getElementById('gcashDetails');
-        const referenceNumberInput = document.getElementById('gcash_reference_number');
+        const referenceNumberInput = document.getElementById('reference_number');
         const deliveryMethodSelect = document.getElementById('delivery_method');
         const addressField = document.getElementById('address');
+        const addressTextarea = addressField.querySelector('textarea'); // The address textarea
         const form = document.querySelector('form'); // The checkout form
 
         // Show/Hide the GCash details section when the payment method is changed
         paymentMethodSelect.addEventListener('change', function () {
-            if (this.value === 'gcash') {
+            if (this.value === 'Gcash') {
                 gcashDetailsSection.classList.remove('d-none');
             } else {
                 gcashDetailsSection.classList.add('d-none');
             }
         });
 
-        // Show/Hide the address input based on the selected delivery method
+        // Show/Hide the address input and set default address based on the delivery method
         deliveryMethodSelect.addEventListener('change', function () {
             if (this.value === 'delivery') {
                 addressField.style.display = 'block';
-            } else {
+                addressTextarea.value = ''; // Clear the address for delivery
+            } else if (this.value === 'pickup') {
                 addressField.style.display = 'none';
+                addressTextarea.value = 'Kuraw Cafe'; // Set default address for pickup
             }
         });
 
         // Form submission validation
         form.addEventListener('submit', function (e) {
             const referenceNumber = referenceNumberInput.value.trim();
-            if (paymentMethodSelect.value === 'gcash') {
+            if (paymentMethodSelect.value === 'Gcash') {
                 // Check if the reference number is exactly 13 characters
                 if (referenceNumber.length !== 13) {
                     e.preventDefault(); // Prevent form submission

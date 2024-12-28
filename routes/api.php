@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\NotificationController;
 
 // Authentication Routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -30,4 +31,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/orders/{order}', [OrderController::class, 'update']); // Update an existing order
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus']); // Update order status
     Route::delete('/orders/{order}', [OrderController::class, 'destroy']); // Delete an order
+
 });

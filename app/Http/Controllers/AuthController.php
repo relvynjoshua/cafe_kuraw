@@ -60,30 +60,30 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|string|min:5',
         ]);
-
-        $credentials = $request->only('email', 'password');
+    
+        $credentials = $request->only('email', 'password', 'is_status');
+    
+        // Check if the user exists
         $user = User::where('email', $credentials['email'])->first();
-
+    
         if (!$user) {
             return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
         }
-
-        // Determine the guard
-        $guard = $user->role === 'admin' ? 'admin' : 'web';
-
-        if (Auth::guard($guard)->attempt($credentials)) {
-            // OTP Logic
-            $otp = rand(100000, 999999);
-            $user->otp = $otp;
-            $user->otp_expires_at = Carbon::now()->addMinutes(10);
-            $user->save();
-            Mail::to($user->email)->send(new OTPMail($otp));
-
-            return redirect()->route('verify.otp.form')->with('email', $user->email);
+    
+        // Check if the user's account is active
+        if (!$user->is_active) {
+            return back()->withErrors(['email' => 'Your account is disabled. Please contact support.'])->withInput();
         }
-
+    
+        // Attempt to log in the user
+        if (Auth::attempt($credentials)) {
+            return redirect()->route($user->role === 'admin' ? 'dashboard.index' : 'menu')
+                             ->with('success', 'Logged in successfully!');
+        }
+    
         return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
     }
+    
 
     /**
      * Verify OTP after login.

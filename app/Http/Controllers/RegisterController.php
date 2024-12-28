@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User; // Import User model
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
@@ -58,19 +58,14 @@ class RegisterController extends Controller
      * Check if an email already exists in the database.
      * Returns a JSON response for AJAX requests.
      */
-    public function checkEmail(Request $request)
+    
+    // Controller method for checking email availability
+    public function checkEmailAvailability(Request $request)
     {
-        // Validate the incoming email field
-        $request->validate([
-            'email' => 'required|email',
-        ]);
+        $email = $request->input('email');
+        $exists = User::where('email', $email)->exists(); // Assuming a User model is used
 
-        // Check if the email already exists in the database
-        $emailExists = User::where('email', $request->email)->exists();
-
-        // Return JSON response
-        return response()->json([
-            'taken' => $emailExists
-        ]);
+        return response()->json(['taken' => $exists]);
     }
+
 }

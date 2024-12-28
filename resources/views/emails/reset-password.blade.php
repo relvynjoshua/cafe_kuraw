@@ -1,47 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuraw Coffee Shop - Forgot Password</title>
-    
-    <!-- Link to Bootstrap 4 CSS for styling -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Password Reset</title>
 </head>
-
 <body>
+    <p>Hello,</p>
+    <p>You are receiving this email because we received a password reset request for your account.</p>
+    <p>Click the button below to reset your password:</p>
+    <a href="{{ $resetLink }}" style="
+    padding: 10px 20px; 
+    background-color: black; 
+    color: white; 
+    text-decoration: none; 
+    border-radius: 5px;
+    display: inline-block;
+    text-align: center;">
+    Reset Password
+    </a>
 
-    <div class="container mt-5">
-        <!-- Logo -->
-        <img src="{{ asset('img/logo.jpg') }}" alt="Kuraw Coffee Shop Logo" class="logo">
-        <h2 class="text-center">Forgot Password</h2>
-
-        <!-- Success Message -->
-        @if(session('success'))
-        <div class="alert alert-success mt-3">
-            {{ session('success') }}
-        </div>
-        @endif
-
-        <!-- Error Messages -->
-        @if($errors->any())
-        <div class="alert alert-danger mt-3">
-            {{ $errors->first() }}
-        </div>
-        @endif
-
-        <!-- Forgot Password Form -->
-        <form method="POST" action="{{ route('password.email') }}">
-            @csrf
-            <div class="form-group">
-                <label for="email">Email Address:</label>
-                <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary mt-3">Send Password Reset Link</button>
-        </form>
-    </div>
+    <p>If you did not request a password reset, no further action is required.</p>
 
     <!-- Footer Section -->
     <footer class="footer-section plain-footer">
@@ -53,15 +32,10 @@
             </div>
         </div>
     </footer>
-
-    <!-- Link to Bootstrap JS for additional functionality -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 <!-- Custom CSS for additional styling -->
 <style>
-        body {
+       body {
             background-color: #f8f9fa; /* Light background color */
             font-family: 'Arial', sans-serif;
             display: flex;
@@ -86,6 +60,7 @@
             border-radius: 20px; /* Rounded corners for input fields */
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
         .btn-primary {
         background-color: #000000; /* Black background */
         color: #ffffff; /* White text */
@@ -102,7 +77,6 @@
         color: #000000; /* Black text on hover */
         border-color: #000000; /* Optional: Change border to black on hover */
     }
-
 
         .alert {
             border-radius: 8px; /* Rounded corners for alerts */
@@ -127,8 +101,15 @@
             margin-bottom: 20px;
         }
 
-        /* Logo Styling */
-        .logo {
+        .form-group label {
+            font-weight: bold; /* Make labels bold */
+        }
+
+        #passwordErrorAlert, #passwordMismatchErrorAlert {
+            font-size: 14px;
+        }
+         /* Logo Styling */
+         .logo {
             max-width: 150px; /* Maximum width for the logo */
             display: block;
             margin: 0 auto 20px; /* Center the logo with space below */
@@ -145,6 +126,7 @@
             font-size: 14px;
         }
 
+
         .copyright-text {
             margin: 0;
             font-weight: 400;
@@ -152,7 +134,7 @@
         }
 
         .footer-section a {
-            color: #ffff;
+            color: #f1f1f1;
             text-decoration: none;
         }
 

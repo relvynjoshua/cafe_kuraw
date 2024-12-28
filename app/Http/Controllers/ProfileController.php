@@ -64,18 +64,23 @@ class ProfileController extends Controller
 
     public function disable($id)
     {
-        $user = User::findOrFail($id); // Ensure user is fetched
-        $user->update(['is_active' => false]); // Update the is_active column
+        $user = User::findOrFail($id);
+        $user->update(['is_active' => false]);
+
         return redirect()->route('dashboard.profile.index')->with('success', 'User has been disabled.');
     }
 
-
+    /**
+     * Enable a user's account.
+     */
     public function enable($id)
     {
-        $user = User::findOrFail($id); // Ensure user is fetched
+        $user = User::findOrFail($id);
         $user->update(['is_active' => true]);
+
         return redirect()->route('dashboard.profile.index')->with('success', 'User has been enabled.');
     }
+
 
     public function destroy($id)
     {

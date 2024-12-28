@@ -29,6 +29,8 @@ use App\Http\Controllers\{
     HistoryController,
     LogController,
     CustomForgotPasswordController,
+    NotificationController,
+    FrontendMenuController
 };
 
 // ----------------------------
@@ -43,11 +45,14 @@ Route::controller(ContactController::class)->group(function () {
     Route::post('/contact', 'store')->name('contact.process'); // Handle form submission
 });
 
-// Menu
+// Menu - Shows all products
 Route::get('/menu', function () {
     $products = \App\Models\Product::with('variations')->get(); // Eager load variations
-    return view('frontend.menu', compact('products'));
+    return view('frontend.menu', compact('products'))->with('selectedCategory', null);
 })->name('menu');
+
+// Menu by Category
+Route::get('/menu/category/{id}', [FrontendMenuController::class, 'category'])->name('menu.category');
 
 // Gallery
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');

@@ -12,17 +12,17 @@ class Order extends Model
     // Allow mass assignment
     protected $fillable = [
         'user_id', // Include user_id if orders are associated with users
-        'customer_name', 
-        'email', 
+        'customer_name',
+        'email',
         'phone',
-        'address', 
-        'total_amount', 
-        'status', 
-        'payment_method', 
-        'delivery_method', 
+        'address',
+        'total_amount',
+        'status',
+        'payment_method',
+        'delivery_method',
         'discount', // Include discount if it's used
-        'gcash_reference_number', 
-        'gcash_proof'
+        'reference_number',
+        'proof_of_payment'
     ];
 
 
@@ -30,8 +30,8 @@ class Order extends Model
     public function products()
     {
         return $this->belongsToMany(Product::class)
-                    ->withPivot('quantity', 'price', 'variation')
-                    ->withTimestamps();
+            ->withPivot('quantity', 'price', 'variation')
+            ->withTimestamps();
     }
 
     // Define relationship with User model

@@ -16,6 +16,7 @@ class User extends Authenticatable
         'firstname',
         'email',
         'password',
+        'is_active',
         'reward_points', // Ensure reward_points is fillable
         'role',          // Include role if it's used
     ];
@@ -34,6 +35,12 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function scopeActive($query)
+{
+    return $query->where('is_active', 1);
+}
+
 
     // Relationship with Order model
     public function orders()

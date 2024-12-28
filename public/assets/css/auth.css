@@ -40,6 +40,28 @@ html, body {
     width: 40%;
 }
 
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 1.5rem; /* Adjust as needed to align with the input's padding */
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.toggle-password i {
+    font-size: 1.5rem; /* Adjust icon size */
+    color: var(--gray-2);
+}
+
+.toggle-password:hover i {
+    color: var(--primary-color);
+}
+
+
 .align-items-center {
     display: flex;
     align-items: center;
@@ -81,7 +103,7 @@ html, body {
 
 .input-group input {
     width: 100%;
-    padding: 1rem 3.5rem;
+    padding: 1rem 4rem;
     font-size: 1.1rem;
     background-color: var(--gray);
     border-radius: .8rem;
