@@ -88,99 +88,102 @@
                     </ul>
 
                     <div class="d-flex align-items-center">
-                        
-                    <a href="#" class="header-notification me-3" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-    <i class="fas fa-bell"></i>
-    <span id="notification-badge" class="position-absolute top-20 translate-middle badge rounded-pill bg-danger">
-        {{ session('notification_count', auth()->user()->unreadNotifications()->count()) }}
-    </span>
-</a>
 
-<!-- Notifications dropdown -->
-<div class="dropdown-menu dropdown-menu-end bg-white shadow border-0" aria-labelledby="notificationDropdown" style="width: 350px; position: absolute; top: 60%; z-index: 1050;">
-    <div class="dropdown-item text-dark text-center" style="font-weight: bold; background-color: #f8f9fa;">
-        Notifications
-    </div>
-    
-    @foreach(auth()->user()->unreadNotifications as $notification)
-        @if($notification->type === 'App\Notifications\OrderStatusNotification')
-            <a class="dropdown-item text-dark notification-item" 
-               data-notification-id="{{ $notification->id }}" 
-               href="{{ url('/orders') }}"
-               onclick="markAsRead(event, {{ $notification->id }}, '{{ $notification->data['order_id'] }}')">
-                <strong>Order #{{ $notification->data['order_id'] }}</strong>: {{ $notification->data['message'] }}
-            </a>
-        @endif
-    @endforeach
-
-    @if(auth()->user()->unreadNotifications->isEmpty())
-        <p class="dropdown-item text-center">No new notifications</p>
-    @endif
-
-    
-
-    <!-- Mark All Read Button -->
-    <form id="mark-all-read-form" action="{{ route('notifications.mark-read') }}" method="POST" style="display: none;">
-        @csrf
-    </form>
-    <a href="#" id="see-all-notifications" class="dropdown-item text-dark text-center" style="font-weight: bold; margin-top: 20px; background-color: #B7C9E2;"
-                           onclick="markAllAndRedirect(event)">See All Notifications</a>
-                    </div>
-</div>
-
-
-
-
-                        <!-- Cart Icon -->
-                        <a href="{{ url('/cart') }}" class="header-cart me-3 position-relative">
-                            <i class="fas fa-shopping-cart"></i>
-                            <!-- Badge for Cart Count -->
-                            <span id="cart-badge"
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ session('cart_count', 0) }}
+                        <a href="#" class="header-notification me-3" id="notificationDropdown" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            <span id="notification-badge"
+                                class="position-absolute top-20 translate-middle badge rounded-pill bg-danger">
+                                @if (auth()->check())
+                                    {{ session('notification_count', auth()->user()->unreadNotifications()->count()) }}
+                                @else
+                                    0
+                                @endif
                             </span>
                         </a>
 
-                        <!-- Profile Dropdown -->
-                        <div class="dropdown">
-                            <a href="#" class="dropdown-toggle text-dark" id="profileDropdown" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end bg-white shadow border-0"
-                                aria-labelledby="profileDropdown" style="width: 200px;">
-                                @if(Auth::check())
-                                    <li class="dropdown-header bg-black text-white py-3 px-3">
-                                        <strong style="font-size: 1.25rem; font-family: 'Arial', sans-serif;">
-                                            Hello, {{ Auth::user()->firstname }}
-                                        </strong>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider my-1">
-                                    </li>
-                                    <li><a class="dropdown-item text-dark" href="{{ route('profile') }}">My Profile</a></li>
-                                    <li><a class="dropdown-item text-dark" href="{{ route('rewards') }}">My Rewards</a></li>
-                                    <li class="dropdown-item text-dark">
-                                        <form action="{{ route('logout.user') }}" method="POST"
-                                            class="dropdown-item m-0 p-0">
-                                            @csrf
-                                            <button type="submit" class="btn btn-link text-dark p-0 m-0">Logout</button>
-                                        </form>
-                                    </li>
-                                @else
-                                    <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Login</a></li>
-                                    <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Register</a>
-                                    </li>
-                                @endif
-                            </ul>
-                        </div>
+                        <!-- Notifications dropdown -->
+                        <div class="dropdown-menu dropdown-menu-end bg-white shadow border-0"
+                            aria-labelledby="notificationDropdown"
+                            style="width: 350px; position: absolute; top: 60%; z-index: 1050;">
+                            <div class="dropdown-item text-dark text-center"
+                                style="font-weight: bold; background-color: #f8f9fa;">
+                                Notifications
+                            </div>
 
+                            @if (auth()->check() && auth()->user()->unreadNotifications->isNotEmpty())
+                                @foreach(auth()->user()->unreadNotifications as $notification)
+                                    <a class="dropdown-item text-dark notification-item"
+                                        data-notification-id="{{ $notification->id }}" href="{{ url('/orders') }}"
+                                        onclick="markAsRead(event, {{ $notification->id }}, '{{ $notification->data['order_id'] }}')">
+                                        <strong>Order #{{ $notification->data['order_id'] }}</strong>:
+                                        {{ $notification->data['message'] }}
+                                    </a>
+                                @endforeach
+                            @else
+                                <p class="dropdown-item text-center">No new notifications</p>
+                            @endif
+
+                            <!-- Mark All Read Button -->
+                            <form id="mark-all-read-form" action="{{ route('notifications.mark-read') }}" method="POST"
+                                style="display: none;">
+                                @csrf
+                            </form>
+                            <a href="#" id="see-all-notifications" class="dropdown-item text-dark text-center"
+                                style="font-weight: bold; margin-top: 20px; background-color: #B7C9E2;"
+                                onclick="markAllAndRedirect(event)">See All Notifications</a>
+                        </div>
                     </div>
+
+                    <!-- Cart Icon -->
+                    <a href="{{ url('/cart') }}" class="header-cart me-3 position-relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        <!-- Badge for Cart Count -->
+                        <span id="cart-badge"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ session('cart_count', 0) }}
+                        </span>
+                    </a>
+
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle text-dark" id="profileDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end bg-white shadow border-0"
+                            aria-labelledby="profileDropdown" style="width: 200px;">
+                            @if(Auth::check())
+                                <li class="dropdown-header bg-black text-white py-3 px-3">
+                                    <strong style="font-size: 1.25rem; font-family: 'Arial', sans-serif;">
+                                        Hello, {{ Auth::user()->firstname }}
+                                    </strong>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider my-1">
+                                </li>
+                                <li><a class="dropdown-item text-dark" href="{{ route('profile') }}">My Profile</a></li>
+                                <li><a class="dropdown-item text-dark" href="{{ route('rewards') }}">My Rewards</a></li>
+                                <li class="dropdown-item text-dark">
+                                    <form action="{{ route('logout.user') }}" method="POST" class="dropdown-item m-0 p-0">
+                                        @csrf
+                                        <button type="submit" class="btn btn-link text-dark p-0 m-0">Logout</button>
+                                    </form>
+                                </li>
+                            @else
+                                <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Login</a></li>
+                                <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Register</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </div>
+
                 </div>
-            </nav>
         </div>
+        </nav>
     </div>
-    
+    </div>
+
     <!-- END NAVIGATION AREA -->
 </header>
 <!-- END HEADER SECTION -->
