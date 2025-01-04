@@ -192,14 +192,15 @@
 
                         <!-- Display Proof of Payment -->
                         <td>
-    @if ($order->proof_of_payment)
-        <a href="{{ Storage::url($order->proof_of_payment) }}" class="btn btn-info btn-sm" target="_blank">
-            <i class="fas fa-eye"></i> View Proof
-        </a>
-    @else
-        <span>No Proof</span>
-    @endif
-</td>
+                            @if ($order->proof_of_payment)
+                                <a href="{{ Storage::url($order->proof_of_payment) }}" class="btn btn-info btn-sm"
+                                    target="_blank">
+                                    <i class="fas fa-eye"></i> View Proof
+                                </a>
+                            @else
+                                <span>No Proof</span>
+                            @endif
+                        </td>
 
                         <td class="d-flex">
                             <a href="{{ route('dashboard.orders.show', $order->id) }}" class="btn btn-info btn-sm">

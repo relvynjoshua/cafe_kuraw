@@ -7,7 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f9f9f9; font-family: Arial, sans-serif; }
-        .sidebar { background-color: #222; color: #fff; height: 100vh; }
+        .container-fluid { height: 100%;}
+        .sidebar { background-color: #222; color: #fff; min-height:100vh; height: 100%h; }
         .sidebar a { color: #fff; display: block; padding: 10px; text-decoration: none; }
         .sidebar a:hover, .active { background-color: #444; }
         .reservation-table { background-color: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
@@ -22,7 +23,7 @@
             <h4 class="text-center mb-4">KURAW</h4>
             <a href="{{ route('pos') }}">Dashboard</a>
             <a href="{{ route('cashier.index') }}">Cashier</a>
-            <a href="{{ route('transactions.index') }}">Transaction</a>
+            <a href="{{ route('cashier.transactions') }}">Transaction</a>
             <a href="{{ route('masteritem.index') }}">Master Item</a>
             <a href="{{ route('cashierReservation.index') }}">Reservation</a>
             <a href="{{ route('cashierHistory.index') }}">History</a>

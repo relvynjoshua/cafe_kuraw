@@ -18,6 +18,12 @@ return [
         'provider' => 'users', // Admins and users share the same provider (User model)
         'session' => 'admin_auth_session', // Unique session key for admins
     ],
+
+    'cashier' => [
+        'driver' => 'session',
+        'provider' => 'users',
+        'session' => 'cashier_auth_session',
+    ],
 ],
 
 

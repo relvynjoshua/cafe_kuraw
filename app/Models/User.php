@@ -36,10 +36,17 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
+    // Check if user is a cashier
+    public function isCashier()
+    {
+        return $this->role === 'cashier';
+    }
+
+
     public function scopeActive($query)
-{
-    return $query->where('is_active', 1);
-}
+    {
+        return $query->where('is_active', 1);
+    }
 
 
     // Relationship with Order model

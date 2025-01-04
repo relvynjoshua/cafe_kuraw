@@ -27,7 +27,7 @@
    <!-- Font Awesome -->
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
    <!-- Meanmenu CSS -->
-   
+
    <!-- Owl Carousel CSS -->
    <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.carousel.min.css') }}">
    <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.theme.default.min.css') }}">
@@ -148,14 +148,14 @@
 <!-- Menu Categories -->
 <div class="container my-4">
    @php
-      $categories = [
-         1 => 'Espresso-Based Coffee',
-         2 => 'Milktea',
-         3 => 'Non-Coffee',
-         4 => 'Snacks',
-         5 => 'Waffle',
-         6 => 'Ramen'
-      ];
+   $categories = [
+      1 => 'Espresso-Based Coffee',
+      2 => 'Milktea',
+      3 => 'Non-Coffee',
+      4 => 'Snacks',
+      5 => 'Waffle',
+      6 => 'Ramen'
+   ];
    @endphp
    <a href="{{ url('/menu') }}" class="{{ is_null($selectedCategory) ? 'active' : '' }}">All</a>
    @foreach ($categories as $id => $name)
@@ -167,37 +167,52 @@
 <div class="container my-5">
    <div class="row">
       @foreach ($products as $product)
-         @if (is_null($selectedCategory) || $product->category_id == $selectedCategory)
-            <div class="col-md-4">
-               <div class="card product-card mb-4 shadow-sm">
-                  <!-- Product Image -->
-                  <div class="card-img-container">
-                     <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top rounded-top" alt="{{ $product->name }}">
-                  </div>
+        <div class="col-md-4">
+          <div class="card product-card mb-4 shadow-sm">
+            <!-- Product Image -->
+            <div class="card-img-container">
+               <img
+                 src="{{ Str::startsWith($product->image, 'assets/') ? asset($product->image) : asset('storage/' . $product->image) }}"
+                 class="card-img-top rounded-top" alt="{{ $product->name }}">
+            </div>
 
-                  <!-- Product Details -->
-                  <div class="card-body">
-                     <h5 class="card-title text-center">{{ $product->name }}</h5>
-                     <p class="card-text text-muted text-center">{{ $product->description }}</p>
-                     <p class="card-text text-center">
-                        <strong>Base Price:</strong> ₱{{ number_format($product->price, 2) }}
-                     </p>
+            <!-- Product Details -->
+            <div class="card-body">
+               <h5 class="card-title text-center">{{ $product->name }}</h5>
+               <p class="card-text text-muted text-center">{{ $product->description }}</p>
+               <p class="card-text text-center">
+                 <strong>Base Price:</strong> ₱{{ number_format($product->price, 2) }}
+               </p>
 
-                     <!-- Add to Cart Button -->
-                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                           <label for="quantity_{{ $product->id }}" class="form-label">Quantity</label>
-                           <input type="number" id="quantity_{{ $product->id }}" name="quantity" value="1" min="1" class="form-control w-75">
-                        </div>
-                        <button type="button" onclick="addToCart({{ $product->id }}, {{ $product->variations->first()->id ?? 0 }})" class="btn btn-primary rounded-pill">
-                           Add to Cart
-                        </button>
-                     </div>
-                  </div>
+               <!-- Variations Dropdown -->
+               @if ($product->variations->isNotEmpty())
+               <div class="mb-3">
+                <label for="variation_{{ $product->id }}" class="form-label">Select Variation:</label>
+                <select id="variation_{{ $product->id }}" class="form-select">
+                  @foreach ($product->variations as $variation)
+                 <option value="{{ $variation->id }}" data-price="{{ $variation->price }}">
+                  {{ $variation->value }} ({{ $variation->type }}) - ₱{{ number_format($variation->price, 2) }}
+                 </option>
+              @endforeach
+                </select>
+               </div>
+            @endif
+
+               <!-- Add to Cart Button -->
+               <div class="d-flex justify-content-between align-items-center">
+                 <div>
+                   <label for="quantity_{{ $product->id }}" class="form-label">Quantity</label>
+                   <input type="number" id="quantity_{{ $product->id }}" name="quantity" value="1" min="1"
+                     class="form-control w-75">
+                 </div>
+                 <button type="button" onclick="addToCart({{ $product->id }})" class="btn btn-primary rounded-pill">
+                   Add to Cart
+                 </button>
                </div>
             </div>
-         @endif
-      @endforeach
+          </div>
+        </div>
+     @endforeach
    </div>
 </div>
 
@@ -224,8 +239,11 @@
 <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script>
-   function addToCart(productId, variationId) {
+   function addToCart(productId) {
       const quantity = document.querySelector(`#quantity_${productId}`).value || 1;
+      const variationSelect = document.querySelector(`#variation_${productId}`);
+      const variationId = variationSelect.value; // Get the selected variation ID
+      const variationPrice = variationSelect.options[variationSelect.selectedIndex].getAttribute('data-price'); // Get the price
 
       fetch('{{ route('cart.add') }}', {
          method: 'POST',
@@ -255,5 +273,6 @@
          .catch(error => console.error('Error:', error));
    }
 </script>
+
 
 @endsection

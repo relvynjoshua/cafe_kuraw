@@ -29,7 +29,7 @@ class Order extends Model
     // Define relationship with Product model
     public function products()
     {
-        return $this->belongsToMany(Product::class)
+        return $this->belongsToMany(Product::class, 'order_product')
             ->withPivot('quantity', 'price', 'variation')
             ->withTimestamps();
     }
@@ -57,6 +57,16 @@ class Order extends Model
     public function isCancelable()
     {
         return $this->status === 'pending';
+    }
+
+    public function scopeWithProducts($query)
+    {
+        return $query->with('products');
+    }
+
+    public function getTransactionIdAttribute()
+    {
+        return 'TRID' . str_pad($this->id, 3, '0', STR_PAD_LEFT); // Prefix with TRID and pad with zeros
     }
 
 }

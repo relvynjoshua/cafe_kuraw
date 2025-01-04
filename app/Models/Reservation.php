@@ -20,4 +20,9 @@ class Reservation extends Model
         'status', // Add a status field (e.g., 'pending', 'confirmed', 'cancelled')
     ];
 
+    public function getReservationIdAttribute()
+    {
+        return 'RES' . str_pad($this->id, 3, '0', STR_PAD_LEFT); // Prefix with RES and pad with zeros
+    }
+
 }

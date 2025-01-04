@@ -28,5 +28,13 @@ class AdminSeeder extends Seeder
             'password' => Hash::make('password'), // Set a secure password
             'role' => 'user', // Role for regular user
         ]);
+
+        // Seed Cashier User
+        User::create([
+            'firstname' => 'Cashier',
+            'email' => 'cashier@example.com',
+            'password' => Hash::make('password'), // Set a secure password
+            'role' => 'cashier', // Role for regular user
+        ]);
     }
 }

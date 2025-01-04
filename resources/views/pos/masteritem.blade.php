@@ -7,7 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style> 
         body { background-color: #f9f9f9; font-family: Arial, sans-serif; }
-        .sidebar { background-color: #222; color: #fff; height: 100vh; }
+        .container-fluid { height: 100%;}
+        .sidebar { background-color: #222; color: #fff; min-height:100vh; height: 100%h; }
         .sidebar a { color: #fff; display: block; padding: 10px; text-decoration: none; }
         .sidebar a:hover, .active { background-color: #444; }
         .categories span { cursor: pointer; margin-right: 10px; padding: 5px 10px; border-radius: 5px; color: #000; }
@@ -26,11 +27,11 @@
             <h4 class="text-center mb-4">KURAW</h4>
             <a href="{{ route('pos') }}">Dashboard</a>
             <a href="{{ route('cashier.index') }}">Cashier</a>
-            <a href="{{ route('transactions.index') }}">Transaction</a>
+            <a href="{{ route('cashier.transactions') }}">Transaction</a>
             <a href="{{ route('masteritem.index') }}" class="active">Master Item</a>
             <a href="{{ route('cashierReservation.index') }}">Reservation</a>
             <a href="{{ route('cashierHistory.index') }}">History</a>
-            <a href="{{route(name: 'cashierManage.index')}}">Manage Orders</a>
+            <a href="{{ route('cashierManage.index') }}">Manage Orders</a>
             <a href="{{ route('cashierProfile.index') }}">Profile</a>
             <a href="{{ route('cashierSettings.index') }}">Settings</a>
             <a href="#" class="text-danger mt-5">Sign Out</a>
@@ -46,17 +47,25 @@
             <!-- Categories -->
             <h5><strong>Categories</strong></h5>
             <div class="categories mb-4" id="categories">
-                <span class="active" data-category="All">All Menu</span>
-                <span data-category="Coffee">Coffee</span>
-                <span data-category="Non-Coffee">Non-Coffee</span>
-                <span data-category="Milktea">Milktea</span>
-                <span data-category="Fruit Soda">Fruit Soda</span>
-                <span data-category="Snacks">Snacks</span>
+                <span class="active" data-category="all" onclick="filterProducts('all')">All Menu</span>
+                @foreach($categories as $category)
+                    <span data-category="{{ $category->id }}" onclick="filterProducts('{{ $category->id }}')">
+                        {{ $category->name }}
+                    </span>
+                @endforeach
             </div>
 
             <!-- Product Grid -->
             <div class="row" id="product-list">
-                <!-- Products will load here dynamically -->
+                @foreach($products as $product)
+                    <div class="col-md-3 mb-4 product-item" data-category="{{ $product->category->id }}">
+                        <div class="product-card">
+                            <img src="{{ asset($product->image) }}" class="product-image" alt="{{ $product->name }}">
+                            <h6 class="fw-bold">{{ $product->name }}</h6>
+                            <p class="text-muted">₱{{ number_format($product->price, 2) }}</p>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -65,65 +74,22 @@
 <!-- Bootstrap Script -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const products = {
-        "All": [
-            { name: "Caramel Macchiato", price: 150, category: "Coffee", image: "{{ asset('assets/img/menu/icedcaramelm.jpg') }}" },
-            { name: "Strawberry Latte", price: 159, category: "Non-Coffee", image: "{{ asset('assets/img/menu/strawberrylatte.jpg') }}" },
-            { name: "Chocolate Milktea", price: 59, category: "Milktea", image: "{{ asset('assets/img/menu/chocomt.jpg') }}" },
-            { name: "Green Apple", price: 99, category: "Fruit Soda", image: "{{ asset('assets/img/menu/greenapple.jpg') }}" },
-            { name: "Toasted Garlic Bread", price: 100, category: "Snacks", image: "{{ asset('assets/img/menu/garlicbread.jpg') }}" }
-        ],
-        "Coffee": [
-            { name: "Caramel Macchiato", price: 150, image: "{{ asset('assets/img/menu/icedcaramelm.jpg') }}" }
-        ],
-        "Non-Coffee": [
-            { name: "Strawberry Latte", price: 159, image: "{{ asset('assets/img/menu/strawberrylatte.jpg') }}" }
-        ],
-        "Milktea": [
-            { name: "Chocolate Milktea", price: 59, image: "{{ asset('assets/img/menu/chocomt.jpg') }}" }
-        ],
-        "Fruit Soda": [
-            { name: "Green Apple", price: 99, image: "{{ asset('assets/img/menu/greenapple.jpg') }}" }
-        ],
-        "Snacks": [
-            { name: "Toasted Garlic Bread", price: 100, image: "{{ asset('assets/img/menu/garlicbread.jpg') }}" }
-        ]
-    };
+    function filterProducts(categoryId) {
+        const productItems = document.querySelectorAll('.product-item');
 
-    const productList = document.getElementById('product-list');
-    const categoryLinks = document.querySelectorAll('.categories span');
-
-    // Function to load products dynamically
-    function loadProducts(category) {
-        productList.innerHTML = ''; // Clear previous products
-        const selectedProducts = products[category] || [];
-        selectedProducts.forEach(product => {
-            productList.innerHTML += `
-                <div class="col-md-3 mb-4">
-                    <div class="product-card">
-                        <img src="${product.image}" class="product-image" alt="${product.name}">
-                        <h6 class="fw-bold">${product.name}</h6>
-                        <p class="text-muted">₱${product.price}</p>
-                    </div>
-                </div>
-            `;
+        productItems.forEach(item => {
+            if (categoryId === 'all' || item.getAttribute('data-category') === categoryId) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
         });
+
+        // Highlight active category
+        const categoryLinks = document.querySelectorAll('.categories span');
+        categoryLinks.forEach(link => link.classList.remove('active'));
+        document.querySelector(`[data-category="${categoryId}"]`).classList.add('active');
     }
-
-    // Event listener for category clicks
-    categoryLinks.forEach(link => {
-        link.addEventListener('click', function () {
-            // Remove active class from all links
-            categoryLinks.forEach(link => link.classList.remove('active'));
-            // Add active class to the clicked link
-            this.classList.add('active');
-            // Load products based on category
-            loadProducts(this.dataset.category);
-        });
-    });
-
-    // Load All products by default
-    loadProducts('All');
 </script>
 </body>
 </html>

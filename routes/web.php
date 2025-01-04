@@ -29,8 +29,6 @@ use App\Http\Controllers\{
     HistoryController,
     LogController,
     CustomForgotPasswordController,
-    NotificationController,
-    FrontendMenuController
 };
 
 // ----------------------------
@@ -45,14 +43,43 @@ Route::controller(ContactController::class)->group(function () {
     Route::post('/contact', 'store')->name('contact.process'); // Handle form submission
 });
 
-// Menu - Shows all products
+// Menu
 Route::get('/menu', function () {
-    $products = \App\Models\Product::with('variations')->get(); // Eager load variations
-    return view('frontend.menu', compact('products'))->with('selectedCategory', null);
+    // Eager load variations for all products
+    $products = \App\Models\Product::with('variations')->get();
+
+    // Define the static categories
+    $categories = [
+        1 => 'Espresso-Based Coffee',
+        2 => 'Milktea',
+        3 => 'Non-Coffee',
+        4 => 'Snacks',
+        5 => 'Waffle',
+        6 => 'Ramen',
+    ];
+
+    // Pass the products, categories, and selectedCategory (null for "All") to the view
+    return view('frontend.menu', compact('products', 'categories'))->with('selectedCategory', null);
 })->name('menu');
 
-// Menu by Category
-Route::get('/menu/category/{id}', [FrontendMenuController::class, 'category'])->name('menu.category');
+Route::get('/menu/category/{id}', function ($id) {
+    // Fetch products by category and eager load variations
+    $products = \App\Models\Product::with('variations')->where('category_id', $id)->get();
+
+    // Define the static categories
+    $categories = [
+        1 => 'Espresso-Based Coffee',
+        2 => 'Milktea',
+        3 => 'Non-Coffee',
+        4 => 'Snacks',
+        5 => 'Waffle',
+        6 => 'Ramen',
+    ];
+
+    // Pass the products, categories, and selectedCategory (current category) to the view
+    return view('frontend.menu', compact('products', 'categories'))->with('selectedCategory', $id);
+})->name('menu.category');
+
 
 // Gallery
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
@@ -103,36 +130,30 @@ Route::controller(AuthController::class)->group(function () {
 // Cashier POS Routes
 // ----------------------------
 // Route to display the Cashier POS page
-Route::get('/cashier', function () {
-    return view('pos.cashierPOS');
-})->name('cashier.index');
+Route::get('/cashier', [CashierController::class, 'index'])->name('cashier.index');
+Route::post('/save-order', [OrderController::class, 'store'])->name('orders.store');
 
 Route::get('/pos', function () {
     return view('pos.POS'); // This will render the POS.blade.php file
 })->name('pos');
 
-Route::get('/transactions', function () {
-    return view('pos.transaction'); // Points to transaction.blade.php
-})->name('transactions.index');
+// Transactions route
+Route::get('/cashier/transactions', [CashierController::class, 'transactions'])->name('cashier.transactions');
 
-Route::get('/master-items', function () {
-    return view('pos.masteritem'); // Points to masteritem.blade.php
-})->name('masteritem.index');
+// Update status route
+Route::put('/cashier/transactions/{id}/status', [CashierController::class, 'updateStatus'])->name('cashier.updateStatus');
 
-Route::get('/cashier-reservation', function () {
-    $bookedDates = ['2024-04-10', '2024-04-15']; // Example booked dates
-    return view('pos.cashierReservation', ['bookedDates' => $bookedDates]);
-})->name('cashierReservation.index');
+Route::post('/cashier/checkout', [CashierController::class, 'checkout'])->name('cashier.checkout');
 
-Route::post('/cashier-reservation/store', function (\Illuminate\Http\Request $request) {
-    // Reservation form processing logic
-    return back()->with('success', 'Reservation submitted successfully!');
-})->name('cashierReservation.store');
+Route::get('/cashier/masteritem', [CashierController::class, 'masterItem'])->name('masteritem.index');
 
+// Cashier Reservations
+Route::get('/cashier/reservations', [CashierController::class, 'reservationIndex'])->name('cashierReservation.index');
+Route::post('/cashier/reservations', [CashierController::class, 'storeReservation'])->name('cashierReservation.store');
 
-Route::get('/cashier-history', function () {
-    return view('pos.cashier-order-history');
-})->name('cashierHistory.index');
+// Order and Reservation History Routes
+Route::get('/cashier/history', [CashierController::class, 'history'])->name('cashierHistory.index');
+
 
 Route::get('/cashier-manage', function () {
     return view('pos.cashierManage');

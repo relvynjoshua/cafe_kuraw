@@ -68,7 +68,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('storage/' . ($item['image'] ?? 'default.jpg')) }}"
+                                            <img src="{{ Str::startsWith($item['image'], 'assets/') ? asset($item['image']) : asset('storage/' . $item['image']) }}"
                                                 alt="{{ $item['name'] }}" class="img-thumbnail me-3"
                                                 style="width: 60px; height: 60px;">
                                             <div>
@@ -154,8 +154,8 @@
 
                             <div class="mb-3">
                                 <label for="reference_number" class="form-label">GCash Reference Number</label>
-                                <input type="text" name="reference_number" id="reference_number"
-                                    class="form-control" placeholder="Enter your GCash reference number" />
+                                <input type="text" name="reference_number" id="reference_number" class="form-control"
+                                    placeholder="Enter your GCash reference number" />
                             </div>
 
                             <div class="mb-3">

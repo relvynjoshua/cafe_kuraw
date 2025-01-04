@@ -17,51 +17,51 @@ use App\Mail\OrderCompletedMail;
 class OrderController extends Controller
 {
     public function myOrders()
-{
-    
-    session(['notification_count' => 0]);
+    {
 
-    // Fetch the user's orders
-    $orders = Auth::user()->orders()->with('products')->orderBy('created_at', 'desc')->get();
+        session(['notification_count' => 0]);
 
-    // Update the session with the latest unread notifications count
-    session(['notification_count' => auth()->user()->unreadNotifications()->count()]);
+        // Fetch the user's orders
+        $orders = Auth::user()->orders()->with('products')->orderBy('created_at', 'desc')->get();
 
-    return view('frontend.orders', compact('orders'));
-}
+        // Update the session with the latest unread notifications count
+        session(['notification_count' => auth()->user()->unreadNotifications()->count()]);
 
-    
-    
-public function index(Request $request)
-{
-    $search = $request->input('search');
+        return view('frontend.orders', compact('orders'));
+    }
 
-    
-    session(['notification_count' => 0]);
 
-    // Fetch orders with associated products
-    $orders = Order::with('products')
-        ->when($search, function ($query, $search) {
-            $query->where('customer_name', 'like', "%$search%")
-                ->orWhere('email', 'like', "%$search%")
-                ->orWhere('phone', 'like', "%$search%")
-                ->orWhere('status', 'like', "%$search%")
-                ->orWhere('payment_method', 'like', "%$search%")
-                ->orWhere('delivery_method', 'like', "%$search%");
-        })
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
 
-    // Update the session with the latest unread notifications count
-    session(['notification_count' => auth()->user()->unreadNotifications()->count()]);
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
 
-    // Fetch unread notifications for the logged-in user
-    $user = auth()->user();
-    $notifications = $user ? $user->unreadNotifications : [];
 
-    // Return the view with the orders and notifications
-    return view('dashboard.orders.index', compact('orders', 'notifications'));
-}
+        session(['notification_count' => 0]);
+
+        // Fetch orders with associated products
+        $orders = Order::with('products')
+            ->when($search, function ($query, $search) {
+                $query->where('customer_name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%")
+                    ->orWhere('phone', 'like', "%$search%")
+                    ->orWhere('status', 'like', "%$search%")
+                    ->orWhere('payment_method', 'like', "%$search%")
+                    ->orWhere('delivery_method', 'like', "%$search%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        // Update the session with the latest unread notifications count
+        session(['notification_count' => auth()->user()->unreadNotifications()->count()]);
+
+        // Fetch unread notifications for the logged-in user
+        $user = auth()->user();
+        $notifications = $user ? $user->unreadNotifications : [];
+
+        // Return the view with the orders and notifications
+        return view('dashboard.orders.index', compact('orders', 'notifications'));
+    }
 
     public function create()
     {
@@ -79,21 +79,31 @@ public function index(Request $request)
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
             'status' => 'required|string|in:pending,completed,cancelled',
-            'payment_method' => 'required|string|max:255',
+            'payment_method' => 'required|string|in:cash,gcash',
             'delivery_method' => 'required|string|max:255',
             'products' => 'required|array|min:1',
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',
             'products.*.variation' => 'nullable|string|max:255',
+            'reference_number' => 'nullable|string|max:255',
+            'proof_of_payment' => 'nullable|file|mimes:jpg,png,jpeg,pdf|max:2048',
+            'total_amount' => 'required|numeric|min:0',
+            'cart' => 'required|json',
         ]);
-    
+
         DB::beginTransaction();
-    
+
         try {
+            // Upload proof of payment if provided
+            $proofOfPaymentPath = null;
+            if ($request->hasFile('proof_of_payment')) {
+                $proofOfPaymentPath = $request->file('proof_of_payment')->store('proofs', 'public');
+            }
+
             // Calculate total amount
             $totalAmount = $this->calculateTotalAmount($validated['products']);
             $discount = 0; // Assume no discount initially
-    
+
             // Create the order
             $order = Order::create([
                 'customer_name' => $validated['customer_name'],
@@ -104,44 +114,50 @@ public function index(Request $request)
                 'delivery_method' => $validated['delivery_method'],
                 'total_amount' => $totalAmount,
                 'discount' => $discount,
+                'reference_number' => $validated['reference_number'] ?? null,
+                'proof_of_payment' => $proofOfPaymentPath,
             ]);
-    
-            // Attach products to the order
-            foreach ($validated['products'] as $product) {
-                $order->products()->attach($product['product_id'], [
-                    'quantity' => $product['quantity'],
-                    'price' => Product::findOrFail($product['product_id'])->price,
-                    'variation' => $product['variation'] ?? null,
+
+            // Save cart items
+            $cartItems = json_decode($validated['cart'], true);
+            foreach ($cartItems as $item) {
+                $order->products()->attach($item['id'], [
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'variation' => $item['variation'] ?? null,
                 ]);
             }
-    
-            // Notify the customer
-            Mail::to($order->email)->send(new OrderStatusMail($order, $order->status));
-    
+
             DB::commit();
-    
-            return redirect()->route('dashboard.orders.index')
-                ->with('success', 'Order created successfully and notification sent!');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order created successfully!',
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Failed to create order: ' . $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create order: ' . $e->getMessage(),
+            ]);
         }
     }
-    
+
 
     public function show($orderId)
     {
         // Retrieve the order with products, variations, and user relationships
         $order = Order::with(['products.variations', 'user'])->findOrFail($orderId);
-    
+
         // Debug: Check if the user is loaded correctly
         $user = $order->user;
         logger('Order user ID: ' . optional($user)->id);
-    
+
         // Pass the order to the view
         return view('dashboard.orders.show', compact('order'));
     }
-    
+
     public function edit(Order $order)
     {
         // Load the order's products and their variations
@@ -223,7 +239,7 @@ public function index(Request $request)
             $user = $order->user;
             if ($user) {
                 $earnedPoints = $this->calculateRewardPoints($order->total_amount);
-            
+
                 if ($oldStatus !== 'completed' && $order->status === 'completed') {
                     $user->increment('reward_points', $earnedPoints);
                     $user->notify(new OrderStatusNotification($order, 'completed'));
@@ -245,20 +261,20 @@ public function index(Request $request)
     public function destroy($id)
     {
         DB::beginTransaction();
-    
+
         try {
             $order = Order::findOrFail($id);
-    
+
             // Detach products
             $order->products()->detach();
-    
+
             // Delete related notifications
             DB::table('notifications')->where('notifiable_id', $id)->delete();
-    
+
             $order->delete();
-    
+
             DB::commit();
-    
+
             return redirect()->route('dashboard.orders.index')
                 ->with('success', 'Order deleted successfully!');
         } catch (\Exception $e) {
@@ -266,7 +282,7 @@ public function index(Request $request)
             return back()->withErrors(['error' => 'Failed to delete order: ' . $e->getMessage()]);
         }
     }
-    
+
     private function calculateTotalAmount($products)
     {
         $total = 0;
@@ -300,17 +316,17 @@ public function index(Request $request)
         $validated = $request->validate([
             'status' => 'required|in:pending,completed,cancelled',
         ]);
-    
+
         $order = Order::findOrFail($id); // Find the order by its ID
         $oldStatus = $order->status;
         $order->status = $validated['status'];
         $order->save();
-    
+
         // Send email to the customer
         if ($order->email) {
             Mail::to($order->email)->send(new OrderStatusMail($order, $validated['status']));
         }
-    
+
         // Add a database notification for the order
         DB::table('notifications')->insert([
             'type' => \App\Notifications\OrderStatusNotification::class,
@@ -325,43 +341,43 @@ public function index(Request $request)
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-    
+
         return redirect()->route('dashboard.orders.index')
             ->with('success', 'Order status updated and customer notified.');
     }
-    
+
 
 
     public function notifications($orderId)
     {
         // Fetch unread notifications for the logged-in user
         $userNotifications = Auth::user()->unreadNotifications;
-    
+
         // Fetch notifications specific to the given order
         $orderNotifications = DB::table('notifications')
             ->where('notifiable_type', 'App\Models\Order')
             ->where('notifiable_id', $orderId)
             ->latest()
             ->get();
-    
+
         // Pass both user-specific unread notifications and order-specific notifications to the view
         return view('frontend.notifications', compact('userNotifications', 'orderNotifications'));
     }
-    
-    
-    
+
+
+
     public function markNotificationsAsRead()
     {
         if (auth()->check()) {
             auth()->user()->unreadNotifications->markAsRead();
         }
-    
+
         return response()->json([
             'status' => 'success',
             'message' => 'Notifications marked as read.',
             'notification_count' => auth()->user()->unreadNotifications()->count()
         ]);
     }
-  
-    
+
+
 }
