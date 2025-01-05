@@ -29,6 +29,7 @@ use App\Http\Controllers\{
     HistoryController,
     LogController,
     CustomForgotPasswordController,
+    NotificationController,
 };
 
 // ----------------------------
@@ -133,9 +134,7 @@ Route::controller(AuthController::class)->group(function () {
 Route::get('/cashier', [CashierController::class, 'index'])->name('cashier.index');
 Route::post('/save-order', [OrderController::class, 'store'])->name('orders.store');
 
-Route::get('/pos', function () {
-    return view('pos.POS'); // This will render the POS.blade.php file
-})->name('pos');
+Route::get('/cashier/pos', [CashierController::class, 'showPOS'])->name('cashier.showPOS');
 
 // Transactions route
 Route::get('/cashier/transactions', [CashierController::class, 'transactions'])->name('cashier.transactions');
@@ -143,7 +142,7 @@ Route::get('/cashier/transactions', [CashierController::class, 'transactions'])-
 // Update status route
 Route::put('/cashier/transactions/{id}/status', [CashierController::class, 'updateStatus'])->name('cashier.updateStatus');
 
-Route::post('/cashier/checkout', [CashierController::class, 'checkout'])->name('cashier.checkout');
+Route::post('/cashier', [CashierController::class, 'checkout'])->name('cashier.checkout');
 
 Route::get('/cashier/masteritem', [CashierController::class, 'masterItem'])->name('masteritem.index');
 
@@ -154,18 +153,28 @@ Route::post('/cashier/reservations', [CashierController::class, 'storeReservatio
 // Order and Reservation History Routes
 Route::get('/cashier/history', [CashierController::class, 'history'])->name('cashierHistory.index');
 
+Route::get('/cashier/manage', [CashierController::class, 'manageOrders'])->name('cashierManage.index');
+// Orders
+Route::post('/cashier/orders/{id}/accept', [CashierController::class, 'acceptOrder'])->name('orders.accept');
+Route::post('/cashier/orders/{id}/cancel', [CashierController::class, 'cancelOrder'])->name('orders.cancel');
 
-Route::get('/cashier-manage', function () {
-    return view('pos.cashierManage');
-})->name('cashierManage.index');
+// Reservations
+Route::post('/cashier/reservations/{id}/accept', [CashierController::class, 'acceptReservation'])->name('reservations.accept');
+Route::post('/cashier/reservations/{id}/cancel', [CashierController::class, 'cancelReservation'])->name('reservations.cancel');
 
-Route::get('/cashier/profile', [CashierController::class, 'profile'])->name('cashierProfile.index');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cashier/profile', [CashierController::class, 'profile'])->name('cashierProfile.index');
+    Route::post('/cashier/profile/update/{id}', [CashierController::class, 'update'])->name('cashier.update');
+});
 
 // Route to view settings page
 Route::get('/cashier/settings', [CashierController::class, 'settings'])->name('cashierSettings.index');
 
 // Route to update settings
 Route::post('/cashier/settings', [CashierController::class, 'updateSettings'])->name('cashierSettings.update');
+
+Route::post('/cashier/logout', [CashierController::class, 'logout'])->name('cashier.logout');
+
 
 // ----------------------------
 // Notification Routes
@@ -174,7 +183,8 @@ Route::post('/notifications/mark-read', function () {
     auth()->user()->unreadNotifications->markAsRead();
     return back();
 })->name('notifications.mark-read');
-
+Route::post('/notifications/{id}/mark-read', [NotificationController::class, 'markRead'])->name('notifications.mark-single-read');
+Route::get('notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.get-unread-count');
 // ----------------------------
 // Analytics Routes
 // ----------------------------

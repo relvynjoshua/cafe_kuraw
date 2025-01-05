@@ -7,10 +7,11 @@
 
     <title>Cashier POS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             background-color: #f9f9f9;
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         .container-fluid {
@@ -24,28 +25,62 @@
             height: 100%h;
         }
 
+        .sidebar h4 {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
         .sidebar a {
             color: #fff;
             display: block;
-            padding: 10px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
             text-decoration: none;
+            transition: all 0.3s ease;
         }
 
         .sidebar a:hover,
         .active {
             background-color: #444;
+            color: #fff;
+            font-weight: bold;
+            transform: translateX(5px);
+            box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.2);
         }
 
+
+        /* Categories */
         .categories span {
             cursor: pointer;
             padding: 5px 10px;
             border-radius: 5px;
             margin-right: 5px;
-            color: #000;
+            color: #fff;
+            background-color: #000;
+            transition: background-color 0.3s;
         }
 
         .categories span.active {
-            background-color: #000000;
+            background-color: #28a745;
+        }
+
+        .categories button {
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #f7f7f7;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .categories button:hover {
+            background-color: #28a745;
             color: #fff;
         }
 
@@ -176,17 +211,37 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-md-2 sidebar p-3">
-                <h4 class="text-center mb-4">KURAW</h4>
-                <a href="{{ route('pos') }}">Dashboard</a>
-                <a href="{{ route('cashier.index') }}" class="active">Cashier</a>
-                <a href="{{ route('cashier.transactions') }}">Transaction</a>
-                <a href="{{ route('masteritem.index') }}">Master Item</a>
-                <a href="{{ route('cashierReservation.index') }}">Reservation</a>
-                <a href="{{ route('cashierHistory.index') }}">History</a>
-                <a href="{{route(name: 'cashierManage.index')}}">Manage Orders</a>
-                <a href="{{ route('cashierProfile.index') }}">Profile</a>
-                <a href="{{ route('cashierSettings.index') }}">Settings</a>
-                <a href="#" class="text-danger mt-5">Sign Out</a>
+                <h4 class="text-center mb-6"><i class="fas fa-coffee"></i> KURAW CAFE</h4>
+                <a href="{{ route('cashier.showPOS') }}">
+                    <i class="fas fa-home me-2"></i>Dashboard
+                </a>
+                <a href="{{ route('cashier.index') }}" class="active">
+                    <i class="fas fa-cash-register me-2"></i>Cashier
+                </a>
+                <a href="{{ route('cashier.transactions') }}">
+                    <i class="fas fa-receipt me-2"></i>Transaction
+                </a>
+                <a href="{{ route('masteritem.index') }}">
+                    <i class="fas fa-box-open me-2"></i>Master Item
+                </a>
+                <a href="{{ route('cashierReservation.index') }}">
+                    <i class="fas fa-calendar-check me-2"></i>Reservation
+                </a>
+                <a href="{{ route('cashierHistory.index') }}">
+                    <i class="fas fa-history me-2"></i>History
+                </a>
+                <a href="{{route(name: 'cashierManage.index')}}">
+                    <i class="fas fa-tasks me-2"></i>Manage Orders
+                </a>
+                <a href="{{ route('cashierProfile.index') }}">
+                    <i class="fas fa-user me-2"></i>Profile
+                </a>
+                <a href="{{ route('cashierSettings.index') }}">
+                    <i class="fas fa-cogs me-2"></i>Settings
+                </a>
+                <a href="#" class="text-danger mt-5">
+                    <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                </a>
             </div>
 
             <!-- Main Content -->
@@ -197,7 +252,7 @@
                         <input type="text" class="form-control" placeholder="Search menu...">
                         <button class="btn btn-outline-secondary" type="button">Search</button>
                     </div>
-                    <div class="d-flex align-items-center">
+                    <!-- <div class="d-flex align-items-center">
                         <button class="btn btn-light me-3 position-relative">
                             🔔
                             <span
@@ -206,7 +261,7 @@
                         <img src="https://via.placeholder.com/40" class="rounded-circle me-2"
                             style="width: 40px; height: 40px;">
                         <span><strong>John Doe</strong></span>
-                    </div>
+                    </div> -->
                 </div>
 
                 <!-- Categories -->
@@ -257,87 +312,100 @@
 
             <!-- Bill Details -->
             <div class="col-md-4 p-4">
-                <h6><strong>Bill Details</strong></h6>
-
-                <!-- Customer Details -->
-                <div class="mb-2">
-                    <label for="customer_name"><strong>Customer Name:</strong></label>
-                    <input type="text" id="customer_name" class="form-control" placeholder="Enter name" required>
-                </div>
-                <div class="mb-2">
-                    <label for="email"><strong>Email:</strong></label>
-                    <input type="email" id="email" class="form-control" placeholder="Enter email" required>
-                </div>
-                <div class="mb-2">
-                    <label for="phone"><strong>Phone:</strong></label>
-                    <input type="text" id="phone" class="form-control" placeholder="Enter phone number" required>
-                </div>
-
-                <!-- Delivery Method -->
-                <div class="mb-2">
-                    <label for="delivery_method"><strong>Delivery Method:</strong></label>
-                    <select id="delivery_method" class="form-select" required>
-                        <option value="pickup">Pickup</option>
-                        <option value="delivery">Delivery</option>
-                    </select>
-                </div>
-
-                <!-- Cart Details -->
-                <table class="table table-bordered" id="bill-details-table">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Image</th>
-                            <th>Product Name</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bill-details">
-                        <!-- Cart items will be dynamically inserted here -->
-                    </tbody>
-                </table>
-                <hr>
-                <!-- <p><strong>Total: ₱<span id="total-price">0.00</span></strong></p> -->
-
-                <!-- Payment Method -->
-                <div class="mb-3">
-                    <label for="payment_method"><strong>Payment Method:</strong></label>
-                    <select id="payment_method" class="form-select" required onchange="togglePaymentMethod(this.value)">
-                        <option value="" disabled selected>Select Payment Method</option>
-                        <option value="cash">Cash</option>
-                        <option value="gcash">GCash</option>
-                    </select>
-                </div>
-
-                <!-- Cash Payment Section -->
-                <div id="cash-section" class="payment-section d-none">
-                    <div class="mb-3">
-                        <label for="cash-amount" class="form-label">Payment Amount</label>
-                        <input type="number" id="cash-amount" class="form-control" placeholder="Enter payment amount">
+                <div class="card shadow-sm border-0 rounded">
+                    <div class="card-header bg-dark text-white">
+                        <h6 class="mb-0 text-center"><strong>Bill Details</strong></h6>
                     </div>
-                    <p><strong>Total: ₱<span id="cash-total-amount">0.00</span></strong></p>
-                    <p><strong>Change: ₱<span id="cash-change">0.00</span></strong></p>
-                    <button class="btn btn-primary w-100" onclick="processCashPayment()">Confirm Payment</button>
-                </div>
+                    <div class="card-body">
 
-                <!-- GCash Payment Section -->
-                <div id="gcash-section" class="payment-section d-none">
-                    <div class="mb-3">
-                        <label for="gcash_reference_number" class="form-label">GCash Reference Number</label>
-                        <input type="text" id="gcash_reference_number" class="form-control"
-                            placeholder="Enter reference number">
-                    </div>
-                    <div class="mb-3">
-                        <label for="gcash_proof" class="form-label">Proof of Payment</label>
-                        <input type="file" id="gcash_proof" class="form-control">
-                    </div>
-                    <p><strong>Total: ₱<span id="gcash-total-amount">0.00</span></strong></p>
-                    <button class="btn btn-primary w-100" onclick="processGCashPayment()">Confirm Payment</button>
-                </div>
+                        <!-- Customer Details -->
+                        <div class="mb-2">
+                            <label for="customer_name"><strong>Customer Name:</strong></label>
+                            <input type="text" id="customer_name" class="form-control" placeholder="Enter name"
+                                required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="email"><strong>Email:</strong></label>
+                            <input type="email" id="email" class="form-control" placeholder="Enter email" required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="phone"><strong>Phone:</strong></label>
+                            <input type="text" id="phone" class="form-control" placeholder="Enter phone number"
+                                required>
+                        </div>
 
-                <!-- Process Transaction Button -->
-                <button class="btn btn-dark w-100 mt-4" onclick="processTransaction()">Process Transaction</button>
+                        <!-- Delivery Method -->
+                        <div class="mb-2">
+                            <label for="delivery_method"><strong>Delivery Method:</strong></label>
+                            <select id="delivery_method" class="form-select" required>
+                                <option value="pickup">Pickup</option>
+                                <option value="delivery">Delivery</option>
+                            </select>
+                        </div>
+
+                        <!-- Cart Details -->
+                        <table class="table table-bordered" id="bill-details-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bill-details">
+                                <!-- Cart items will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                        <hr>
+                        <!-- <p><strong>Total: ₱<span id="total-price">0.00</span></strong></p> -->
+
+                        <!-- Payment Method -->
+                        <div class="mb-3">
+                            <label for="payment_method"><strong>Payment Method:</strong></label>
+                            <select id="payment_method" class="form-select" required
+                                onchange="togglePaymentMethod(this.value)">
+                                <option value="" disabled selected>Select Payment Method</option>
+                                <option value="cash">Cash</option>
+                                <option value="gcash">GCash</option>
+                            </select>
+                        </div>
+
+                        <!-- Cash Payment Section -->
+                        <div id="cash-section" class="payment-section d-none">
+                            <div class="mb-3">
+                                <label for="cash-amount" class="form-label">Payment Amount</label>
+                                <input type="number" id="cash-amount" class="form-control"
+                                    placeholder="Enter payment amount">
+                            </div>
+                            <p><strong>Total: ₱<span id="cash-total-amount">0.00</span></strong></p>
+                            <p><strong>Change: ₱<span id="cash-change">0.00</span></strong></p>
+                            <button class="btn btn-primary w-100" onclick="processCashPayment()">Confirm
+                                Payment</button>
+                        </div>
+
+                        <!-- GCash Payment Section -->
+                        <div id="gcash-section" class="payment-section d-none">
+                            <div class="mb-3">
+                                <label for="gcash_reference_number" class="form-label">GCash Reference Number</label>
+                                <input type="text" id="gcash_reference_number" class="form-control"
+                                    placeholder="Enter reference number">
+                            </div>
+                            <div class="mb-3">
+                                <label for="gcash_proof" class="form-label">Proof of Payment</label>
+                                <input type="file" id="gcash_proof" class="form-control">
+                            </div>
+                            <p><strong>Total: ₱<span id="gcash-total-amount">0.00</span></strong></p>
+                            <button class="btn btn-primary w-100" onclick="processGCashPayment()">Confirm
+                                Payment</button>
+                        </div>
+
+                        <!-- Process Transaction Button -->
+                        <button class="btn btn-dark w-100 mt-4" onclick="processTransaction()">Process
+                            Transaction</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -392,7 +460,6 @@
             }
         }
 
-        // Process GCash Payment
         function processGCashPayment() {
             const referenceNumber = document.getElementById('gcash_reference_number').value;
             const proofOfPayment = document.getElementById('gcash_proof').files[0];
@@ -502,8 +569,6 @@
         `;
             billDetails.innerHTML += totalRow;
         }
-
-
 
         function updateQuantity(index, action) {
             const item = cart[index];
@@ -641,10 +706,6 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
-
-
-
-
 
     </script>
 

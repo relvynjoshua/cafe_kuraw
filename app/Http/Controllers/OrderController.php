@@ -30,7 +30,21 @@ class OrderController extends Controller
         return view('frontend.orders', compact('orders'));
     }
 
-
+    public function getOrderDetails($id)
+    {
+        try {
+            $order = Order::with('products')->findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'order' => $order,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found.',
+            ], 404);
+        }
+    }
 
     public function index(Request $request)
     {
@@ -129,6 +143,10 @@ class OrderController extends Controller
             }
 
             DB::commit();
+
+            session()->forget('cart'); // Clear session cart data
+            session()->forget('cart_discount');
+            session()->put('cart_count', 0);
 
             return response()->json([
                 'success' => true,
@@ -346,8 +364,6 @@ class OrderController extends Controller
             ->with('success', 'Order status updated and customer notified.');
     }
 
-
-
     public function notifications($orderId)
     {
         // Fetch unread notifications for the logged-in user
@@ -364,8 +380,6 @@ class OrderController extends Controller
         return view('frontend.notifications', compact('userNotifications', 'orderNotifications'));
     }
 
-
-
     public function markNotificationsAsRead()
     {
         if (auth()->check()) {
@@ -378,6 +392,5 @@ class OrderController extends Controller
             'notification_count' => auth()->user()->unreadNotifications()->count()
         ]);
     }
-
 
 }

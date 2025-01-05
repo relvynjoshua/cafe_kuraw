@@ -41,7 +41,7 @@ class OrderStatusNotification extends Notification
             ->line('Your order #' . $this->order->id . ' status has been updated.')
             ->line('Status: ' . ucfirst($this->order->status))
             ->action('View Order', url('/orders/' . $this->order->id))
-            ->line('Thank you for shopping with us!');
+            ->line('Thank you for ordering!');
     }
 
     /**

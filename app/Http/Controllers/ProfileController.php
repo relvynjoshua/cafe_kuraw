@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-    // Display a list of users with optional search functionality
     public function index(Request $request)
     {
         $query = User::query();
@@ -20,7 +19,7 @@ class ProfileController extends Controller
         }
 
         if ($request->has('status')) {
-            $query->where('is_active', $request->status === 'active');
+            $query->where('is_active', $request->status === 'active' ? true : false);
         }
 
         if ($request->has('sort')) {
@@ -28,18 +27,16 @@ class ProfileController extends Controller
         }
 
         $users = $query->paginate(10);
+
         return view('dashboard.profile.index', compact('users'));
     }
 
-
-    // Show the edit form for a specific user
     public function edit($id)
     {
         $user = User::findOrFail($id);
         return view('dashboard.profile.edit', compact('user'));
     }
 
-    // Update a user's profile
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -65,35 +62,42 @@ class ProfileController extends Controller
     public function disable($id)
     {
         $user = User::findOrFail($id);
+
+        if (!$user->is_active) {
+            return redirect()->route('dashboard.profile.index')->with('error', 'User is already disabled.');
+        }
+
         $user->update(['is_active' => false]);
 
-        return redirect()->route('dashboard.profile.index')->with('success', 'User has been disabled.');
+        return redirect()->route('dashboard.profile.index')->with('success', "User '{$user->firstname}' has been disabled.");
     }
 
-    /**
-     * Enable a user's account.
-     */
     public function enable($id)
     {
         $user = User::findOrFail($id);
+
+        if ($user->is_active) {
+            return redirect()->route('dashboard.profile.index')->with('error', 'User is already active.');
+        }
+
         $user->update(['is_active' => true]);
 
-        return redirect()->route('dashboard.profile.index')->with('success', 'User has been enabled.');
+        return redirect()->route('dashboard.profile.index')->with('success', "User '{$user->firstname}' has been enabled.");
     }
-
 
     public function destroy($id)
     {
-        $user = User::findOrFail($id); // Ensure user is fetched
+        $user = User::findOrFail($id);
         $user->delete();
+
         return redirect()->route('dashboard.profile.index')->with('success', 'User has been deleted.');
     }
+
     public function restore($id)
     {
         $user = User::withTrashed()->findOrFail($id);
         $user->restore();
+
         return redirect()->route('dashboard.profile.index')->with('success', 'User has been restored.');
     }
-
-
 }

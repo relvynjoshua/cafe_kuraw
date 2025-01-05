@@ -60,30 +60,27 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|string|min:5',
         ]);
-    
-        $credentials = $request->only('email', 'password', 'is_status');
-    
-        // Check if the user exists
-        $user = User::where('email', $credentials['email'])->first();
-    
-        if (!$user) {
-            return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
-        }
-    
-        // Check if the user's account is active
-        if (!$user->is_active) {
-            return back()->withErrors(['email' => 'Your account is disabled. Please contact support.'])->withInput();
-        }
-    
+
+        $credentials = $request->only('email', 'password');
+
         // Attempt to log in the user
         if (Auth::attempt($credentials)) {
-            return redirect()->route($user->role === 'admin' ? 'dashboard.index' : 'menu')
-                             ->with('success', 'Logged in successfully!');
+            $user = Auth::user();
+
+            // Redirect based on the user's role
+            if ($user->role === 'admin') {
+                return redirect()->route('dashboard.index')->with('success', 'Welcome, Admin!');
+            } elseif ($user->role === 'user') {
+                return redirect()->route('menu')->with('success', 'Logged in successfully!');
+            }
+
+            // Fallback for unknown roles
+            return redirect('/')->with('error', 'Unauthorized role.');
         }
-    
+
         return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
     }
-    
+
 
     /**
      * Verify OTP after login.

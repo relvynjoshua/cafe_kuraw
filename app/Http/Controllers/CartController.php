@@ -26,6 +26,12 @@ class CartController extends Controller
         return view('frontend.cart', compact('cart', 'totalPrice', 'discount', 'finalPrice', 'orders'));
     }
 
+    public function cartCount()
+    {
+        $cartCount = session('cart_count', 0);
+        return response()->json(['cart_count' => $cartCount]);
+    }
+
     /**
      * Add a product to the cart.
      */
@@ -46,6 +52,17 @@ class CartController extends Controller
 
         // Fetch existing cart or initialize it
         $cart = session()->get('cart', []);
+
+        // Calculate current total quantity
+        $currentTotalQuantity = collect($cart)->sum('quantity');
+
+        // Check if adding the new quantity will exceed the limit
+        if ($currentTotalQuantity + $quantity > 10) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You cannot order more than 10 items. Please call us for larger orders.'
+            ], 400);
+        }
 
         // Use product and variation ID as a unique cart key
         $cartKey = $productId . '-' . $variationId;
@@ -69,7 +86,10 @@ class CartController extends Controller
         // Update the cart count in session
         session()->put('cart_count', collect($cart)->sum('quantity'));
 
-        return response()->json(['status' => 'success', 'message' => 'Product added to cart!', 'cart_count' => session('cart_count')]);
+        $cartCount = collect($cart)->sum('quantity');
+        session()->put('cart_count', $cartCount);
+
+        return response()->json(['status' => 'success', 'message' => 'Product added to cart!', 'cart_count' => $cartCount]);
     }
 
     /**
@@ -87,9 +107,11 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Cart updated successfully!');
-    }
+        $cartCount = collect($cart)->sum('quantity');
+        session()->put('cart_count', $cartCount);
 
+        return response()->json(['status' => 'success', 'message' => 'Cart updated successfully!', 'cart_count' => $cartCount]);
+    }
     /**
      * Remove an item from the cart.
      */
@@ -104,9 +126,11 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Item removed from cart.');
-    }
+        $cartCount = collect($cart)->sum('quantity');
+        session()->put('cart_count', $cartCount);
 
+        return response()->json(['status' => 'success', 'message' => 'Item removed from cart.', 'cart_count' => $cartCount]);
+    }
     /**
      * Checkout the cart and create an order.
      */
@@ -123,31 +147,31 @@ class CartController extends Controller
             'reference_number' => 'nullable|required_if:payment_method,Gcash|string|size:13',
             'proof_of_payment' => 'nullable|image|required_if:payment_method,Gcash|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
-    
+
         if ($validated['delivery_method'] === 'pickup') {
             $validated['address'] = 'Kuraw Cafe';
         }
-    
+
         $cart = session()->get('cart', []);
         $discount = session('cart_discount', 0);
-    
+
         if (empty($cart)) {
             return redirect()->route('cart.index')->withErrors('Your cart is empty.');
         }
-    
+
         $totalAmount = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
         $finalAmount = max(0, $totalAmount - $discount);
-    
+
         $user = Auth::user();
         if (!$user) {
             return redirect()->route('login')->withErrors('You must be logged in to place an order.');
         }
-    
+
         $gcashProofPath = null;
         if ($request->payment_method === 'Gcash' && $request->hasFile('proof_of_payment')) {
             $gcashProofPath = $request->file('proof_of_payment')->store('gcash_proofs', 'public');
         }
-    
+
         $order = Order::create([
             'user_id' => $user->id,
             'customer_name' => $validated['customer_name'],
@@ -162,7 +186,7 @@ class CartController extends Controller
             'reference_number' => $validated['reference_number'] ?? null,
             'proof_of_payment' => $gcashProofPath,
         ]);
-    
+
         foreach ($cart as $key => $item) {
             [$productId, $variationId] = explode('-', $key);
             $order->products()->attach($productId, [
@@ -171,7 +195,7 @@ class CartController extends Controller
                 'variation' => $item['variation'] ?? null,
             ]);
         }
-    
+
         if ($discount > 0) {
             \App\Models\PointsHistory::create([
                 'user_id' => $user->id,
@@ -179,14 +203,16 @@ class CartController extends Controller
                 'points' => -$discount,
             ]);
         }
-    
+
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             $admin->notify(new NewOrderPlaced($order));
         }
-    
+
+        // Clear the cart session and reset cart count
         session()->forget(['cart', 'cart_discount']);
-    
+        session()->put('cart_count', 0); // Reset cart count to zero
+
         return redirect()->route('cart.index')->with('success', 'Order placed successfully!');
     }
 }

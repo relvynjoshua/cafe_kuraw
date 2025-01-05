@@ -7,9 +7,54 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Reservation;
+use App\Models\User;
 
 class CashierController extends Controller
 {
+    public function showPOS()
+    {
+        // Fetch the latest transactions
+        $latestTransactions = Order::orderBy('created_at', 'desc')
+            ->take(5) // Limit to the latest 5 transactions
+            ->get();
+
+        // Fetch popular products by the number of orders
+        $popularProducts = Product::withCount('orders') // Assuming a relationship exists
+            ->orderBy('orders_count', 'desc')
+            ->take(5) // Limit to the top 5 products
+            ->get();
+
+        // Fetch reservations as receipts
+        $recentReceipts = Reservation::where('status', 'confirmed')
+            ->orderBy('reservation_date', 'desc')
+            ->take(5)
+            ->get();
+
+        // Calculate today's gross profit
+        $today = now()->toDateString(); // Get today's date
+        $todayOrders = Order::whereDate('created_at', $today)->get();
+
+        $grossProfit = $todayOrders->sum(function ($order) {
+            return $order->total_amount; // Total order amount
+        });
+
+        $totalCost = $todayOrders->sum(function ($order) {
+            return $order->products->sum(function ($product) {
+                return $product->cost_price * $product->pivot->quantity; // Assuming `cost_price` exists
+            });
+        });
+
+        $netProfit = $grossProfit - $totalCost; // Calculate net profit
+
+        return view('pos.POS', compact(
+            'latestTransactions',
+            'popularProducts',
+            'recentReceipts',
+            'grossProfit',
+            'netProfit'
+        ));
+    }
+
     public function settings()
     {
         // Check if the user is authenticated
@@ -67,6 +112,36 @@ class CashierController extends Controller
 
         // Return the profile view with the cashier data
         return view('pos.cashierProfile', compact('cashier'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'firstname' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+        ]);
+
+        // Find the cashier by ID
+        $cashier = User::findOrFail($id);
+
+        // Update the fields
+        $cashier->firstname = $request->input('firstname');
+        $cashier->email = $request->input('email');
+
+        // Save the changes
+        $cashier->save();
+
+        // Redirect back with success message
+        return redirect()->route('cashierProfile.index')->with('success', 'Profile updated successfully!');
+    }
+
+    public function edit($id)
+    {
+        // Retrieve the cashier by ID
+        $cashier = User::findOrFail($id); // Replace `User` with your Cashier model if different
+
+        // Return the edit view with the cashier data
+        return view('pos.cashierEdit', compact('cashier'));
     }
 
     public function index()
@@ -226,14 +301,74 @@ class CashierController extends Controller
         return redirect()->route('cashierReservation.index')->with('success', 'Reservation created successfully.');
     }
 
-    public function history()
+    public function history(Request $request)
     {
-        // Fetch order and reservation data
-        $orders = Order::orderBy('created_at', 'desc')->get();
-        $reservations = Reservation::orderBy('reservation_date', 'desc')->get();
+        // Check which table (orders or reservations) is being paginated
+        $orders = Order::orderBy('created_at', 'desc')->paginate(10, ['*'], 'orders_page');
+        $reservations = Reservation::orderBy('created_at', 'desc')->paginate(10, ['*'], 'reservations_page');
 
         return view('pos.cashier-order-history', compact('orders', 'reservations'));
     }
 
+    public function manageOrders()
+    {
+        // Fetch pending orders
+        $orders = Order::where('status', 'pending')->orderBy('created_at', 'asc')->get();
+
+        // Fetch pending reservations
+        $reservations = Reservation::where('status', 'pending')->orderBy('reservation_date', 'asc')->get();
+
+        // Pass the data to the view
+        return view('pos.cashierManage', compact('orders', 'reservations'));
+    }
+
+    public function acceptOrder($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->status = 'completed';
+        $order->save();
+
+        return redirect()->back()->with('success', 'Order accepted successfully!');
+    }
+
+    public function cancelOrder($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->status = 'cancelled';
+        $order->save();
+
+        return redirect()->back()->with('success', 'Order cancelled successfully!');
+    }
+
+    public function acceptReservation($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        $reservation->status = 'completed';
+        $reservation->save();
+
+        return redirect()->back()->with('success', 'Reservation accepted successfully!');
+    }
+
+    public function cancelReservation($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        $reservation->status = 'cancelled';
+        $reservation->save();
+
+        return redirect()->back()->with('success', 'Reservation cancelled successfully!');
+    }
+
+    public function logout(Request $request)
+    {
+        // Invalidate the session and log the user out
+        auth()->logout();
+
+        // Regenerate the session to prevent session fixation attacks
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Redirect to the login page
+        return redirect()->route('login-signup.form')->with('success', 'You have been logged out successfully.');
+    }
 
 }

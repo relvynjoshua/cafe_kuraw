@@ -236,14 +236,35 @@
    </div>
 </div>
 
+<!-- Call Us Notification Modal -->
+<div class="modal fade" id="callUsModal" tabindex="-1" aria-labelledby="callUsModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="callUsModalLabel">Order Limit Exceeded</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body text-center">
+            <i class="fas fa-phone-alt text-warning fa-3x mb-3"></i>
+            <p>You have exceeded the maximum order limit of 10 items. Please <strong>call us</strong> at <strong>0956
+                  165 7495</strong> to place a larger order.</p>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="tel:+639561657495" class="btn btn-primary">Call Us</a>
+         </div>
+      </div>
+   </div>
+</div>
+
+
 <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script>
    function addToCart(productId) {
       const quantity = document.querySelector(`#quantity_${productId}`).value || 1;
       const variationSelect = document.querySelector(`#variation_${productId}`);
-      const variationId = variationSelect.value; // Get the selected variation ID
-      const variationPrice = variationSelect.options[variationSelect.selectedIndex].getAttribute('data-price'); // Get the price
+      const variationId = variationSelect ? variationSelect.value : null; // Get the selected variation ID if it exists
 
       fetch('{{ route('cart.add') }}', {
          method: 'POST',
@@ -266,13 +287,14 @@
                // Show Modal Explicitly
                const addToCartModal = new bootstrap.Modal(document.getElementById('addToCartModal'));
                addToCartModal.show();
-            } else {
-               alert(data.message);
+            } else if (data.status === 'error') {
+               // Show "Call Us" Modal
+               const callUsModal = new bootstrap.Modal(document.getElementById('callUsModal'));
+               callUsModal.show();
             }
          })
          .catch(error => console.error('Error:', error));
    }
 </script>
-
 
 @endsection

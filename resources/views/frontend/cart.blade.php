@@ -252,6 +252,45 @@
             }
         });
     });
+
+    document.querySelectorAll('.btn-danger').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const form = event.target.closest('form');
+            const action = form.getAttribute('action');
+            const csrfToken = form.querySelector('input[name="_token"]').value;
+            const itemId = form.querySelector('input[name="item_id"]').value;
+
+            fetch(action, {
+                method: 'DELETE', // Use DELETE method
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ item_id: itemId }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update the cart badge
+                        document.getElementById('cart-badge').innerText = data.cart_count;
+
+                        // Redirect if the cart is empty
+                        if (data.cart_count === 0) {
+                            window.location.href = "{{ route('cart.index') }}"; // Redirect to the cart page
+                        } else {
+                            // Optionally refresh the current cart page to reflect changes
+                            window.location.reload();
+                        }
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error removing item from cart:', error));
+        });
+    });
 </script>
 
 <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
