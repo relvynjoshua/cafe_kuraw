@@ -16,6 +16,14 @@ class LoginController extends Controller
             'password' => 'required|min:5',
         ]);
 
+        // Check if the user exists
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()
+                ->withErrors(['email' => 'The account does not exist. Please sign up or check your email address.'])
+                ->withInput();
+        }
+
         // Attempt to log in the user
         if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             // Invalid credentials

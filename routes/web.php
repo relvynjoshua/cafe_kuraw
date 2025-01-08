@@ -107,6 +107,9 @@ Route::controller(AuthController::class)->group(function () {
     // Route for OTP verification
     Route::post('/verify-otp', [OTPController::class, 'verifyOTP']);
 
+    // Route for resending OTP
+    Route::post('/resend-otp', [OTPController::class, 'resendOTP']);
+
     // Login Route
     Route::post('/login-signup', [LoginController::class, 'login'])->name('login');
     Route::post('/register', [RegisterController::class, 'register'])->name('register');
@@ -242,7 +245,7 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     // Report Generation Routes
     Route::get('/reports/orders', [DashboardController::class, 'generateOrdersReport'])->name('dashboard.reports.orders');
     Route::get('/reports/reservations', [DashboardController::class, 'generateReservationsReport'])->name('dashboard.reports.reservations');
-    
+
     // Categories
     Route::prefix('category')->controller(CategoryController::class)->name('dashboard.category')->group(function () {
         Route::get('/', 'index')->name('.index');

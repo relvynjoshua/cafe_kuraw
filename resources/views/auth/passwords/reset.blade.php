@@ -11,7 +11,6 @@
 </head>
 
 <body>
-<body>
     <div class="container mt-5">
         <img src="{{ asset('img/logo.jpg') }}" alt="Kuraw Coffee Shop Logo" class="logo">
         <h2 class="text-center">Reset Password</h2>
@@ -29,19 +28,27 @@
         </div>
         @endif
 
-        <form method="POST" action="{{ route('password.update') }}">
+        <form id="reset-password-form" method="POST" action="{{ route('password.update') }}">
             @csrf
             <input type="hidden" name="token" value="{{ $token }}">
             <input type="hidden" name="email" value="{{ $email }}">
 
+            <!-- Password Field -->
             <div class="form-group">
                 <label for="password">New Password:</label>
                 <input type="password" id="password" name="password" class="form-control" placeholder="Enter your new password" required>
+                <small id="password-error" class="form-text text-danger" style="display: none;">
+                    Password must be at least 8 characters long, contain at least one special character (!@#$%^&*), and one uppercase letter.
+                </small>
             </div>
 
+            <!-- Confirm Password Field -->
             <div class="form-group">
                 <label for="password_confirmation">Confirm Password:</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Confirm your new password" required>
+                <small id="confirm-password-error" class="form-text text-danger" style="display: none;">
+                    Password confirmation does not match or lacks required criteria.
+                </small>
             </div>
 
             <button type="submit" class="btn btn-primary mt-3">Reset Password</button>
@@ -59,10 +66,44 @@
     </footer>
 </body>
 
+<script>
+    // Add client-side validation for password
+    document.getElementById('reset-password-form').addEventListener('submit', function (e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('password_confirmation').value;
+        const passwordError = document.getElementById('password-error');
+        const confirmPasswordError = document.getElementById('confirm-password-error');
+
+        // Check if the password meets the criteria
+        const specialCharRegex = /[!@#$%^&*]/;
+        const upperCaseRegex = /[A-Z]/;
+        let isValid = true;
+
+        if (password.length < 8 || !specialCharRegex.test(password) || !upperCaseRegex.test(password)) {
+            e.preventDefault(); // Prevent form submission
+            passwordError.style.display = 'block'; // Show error message
+            isValid = false;
+        } else {
+            passwordError.style.display = 'none'; // Hide error message
+        }
+
+        // Check if passwords match and confirm password meets the same criteria
+        if (password !== confirmPassword || !specialCharRegex.test(confirmPassword) || !upperCaseRegex.test(confirmPassword)) {
+            e.preventDefault(); // Prevent form submission
+            confirmPasswordError.style.display = 'block'; // Show error message
+            isValid = false;
+        } else {
+            confirmPasswordError.style.display = 'none'; // Hide error message
+        }
+
+        return isValid; // Allow form submission only if valid
+    });
+</script>
+
 <!-- Custom CSS for additional styling -->
 <style>
     body {
-        background-color: #f8f9fa; /* Light background color */
+        background-color: #f8f9fa;
         font-family: 'Arial', sans-serif;
         display: flex;
         flex-direction: column;
@@ -70,28 +111,27 @@
     }
 
     .container {
-        max-width: 500px; /* Limit the form width */
+        max-width: 500px;
         padding: 30px;
-        background-color: #ffffff; /* White background for the form */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow around the form */
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         border-radius: 15px;
-        margin-bottom: auto; /* Push footer to the bottom */
+        margin-bottom: auto;
     }
 
     h2 {
-        color: #333; /* Dark color for the title */
+        color: #333;
     }
 
     .form-control {
-        border-radius: 20px; /* Rounded corners for input fields */
+        border-radius: 20px;
         box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     .btn-primary {
-        background-color: #000000; /* Black background */
-        color: #ffffff; /* White text */
-        border-color: #ffffff; /* White border */
-        border-radius: 20px; /* Rounded button */
+        background-color: #000000;
+        color: #ffffff;
+        border-radius: 20px;
         padding: 10px;
         font-size: 16px;
         width: 100%;
@@ -99,76 +139,30 @@
     }
 
     .btn-primary:hover {
-        background-color: #ffffff; /* White background on hover */
-        color: #000000; /* Black text on hover */
-        border-color: #000000; /* Optional: Change border to black on hover */
+        background-color: #ffffff;
+        color: #000000;
+        border-color: #000000;
     }
 
     .alert {
-        border-radius: 8px; /* Rounded corners for alerts */
+        border-radius: 8px;
         font-size: 16px;
     }
 
-    .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-    }
-
-    .alert-danger {
-        background-color: #f8d7da;
-        color: #721c24;
-    }
-
-    .mt-3 {
-        margin-top: 1rem;
-    }
-
-    .text-center {
-        margin-bottom: 20px;
-    }
-
-    /* Logo Styling */
     .logo {
-        max-width: 150px; /* Maximum width for the logo */
+        max-width: 150px;
         display: block;
-        margin: 0 auto 20px; /* Center the logo with space below */
+        margin: 0 auto 20px;
         border-radius: 15px;
     }
 
-    /* Footer Styles */
     .footer-section {
-        background-color: #000000; /* Dark footer background */
-        padding: 10px 0; /* Padding for top and bottom */
-        color: white; /* White text for contrast */
+        background-color: #000000;
+        padding: 10px 0;
+        color: white;
         text-align: center;
-        margin-top: auto; /* Push footer to the bottom of the page */
+        margin-top: auto;
         font-size: 14px;
     }
-
-    .copyright-text {
-        margin: 0;
-        font-weight: 400;
-        font-size: 18px;
-    }
-
-    .footer-section a {
-        color: #ffff;
-        text-decoration: none;
-    }
-
-    .footer-section a:hover {
-        text-decoration: underline; /* Underline links on hover */
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .footer-section {
-            padding: 10px 0; /* Less padding on mobile */
-        }
-
-        .copyright-text {
-            font-size: 12px; /* Smaller text size on mobile */
-        }
-    }
 </style>
-</html> 
+</html>

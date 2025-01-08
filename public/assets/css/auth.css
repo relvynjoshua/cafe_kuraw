@@ -117,6 +117,10 @@ html, body {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
 }
 
+input.error {
+    border: 2px solid red;
+}
+
 .form button {
     cursor: pointer;
     width: 100%;
@@ -351,34 +355,72 @@ html, body {
     }
 }
 
-/* MODAL */
+/* Modal Style */
 .modal {
-    display: none;  /* Initially hidden */
-    background-color: rgba(0, 0, 0, 0.7); /* Dark background */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
-    z-index: 999;
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 15px;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
     text-align: center;
-    width: 350px;
-    max-width: 100%;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-}
-
-#otp-timer {
+  }
+  
+  .modal-header h2 {
+    margin: 0;
+  }
+  
+  .otp-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+    border-radius: 10;
+  }
+  
+  .otp-digit {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 1.2em;
+  }
+  
+  #resend-timer {
     margin-top: 15px;
-}
+    font-size: 0.9em;
+    color: gray;
+  }
 
+  /* Loading spinner*/
+  .spinner {
+    width: 24px;
+    height: 24px;
+    border: 4px solid #fff(0, 0, 0, 0.1);
+    border-top-color: #333;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
 button {
     padding: 10px 20px;
     background-color: #5cb85c;
@@ -427,7 +469,7 @@ button:hover {
 button {
     margin-top: 15px;
     padding: 12px 25px;
-    background-color: #5cb85c;
+    background-color: black;
     color: #fff;
     border: none;
     border-radius: 5px;
