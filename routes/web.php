@@ -239,6 +239,10 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
+    // Report Generation Routes
+    Route::get('/reports/orders', [DashboardController::class, 'generateOrdersReport'])->name('dashboard.reports.orders');
+    Route::get('/reports/reservations', [DashboardController::class, 'generateReservationsReport'])->name('dashboard.reports.reservations');
+    
     // Categories
     Route::prefix('category')->controller(CategoryController::class)->name('dashboard.category')->group(function () {
         Route::get('/', 'index')->name('.index');

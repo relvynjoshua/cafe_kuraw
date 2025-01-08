@@ -123,13 +123,15 @@
     }
 
     .btn-report {
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
         padding: 10px 20px;
         margin: 5px;
         font-size: 1rem;
         border: none;
         border-radius: 5px;
         background-color: #333;
-        /* Dark black-gray */
         color: #fff;
         transition: 0.3s;
     }
@@ -137,6 +139,7 @@
     .btn-report:hover {
         background-color: #000;
     }
+
 
     /* Responsive */
     @media (max-width: 992px) {
@@ -162,17 +165,17 @@
             <div class="kpi-container">
                 <div class="kpi-card">
                     <i class="fas fa-dollar-sign kpi-icon"></i>
-                    <div class="kpi-value">₱{{ number_format($salesData ?? 150000, 2) }}</div>
+                    <div class="kpi-value">₱{{ number_format($totalSales, 2) }}</div>
                     <div class="kpi-title">Overall Sales</div>
                 </div>
                 <div class="kpi-card">
                     <i class="fas fa-shopping-cart kpi-icon"></i>
-                    <div class="kpi-value">{{ $totalOrders ?? 340 }}</div>
+                    <div class="kpi-value">{{ $totalOrders ?? 0 }}</div>
                     <div class="kpi-title">Total Orders</div>
                 </div>
                 <div class="kpi-card">
                     <i class="fas fa-users kpi-icon"></i>
-                    <div class="kpi-value">{{ $totalUsers ?? 150 }}</div>
+                    <div class="kpi-value">{{ $totalCustomers ?? 0 }}</div>
                     <div class="kpi-title">Total Users</div>
                 </div>
             </div>
@@ -181,45 +184,49 @@
             <div class="table-card">
                 <h4>Incoming Orders</h4>
                 <table>
-                    <tr>
-                        <th>Name</th>
-                        <th>Order Count</th>
-                        <th>Last Order</th>
-                    </tr>
-                    <tr>
-                        <td>John Doe</td>
-                        <td>5</td>
-                        <td>2024-01-15</td>
-                    </tr>
-                    <tr>
-                        <td>Jane Smith</td>
-                        <td>8</td>
-                        <td>2024-01-14</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Order Count</th>
+                            <th>Last Order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($latestOrders as $order)
+                            <tr>
+                                <td>{{ $order->customer_name ?? 'Unknown' }}</td>
+                                <td>{{ $order->products->count() }}</td>
+                                <td>{{ $order->created_at->format('Y-m-d') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
+
 
             <!-- Incoming Reservations -->
             <div class="table-card">
                 <h4>Incoming Reservations</h4>
                 <table>
-                    <tr>
-                        <th>Name</th>
-                        <th>Reservation Count</th>
-                        <th>Last Reservation</th>
-                    </tr>
-                    <tr>
-                        <td>Sarah Brown</td>
-                        <td>3</td>
-                        <td>2024-01-12</td>
-                    </tr>
-                    <tr>
-                        <td>Mark Lee</td>
-                        <td>4</td>
-                        <td>2024-01-10</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Reservation Count</th>
+                            <th>Last Reservation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($latestReservations as $reservation)
+                            <tr>
+                                <td>{{ $reservation->name ?? 'Unknown' }}</td>
+                                <td>{{ $reservation->count ?? 1 }}</td>
+                                <td>{{ $reservation->created_at->format('Y-m-d') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
+
         </div>
 
         <!-- Right Section -->
@@ -246,12 +253,17 @@
     <!-- Generate Reports -->
     <div class="report-container">
         <h3>Generate Reports</h3>
-        <button class="btn-report">Daily Orders</button>
-        <button class="btn-report">Weekly Orders</button>
-        <button class="btn-report">Monthly Orders</button>
-        <button class="btn-report">Daily Reservations</button>
-        <button class="btn-report">Weekly Reservations</button>
-        <button class="btn-report">Monthly Reservations</button>
+        <a href="{{ route('dashboard.reports.orders', ['time_frame' => 'daily']) }}" class="btn-report">Daily Orders</a>
+        <a href="{{ route('dashboard.reports.orders', ['time_frame' => 'weekly']) }}" class="btn-report">Weekly
+            Orders</a>
+        <a href="{{ route('dashboard.reports.orders', ['time_frame' => 'monthly']) }}" class="btn-report">Monthly
+            Orders</a>
+        <a href="{{ route('dashboard.reports.reservations', ['time_frame' => 'daily']) }}" class="btn-report">Daily
+            Reservations</a>
+        <a href="{{ route('dashboard.reports.reservations', ['time_frame' => 'weekly']) }}" class="btn-report">Weekly
+            Reservations</a>
+        <a href="{{ route('dashboard.reports.reservations', ['time_frame' => 'monthly']) }}" class="btn-report">Monthly
+            Reservations</a>
     </div>
 </div>
 
@@ -260,35 +272,74 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     // Orders by Time
-    new ApexCharts(document.querySelector("#ordersByTimeChart"), {
-        series: [{ name: "Orders", data: [120, 150, 180] }],
-        chart: { type: "bar", height: 300 },
-        xaxis: { categories: ["Daily", "Weekly", "Monthly"] },
-        colors: ["#000"]
-    }).render();
+    document.addEventListener("DOMContentLoaded", function () {
+        new ApexCharts(document.querySelector("#ordersByTimeChart"), {
+            series: [{
+                name: "Orders",
+                data: [{{ $ordersDaily }}, {{ $ordersWeekly }}, {{ $ordersMonthly }}]
+            }],
+            chart: {
+                type: "bar",
+                height: 300
+            },
+            xaxis: {
+                categories: ["Daily", "Weekly", "Monthly"]
+            },
+            colors: ["#000"]
+        }).render();
+    });
 
-    // Inventory Overview
-    new ApexCharts(document.querySelector("#inventoryChart"), {
-        series: [40, 30, 30],
-        chart: { type: "pie", height: 300 },
-        labels: ["Available", "Sold", "Reserved"],
-        colors: ["#000", "#555", "#888"]
-    }).render();
+    // Convert PHP variables to JavaScript
+    let categories = @json($categories);
+    let categoryCounts = @json($categoryCounts);
 
-    // Customer Growth
-    new ApexCharts(document.querySelector("#customerGrowthChart"), {
-        series: [{ name: "Growth", data: [10, 20, 30, 40] }],
-        chart: { type: "area", height: 300 },
-        colors: ["#000"]
-    }).render();
+    // Inventory Overview Chart
+    document.addEventListener("DOMContentLoaded", function () {
+        new ApexCharts(document.querySelector("#inventoryChart"), {
+            series: categoryCounts,
+            chart: { type: "pie", height: 300 },
+            labels: categories,
+            colors: ["#000", "#555", "#888", "#CCC", "#999"] // Add more colors if needed
+        }).render();
+    });
 
-    // Reward System
-    new ApexCharts(document.querySelector("#rewardSystemChart"), {
-        series: [40, 35, 25],
-        chart: { type: "donut", height: 300 },
-        labels: ["Earned", "Used", "Expired"],
-        colors: ["#000", "#555", "#888"]
-    }).render();
+    // Convert PHP variables to JavaScript
+    let growthMonths = @json($growthMonths);
+    let growthData = @json($growthData);
+
+    // Customer Growth Chart
+    document.addEventListener("DOMContentLoaded", function () {
+        new ApexCharts(document.querySelector("#customerGrowthChart"), {
+            series: [{
+                name: "Growth",
+                data: growthData
+            }],
+            chart: {
+                type: "area",
+                height: 300
+            },
+            xaxis: {
+                categories: growthMonths
+            },
+            colors: ["#000"]
+        }).render();
+    });
+
+    // Convert PHP variables to JavaScript
+    let rewardPoints = @json($rewardPoints);
+
+    // Reward System Chart
+    document.addEventListener("DOMContentLoaded", function () {
+        new ApexCharts(document.querySelector("#rewardSystemChart"), {
+            series: rewardPoints,
+            chart: {
+                type: "donut",
+                height: 300
+            },
+            labels: rewardPoints.map((_, index) => `User ${index + 1}`), // Anonymize user data
+            colors: ["#000", "#555", "#888", "#AAA", "#CCC"] // Add more colors if needed
+        }).render();
+    });
 </script>
 
 @endsection
