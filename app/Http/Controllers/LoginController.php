@@ -39,7 +39,7 @@ class LoginController extends Controller
         if ($user->role === 'admin') {
             return redirect()->route('dashboard.index')->with('success', 'Welcome, Admin!');
         } elseif ($user->role === 'cashier') {
-            return redirect()->route('pos.POS')->with('success', 'Welcome, Cashier!');
+            return redirect()->route('cashier.showPOS')->with('success', 'Welcome, Cashier!');
         } elseif ($user->role === 'user') {
             return redirect()->route('home')->with('success', 'Welcome back!');
         } 

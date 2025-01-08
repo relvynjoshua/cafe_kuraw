@@ -130,18 +130,17 @@ Route::controller(AuthController::class)->group(function () {
 // ----------------------------
 // Cashier POS Routes
 // ----------------------------
-// Route to display the Cashier POS page
-Route::get('/cashier', [CashierController::class, 'index'])->name('cashier.index');
-Route::post('/save-order', [OrderController::class, 'store'])->name('orders.store');
-
+// Cashier dashboard
 Route::get('/cashier/pos', [CashierController::class, 'showPOS'])->name('cashier.showPOS');
 
 // Transactions route
 Route::get('/cashier/transactions', [CashierController::class, 'transactions'])->name('cashier.transactions');
+Route::post('/cashier/transactions/save-order', [OrderController::class, 'store'])->name('orders.store');
 
 // Update status route
 Route::put('/cashier/transactions/{id}/status', [CashierController::class, 'updateStatus'])->name('cashier.updateStatus');
 
+Route::get('/cashier', [CashierController::class, 'index'])->name('cashier.index');
 Route::post('/cashier', [CashierController::class, 'checkout'])->name('cashier.checkout');
 
 Route::get('/cashier/masteritem', [CashierController::class, 'masterItem'])->name('masteritem.index');
@@ -173,7 +172,7 @@ Route::get('/cashier/settings', [CashierController::class, 'settings'])->name('c
 // Route to update settings
 Route::post('/cashier/settings', [CashierController::class, 'updateSettings'])->name('cashierSettings.update');
 
-Route::post('/cashier/logout', [CashierController::class, 'logout'])->name('cashier.logout');
+Route::post('/cashier/logout', [CashierController::class, 'logoutCashier'])->name('cashier.logoutCashier');
 
 
 // ----------------------------

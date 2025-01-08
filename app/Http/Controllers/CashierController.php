@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class CashierController extends Controller
 {
@@ -369,6 +370,17 @@ class CashierController extends Controller
 
         // Redirect to the login page
         return redirect()->route('login-signup.form')->with('success', 'You have been logged out successfully.');
+    }
+
+    public function logoutCashier(Request $request)
+    {
+        Auth::guard('cashier')->logout();
+
+        $request->session()->forget('cashier_auth_session');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login-signup.form')->with('success', 'Cashier logged out successfully!');
     }
 
 }

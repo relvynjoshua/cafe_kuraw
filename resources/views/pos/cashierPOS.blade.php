@@ -239,9 +239,12 @@
                 <a href="{{ route('cashierSettings.index') }}">
                     <i class="fas fa-cogs me-2"></i>Settings
                 </a>
-                <a href="#" class="text-danger mt-5">
-                    <i class="fas fa-sign-out-alt me-2"></i>Sign Out
-                </a>
+                <form action="{{ route('cashier.logoutCashier') }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-link text-danger mt-5">
+                        <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                    </button>
+                </form>
             </div>
 
             <!-- Main Content -->
