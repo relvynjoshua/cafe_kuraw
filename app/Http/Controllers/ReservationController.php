@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\NewReservationNotification;
+use App\Notifications\ReservationStatusUpdated;
 
 class ReservationController extends Controller
 {
@@ -44,6 +46,7 @@ class ReservationController extends Controller
         return view('dashboard.reservations.index', compact('reservations'));
     }
 
+    // Store reservation
     // Store reservation
     public function store(Request $request)
     {
@@ -102,12 +105,16 @@ class ReservationController extends Controller
             'status' => $request->input('status', 'pending'),
         ]));
 
+
         // Notify admins for frontend reservations
         if ($request->route()->getName() === 'reservation.store') {
             $admins = \App\Models\User::where('role', 'admin')->get();
             foreach ($admins as $admin) {
-                $admin->notify(new \App\Notifications\NewReservationNotification($reservation));
+                $admin->notify(new NewReservationNotification($reservation));
             }
+
+            // Notify the user (this could be when the reservation is confirmed)
+            Auth::user()->notify(new ReservationStatusUpdated($reservation));
 
             return redirect()->route('reservation.page')
                 ->with('success', 'Your reservation has been submitted successfully!');
@@ -118,17 +125,27 @@ class ReservationController extends Controller
             ->with('alert', 'alert-success');
     }
 
-    // Show reservation details
+
     public function show($id)
     {
-        $reservation = Reservation::findOrFail($id);
+        try {
+            $reservation = Reservation::findOrFail($id);
 
-        if (request()->is('api/*')) {
-            return response()->json(['reservation' => $reservation], 200);
+            // Check if the request is an AJAX request
+            if (request()->ajax()) {
+                return response()->json($reservation, 200); // Return JSON for AJAX requests
+            }
+
+            // For regular requests, return a view
+            return view('dashboard.reservations.show', compact('reservation'));
+        } catch (\Exception $e) {
+            \Log::error("Error fetching reservation details: " . $e->getMessage()); // Log the error
+            return response()->json(['error' => 'Failed to fetch reservation details.'], 500);
         }
-
-        return view('dashboard.reservations.show', compact('reservation'));
     }
+
+
+
 
     // Edit reservation
     public function edit($id)
@@ -155,6 +172,9 @@ class ReservationController extends Controller
 
         $reservation->update($validated);
 
+        // Notify the user about the status update
+        Auth::user()->notify(new ReservationStatusUpdated($reservation));
+
         if ($request->is('api/*')) {
             return response()->json([
                 'message' => 'Reservation updated successfully',
@@ -177,6 +197,9 @@ class ReservationController extends Controller
         ]);
 
         $reservation->update(['status' => $validated['status']]);
+
+        // Notify the user about the reservation status change
+        Auth::user()->notify(new ReservationStatusUpdated($reservation));
 
         if ($request->is('api/*')) {
             return response()->json([

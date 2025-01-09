@@ -4,7 +4,6 @@
     <script src="{{ asset('assets/js/notifications.js') }}"></script>
     <script src="{{ asset('assets/js/notif-customer.js') }}"></script>
 
-
     <!-- START LOGO AREA -->
     <div class="logo-area">
         <div class="auto-container">
@@ -68,9 +67,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('gallery.index') }}"
-                                class="nav-link {{ request()->routeIs('gallery.index') ? 'active' : '' }}">
-                                Gallery
-                            </a>
+                                class="nav-link {{ request()->routeIs('gallery.index') ? 'active' : '' }}">Gallery</a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ url('/menu') }}"
@@ -91,58 +88,77 @@
                     </ul>
 
                     <!-- Notification Bell Icon -->
-                    <a href="#" class="header-notification me-3" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a href="#" class="header-notification me-3" id="notificationDropdown" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         <i class="fas fa-bell"></i>
                         @if(auth()->check() && session()->has('notification_count'))
-                        <span id="notification-badge" class="position-absolute top-20 translate-middle badge rounded-pill bg-danger">
-                            {{ session('notification_count', auth()->user()->unreadNotifications()->count()) }}
-                        </span>
+                            <span id="notification-badge"
+                                class="position-absolute top-20 translate-middle badge rounded-pill bg-danger">
+                                {{ session('notification_count', auth()->user()->unreadNotifications()->count()) }}
+                            </span>
                         @endif
                     </a>
+
                     <!-- Notifications Dropdown -->
-                    <div class="dropdown-menu dropdown-menu-end bg-white shadow border-0" aria-labelledby="notificationDropdown" style="width: 350px; position: absolute; top: 60%; z-index: 1050;">
-                        <div class="dropdown-item text-dark text-center" style="font-weight: bold; background-color: #f8f9fa;">
+                    <div class="dropdown-menu dropdown-menu-end bg-white shadow border-0"
+                        aria-labelledby="notificationDropdown"
+                        style="width: 500px; position: absolute; top: 60%; z-index: 1050;">
+                        <div class="dropdown-item text-dark text-center"
+                            style="font-weight: bold; background-color: #f8f9fa;">
                             Notifications
                         </div>
 
                         @if(auth()->check())
-                        <div id="notification-list">
-                            @forelse(auth()->user()->unreadNotifications as $notification)
-                            @if($notification->type === 'App\Notifications\OrderStatusNotification')
-                            <a class="dropdown-item text-dark notification-item"
-                                id="notification-{{ $notification->id }}"
-                                data-notification-id="{{ $notification->id }}"
-                                data-order-id="{{ $notification->data['order_id'] }}"
-                                href="javascript:void(0)"
-                                onclick="markAsRead(event, '{{ $notification->id }}', '{{ csrf_token() }}', '{{ route('notifications.mark-read', ['notificationId' => $notification->id]) }}')">
-                                <strong>Order #{{ $notification->data['order_id'] }}</strong>: {{ $notification->data['message'] }}
-                            </a>
+                            <div id="notification-list">
+                                @forelse(auth()->user()->unreadNotifications as $notification)
+                                    @if($notification->type === 'App\Notifications\OrderStatusNotification')
+                                        <a class="dropdown-item text-dark notification-item"
+                                            id="notification-{{ $notification->id }}" data-notification-id="{{ $notification->id }}"
+                                            data-order-id="{{ $notification->data['order_id'] }}" href="javascript:void(0)"
+                                            onclick="markAsRead(event, '{{ $notification->id }}', '{{ csrf_token() }}', '{{ route('notifications.mark-read', ['notificationId' => $notification->id]) }}')">
+                                            <strong>Order #{{ $notification->data['order_id'] }}</strong>:
+                                            {{ $notification->data['message'] }}
+                                        </a>
+                                    @elseif($notification->type === 'App\Notifications\NewReservationNotification' || $notification->type === 'App\Notifications\ReservationStatusUpdated')
+                                        <a class="dropdown-item text-dark notification-item"
+                                            id="notification-{{ $notification->id }}" data-notification-id="{{ $notification->id }}"
+                                            data-reservation-id="{{ $notification->data['reservation_id'] }}"
+                                            href="javascript:void(0)"
+                                            onclick="markAsRead(event, '{{ $notification->id }}', '{{ csrf_token() }}', '{{ route('notifications.mark-read', ['notificationId' => $notification->id]) }}')">
+                                            <strong>Reservation #{{ $notification->data['reservation_id'] }}</strong>:
+                                            {{ $notification->data['message'] }}
+                                        </a>
+                                    @endif
+                                @empty
+                                    <p class="dropdown-item text-center">No new notifications</p>
+                                @endforelse
+                            </div>
 
+                            @if(session()->has('notification_count') && auth()->user()->unreadNotifications->isNotEmpty())
+                                <!-- Mark All Read Button -->
+                                <form id="mark-all-read-form" action="{{ route('notifications.mark-read') }}" method="POST"
+                                    style="display: none;">
+                                    @csrf
+                                </form>
+                                <a href="#" id="see-all-notifications" class="dropdown-item text-dark text-center"
+                                    style="font-weight: bold; margin-top: 20px; background-color: #B7C9E2;"
+                                    onclick="markAllAndRedirect(event)">See All Notifications</a>
                             @endif
-                            @empty
-                            <p class="dropdown-item text-center">No new notifications</p>
-                            @endforelse
-                        </div>
-
-                        @if(session()->has('notification_count') && auth()->user()->unreadNotifications->isNotEmpty())
-                        <!-- Mark All Read Button -->
-                        <form id="mark-all-read-form" action="{{ route('notifications.mark-read') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                        <a href="#" id="see-all-notifications" class="dropdown-item text-dark text-center" style="font-weight: bold; margin-top: 20px; background-color: #B7C9E2;" onclick="markAllAndRedirect(event)">See All Notifications</a>
-                        @endif
                         @else
-                        <p class="dropdown-item text-center">No notifications available</p>
+                            <p class="dropdown-item text-center">No notifications available</p>
                         @endif
                     </div>
 
+
                     <!-- Order Details Modal -->
-                    <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="orderDetailsModal" tabindex="-1"
+                        aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content" style="width: 800px;">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <table class="table table-bordered">
@@ -159,7 +175,35 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Reservation Details Modal -->
+                    <div class="modal fade" id="reservationDetailsModal" tabindex="-1"
+                        aria-labelledby="reservationDetailsModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content" style="width: 800px;">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="reservationDetailsModalLabel">Reservation Details</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Customer Name</th>
+                                                <th>Reservation Date</th>
+                                                <th>Time</th>
+                                                <th>Guests</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="modalReservationDetails">
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -174,6 +218,7 @@
                             {{ session('cart_count', 0) }}
                         </span>
                     </a>
+
                     <!-- Profile Dropdown -->
                     <div class="dropdown">
                         <a href="#" class="dropdown-toggle text-dark" id="profileDropdown" role="button"
@@ -183,27 +228,24 @@
                         <ul class="dropdown-menu dropdown-menu-end bg-white shadow border-0"
                             aria-labelledby="profileDropdown" style="width: 200px;">
                             @if(Auth::check())
-                            <li class="dropdown-header bg-black text-white py-3 px-3">
-                                <strong style="font-size: 1.25rem; font-family: 'Arial', sans-serif;">
-                                    Hello, {{ Auth::user()->firstname }}
-                                </strong>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider my-1">
-                            </li>
-                            <li><a class="dropdown-item text-dark" href="{{ route('profile') }}">My Profile</a></li>
-                            <li><a class="dropdown-item text-dark" href="{{ route('rewards') }}">My Rewards</a></li>
-                            <li class="dropdown-item text-dark">
-                                <form action="{{ route('logout.user') }}" method="POST"
-                                    class="dropdown-item m-0 p-0">
-                                    @csrf
-                                    <button type="submit" class="btn btn-link text-dark p-0 m-0">Logout</button>
-                                </form>
-                            </li>
+                                <li class="dropdown-header bg-black text-white py-3 px-3">
+                                    <strong style="font-size: 1.25rem; font-family: 'Arial', sans-serif;">Hello,
+                                        {{ Auth::user()->firstname }}</strong>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider my-1">
+                                </li>
+                                <li><a class="dropdown-item text-dark" href="{{ route('profile') }}">My Profile</a></li>
+                                <li><a class="dropdown-item text-dark" href="{{ route('rewards') }}">My Rewards</a></li>
+                                <li class="dropdown-item text-dark">
+                                    <form action="{{ route('logout.user') }}" method="POST" class="dropdown-item m-0 p-0">
+                                        @csrf
+                                        <button type="submit" class="btn btn-link text-dark p-0 m-0">Logout</button>
+                                    </form>
+                                </li>
                             @else
-                            <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Login</a></li>
-                            <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Register</a>
-                            </li>
+                                <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Login</a></li>
+                                <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Register</a></li>
                             @endif
                         </ul>
                     </div>
@@ -214,12 +256,11 @@
     </div>
     </div>
 
-
     <!-- END NAVIGATION AREA -->
 </header>
 <!-- END HEADER SECTION -->
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         forceRefreshNotificationBadge(); // Refresh the notification badge on page load
     });
 </script>

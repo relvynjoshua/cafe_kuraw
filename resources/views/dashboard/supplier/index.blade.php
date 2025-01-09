@@ -100,8 +100,8 @@
 
     <!-- Search Bar -->
     <form action="{{ route('dashboard.supplier.index') }}" method="GET" class="d-flex mb-3">
-        <input type="text" name="search" class="form-control me-2"
-            placeholder="Search by Company Name, Contact Person, or Email" value="{{ request('search') }}">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search by Company Name"
+            value="{{ request('search') }}">
         <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
 
@@ -127,8 +127,8 @@
                     <td>{{ $supplier->id }}</td>
                     <td>{{ $supplier->company_name }}</td>
                     <!-- <td>{{ $supplier->contact_person }}</td>
-                    <td>{{ $supplier->phone_number }}</td>
-                    <td>{{ $supplier->email }}</td> -->
+                        <td>{{ $supplier->phone_number }}</td>
+                        <td>{{ $supplier->email }}</td> -->
                     <td>{{ $supplier->address }}</td>
                     <td>
                         <a href="{{ route('dashboard.supplier.edit', $supplier) }}" class="btn btn-warning btn-sm">

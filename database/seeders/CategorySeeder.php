@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 
 class CategorySeeder extends Seeder
 {
@@ -14,6 +15,15 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
+        // Disable foreign key checks to allow truncation
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Truncate the categories table
+        Category::truncate();
+
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         // Define an array of categories
         $categories = [
             ['name' => 'Espresso-Based Coffee'],
@@ -28,6 +38,10 @@ class CategorySeeder extends Seeder
             ['name' => 'Cleaning Supplies'],
             ['name' => 'Electronics'],
             ['name' => 'Packaging Items'],
+            ['name' => 'Condiments'], // New category
+            ['name' => 'Cooking Ingredients'], // New category
+            ['name' => 'Vegetables'], // New category
+            ['name' => 'Dairy'], // New category
         ];
 
         // Insert categories into the database
@@ -36,6 +50,6 @@ class CategorySeeder extends Seeder
         }
 
         // Optional: Print success message
-        $this->command->info('Categories table seeded successfully!');
+        $this->command->info('Categories table truncated and seeded successfully with new entries!');
     }
 }

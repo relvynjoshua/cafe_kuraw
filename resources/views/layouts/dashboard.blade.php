@@ -246,13 +246,16 @@
 												<strong>{{ $notification->data['customer_name'] }}</strong>
 												(₱{{ number_format($notification->data['total_amount'], 2) }}).
 											</span>
-										@elseif ($notification->type === \App\Notifications\NewReservationNotification::class)
-											<span>New Reservation #{{ $notification->data['reservation_id'] }} from
-												<strong>{{ $notification->data['customer_name'] }}</strong>
-												on {{ $notification->data['reservation_date'] }} at
-												{{ $notification->data['reservation_time'] }}.
-											</span>
-										@endif
+                                            @elseif ($notification->type === \App\Notifications\ReservationStatusUpdated::class)
+                                                <span>New Reservation #{{ $notification->data['reservation_id'] }}
+
+                                                    <strong>{{ ucfirst($notification->data['status']) }}</strong>.
+                                                </span>
+                                                @elseif ($notification->type === \App\Notifications\ReservationStatusUpdated::class)
+
+                                                <strong>{{ ucfirst($notification->data['status']) }}</strong>.
+                                                </span>
+                                                @endif
 										<small
 											class="text-muted d-block">{{ $notification->created_at->diffForHumans() }}</small>
 									</div>

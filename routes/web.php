@@ -89,6 +89,9 @@ Route::get('/gallery/{galleryItem}', [GalleryController::class, 'show'])->name('
 // Public Reservation Page
 Route::get('/reservation', [ReservationController::class, 'showReservationPage'])->name('reservation.page');
 Route::post('/reservation', [ReservationController::class, 'store'])->name('reservation.store');
+Route::get('/reservations/{id}', [ReservationController::class, 'show'])->name('reservation.show');
+Route::get('/reservation/{id}', [ReservationController::class, 'show'])->name('reservation.show');
+
 
 // ----------------------------
 // Authentication Routes
@@ -209,7 +212,7 @@ Route::middleware(['auth'])->group(function () {
     // Orders
     Route::prefix('orders')->controller(OrderController::class)->group(function () {
         Route::get('/', 'myOrders')->name('orders.index');
-        Route::get('/{order}', 'show')->name('orders.show');
+        Route::get('/{order}', 'show')->name('orders.showDetails');
         Route::post('/{order}/cancel', 'cancel')->name('orders.cancel');
     });
 });

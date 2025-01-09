@@ -48,7 +48,7 @@
         <div class="space-y-4">
             @foreach ($orders as $order)
                 <div class="border rounded-lg shadow p-4 hover:bg-gray-50 transition">
-                    <a href="{{ route('orders.show', $order->id) }}"
+                    <a href="{{ route('orders.showDetails', $order->id) }}"
                         class="flex justify-between items-center text-decoration-none text-dark">
                         <div>
                             <h4 class="font-semibold">Order #{{ $order->id }}</h4>

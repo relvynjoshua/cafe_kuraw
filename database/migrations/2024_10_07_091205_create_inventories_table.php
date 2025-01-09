@@ -13,15 +13,15 @@ return new class extends Migration {
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
             $table->string('item_name');
-            $table->unsignedBigInteger('category_id'); 
-            $table->unsignedBigInteger('supplier_id')->nullable(); 
-            $table->unsignedInteger('quantity');
-            $table->string('unit')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->date('expiry_date')->nullable();
-            $table->text('description')->nullable();
-            $table->string('location')->nullable();
-            $table->timestamps();
+            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('supplier_id')->nullable();
+            $table->integer('quantity')->default(0); // Stock quantity
+            $table->string('unit')->nullable(); // Unit of measurement
+            $table->decimal('price', 10, 2); // Item price
+            $table->date('expiry_date')->nullable(); // Expiry date (optional)
+            $table->text('description')->nullable(); // Item description
+            $table->string('location')->nullable(); // Location in storage
+            $table->timestamps(); // Created and updated timestamps
 
             // Foreign key constraints
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');

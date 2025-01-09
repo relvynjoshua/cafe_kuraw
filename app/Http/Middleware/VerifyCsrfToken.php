@@ -11,10 +11,14 @@ class VerifyCsrfToken extends Middleware
      *
      * @var array<int, string>
      */
-    protected $except = [
-        'dashboard/register',
-        'dashboard/login',
-        'dashboard/logout',
-        'notifications/mark-all-read',
-    ];
+    // In app/Http/Middleware/VerifyCsrfToken.php
+
+        protected $except = [
+            'dashboard/register',
+            'dashboard/login',
+            'dashboard/logout',
+            'notifications/mark-all-read',
+            'notifications/{notificationId}/mark-read', 
+        ];
+
 }

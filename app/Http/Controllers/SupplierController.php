@@ -15,12 +15,10 @@ class SupplierController extends Controller
 
         // Fetch suppliers with optional search filters
         $suppliers = Supplier::when($search, function ($query, $search) {
-            $query->where('company_name', 'like', "%$search%")
-                ->orWhere('contact_person', 'like', "%$search%")
-                ->orWhere('email', 'like', "%$search%");
+            $query->where('company_name', 'like', "%$search%");
         })
-        ->orderBy('id', 'DESC')
-        ->paginate(10); // Adjust pagination size as needed
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
 
         return view('dashboard.supplier.index', compact('suppliers'));
     }

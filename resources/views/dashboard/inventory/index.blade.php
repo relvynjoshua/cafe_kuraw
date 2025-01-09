@@ -63,7 +63,8 @@
     .table-responsive {
         overflow-x: auto;
         white-space: nowrap;
-        background-color: #f9f9f9; /* Set the table background to white */
+        background-color: #f9f9f9;
+        /* Set the table background to white */
         padding: 15px;
         border-radius: 8px;
     }
@@ -75,23 +76,27 @@
         border-collapse: collapse;
     }
 
-    th, td {
+    th,
+    td {
         text-align: center;
         vertical-align: middle;
         padding: 10px;
         font-size: 0.9rem;
-        border: 1px solid #ddd; /* Add borders to table cells */
+        border: 1px solid #ddd;
+        /* Add borders to table cells */
     }
 
     th {
-        background-color: #f5f5f5; /* Light gray background for table headers */
+        background-color: #f5f5f5;
+        /* Light gray background for table headers */
         font-weight: bold;
     }
 
     /* Adjusting the Actions column */
     td:nth-child(10),
     th:nth-child(10) {
-        min-width: 150px; /* Adjust the width to make it spacious */
+        min-width: 150px;
+        /* Adjust the width to make it spacious */
     }
 
     .action-buttons {
@@ -132,15 +137,16 @@
     /* Adjust Stock Adjustment column */
     td:nth-child(12),
     th:nth-child(12) {
-        min-width: 280px; /* Ensure the column is wide enough */
+        min-width: 280px;
+        /* Ensure the column is wide enough */
     }
 
     /* Styling for the container */
     .container {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     h1,
@@ -154,12 +160,14 @@
             font-size: 0.8rem;
         }
 
-        th, td {
+        th,
+        td {
             padding: 5px;
         }
 
         .action-buttons {
-            flex-direction: column; /* Stack buttons on smaller screens */
+            flex-direction: column;
+            /* Stack buttons on smaller screens */
         }
 
         .pagination a {
@@ -222,42 +230,45 @@
                         <td>{{ $inventory->location ?? 'N/A' }}</td>
                         <td>
                             <div class="action-buttons">
-                                <a href="{{ route('dashboard.inventory.edit', $inventory->id) }}" class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
+                                <a href="{{ route('dashboard.inventory.edit', $inventory->id) }}"
+                                    class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
                                 </a>
                                 <form action="{{ route('dashboard.inventory.destroy', $inventory->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i>
+                                        Delete</button>
                                 </form>
                             </div>
                         </td>
                         <td>
                             @if ($inventory->quantity == 0)
-                                <span class="badge badge-danger" style="background-color: red; color: white;">Out of Stock</span>
+                                <span class="badge badge-danger" style="background-color: red; color: white;">Out of
+                                    Stock</span>
                             @elseif ($inventory->quantity > 0 && $inventory->quantity <= 10)
-                                <span class="badge badge-warning" style="background-color: red; color: white;">Low Stock</span>
+                                <span class="badge badge-warning" style="background-color: orange; color: white;">Low
+                                    Stock</span>
                             @elseif ($inventory->quantity > 10 && $inventory->quantity <= 50)
-                                <span class="badge badge-success" style="background-color: green; color: white;">Sufficient</span>
+                                <span class="badge badge-success"
+                                    style="background-color: green; color: white;">Sufficient</span>
                             @elseif ($inventory->quantity > 50 && $inventory->quantity <= 100)
                                 <span class="badge badge-info" style="background-color: blue; color: white;">High</span>
-                            @elseif ($inventory->quantity > 100)
-                                <span class="badge badge-primary" style="background-color: purple; color: white;">Overstocked</span>
+                            @else
+                                <span class="badge badge-primary"
+                                    style="background-color: purple; color: white;">Overstocked</span>
                             @endif
                         </td>
+
                         <td>
-                            <div>
-                                <label>Current Quantity:</label>
-                                <input type="number" value="{{ $inventory->quantity }}" readonly class="form-control text-center" style="width: 60px; display: inline;">
-                            </div>
-                            <form>
+                            <form action="{{ route('dashboard.inventory.updateQuantity', $inventory->id) }}" method="POST">
+                                @csrf
                                 <div class="input-group" style="margin-top: 10px;">
-                                    <select class="form-select">
+                                    <select name="change_type" class="form-select">
                                         <option value="add">Add</option>
                                         <option value="subtract">Subtract</option>
                                     </select>
-                                    <input type="number" class="form-control" placeholder="Qty">
+                                    <input type="number" name="quantity" class="form-control" placeholder="Qty" required>
                                     <button class="btn btn-primary" type="submit">Update</button>
                                 </div>
                             </form>

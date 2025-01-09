@@ -162,6 +162,29 @@ class OrderController extends Controller
         }
     }
 
+    public function showDetails($orderId)
+    {
+        $order = Order::with(['products.variations'])->findOrFail($orderId);
+
+        // Prepare the response data
+        $orderData = [
+            'customerName' => $order->customer_name,
+            'products' => $order->products->map(function ($product) {
+                return [
+                    'name' => $product->name,
+                    'variation' => $product->pivot->variation,
+                    'quantity' => $product->pivot->quantity,
+                    'price' => $product->pivot->price,
+                    'total' => $product->pivot->quantity * $product->pivot->price,
+                ];
+            })->toArray(), // Ensure it's an array
+            'date' => $order->created_at->format('F d, Y h:i A'), // Format date
+            'status' => $order->status, // Add the order status
+        ];
+
+        return response()->json($orderData);
+    }
+
 
     public function show($orderId)
     {

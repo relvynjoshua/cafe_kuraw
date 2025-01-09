@@ -1,8 +1,3 @@
-/*
-Author       : Tech Trek.
-Template Name: Nekaton - Responsive School Template
-Version      : 1.0
-*/
 
 /*=============================================================
     CSS INDEX
@@ -5616,4 +5611,18 @@ a.header-search {
   .auto-container {
     width: 90%;
   }
+}
+
+
+
+#orderDetailsModal {
+  z-index: 1051 !important; /* Ensure the modal is above the backdrop */
+}
+
+.modal-backdrop {
+  z-index: 1049 !important; /* Ensure the backdrop is behind the modal */
+}
+
+#reservationDetailsModal {
+  z-index: 1051 !important; /* Ensure the modal is above the backdrop */
 }
