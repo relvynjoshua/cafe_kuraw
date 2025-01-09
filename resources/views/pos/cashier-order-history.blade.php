@@ -205,6 +205,14 @@
                 font-size: 1rem;
             }
         }
+
+        .table-responsive {
+            overflow-x: auto;
+            white-space: nowrap;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
@@ -265,35 +273,39 @@
                             </div>
                         </div>
                     </form>
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Transaction ID</th>
-                                <th>Customer Name</th>
-                                <th>Date</th>
-                                <th>Total Amount</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($orders as $order)
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
                                 <tr>
-                                    <td>{{ $order->transaction_id }}</td>
-                                    <td>{{ $order->customer_name }}</td>
-                                    <td>{{ $order->created_at->format('Y-m-d') }}</td>
-                                    <td>₱{{ number_format($order->total_amount, 2) }}</td>
-                                    <td><span
-                                            class="status-{{ strtolower($order->status) }}">{{ ucfirst($order->status) }}</span>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#orderModal{{ $order->id }}">View</button>
-                                    </td>
+                                    <th>Transaction ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach($orders as $order)
+                                    <tr>
+                                        <td>{{ $order->transaction_id }}</td>
+                                        <td>{{ $order->customer_name }}</td>
+                                        <td>{{ $order->created_at->format('Y-m-d') }}</td>
+                                        <td>₱{{ number_format($order->total_amount, 2) }}</td>
+                                        <td><span
+                                                class="status-{{ strtolower($order->status) }}">{{ ucfirst($order->status) }}</span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#orderModal{{ $order->id }}">View</button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
                     <!-- Pagination Links -->
                     <div class="pagination d-flex justify-content-center align-items-center mt-3">
                         <a href="{{ $orders->previousPageUrl() }}#orders-section"
@@ -331,37 +343,41 @@
                             </div>
                         </div>
                     </form>
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Reservation ID</th>
-                                <th>Customer Name</th>
-                                <th>Reservation Date</th>
-                                <th>Reservation Time</th>
-                                <th>Number of Guests</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($reservations as $reservation)
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
                                 <tr>
-                                    <td>{{ $reservation->reservation_id }}</td>
-                                    <td>{{ $reservation->name }}</td>
-                                    <td>{{ $reservation->reservation_date }}</td>
-                                    <td>{{ $reservation->reservation_time }}</td>
-                                    <td>{{ $reservation->number_of_guests }}</td>
-                                    <td><span
-                                            class="status-{{ strtolower($reservation->status) }}">{{ ucfirst($reservation->status) }}</span>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#reservationModal{{ $reservation->id }}">View</button>
-                                    </td>
+                                    <th>Reservation ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Reservation Date</th>
+                                    <th>Reservation Time</th>
+                                    <th>Number of Guests</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach($reservations as $reservation)
+                                    <tr>
+                                        <td>{{ $reservation->reservation_id }}</td>
+                                        <td>{{ $reservation->name }}</td>
+                                        <td>{{ $reservation->reservation_date }}</td>
+                                        <td>{{ $reservation->reservation_time }}</td>
+                                        <td>{{ $reservation->number_of_guests }}</td>
+                                        <td><span
+                                                class="status-{{ strtolower($reservation->status) }}">{{ ucfirst($reservation->status) }}</span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#reservationModal{{ $reservation->id }}">View</button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
                     <!-- Pagination Links -->
                     <div class="pagination d-flex justify-content-center align-items-center mt-3">
                         <a href="{{ $reservations->previousPageUrl() }}#reservations-section"

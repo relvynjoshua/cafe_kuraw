@@ -98,6 +98,14 @@
     .variation-table td {
         padding: 5px;
     }
+
+    .table-responsive {
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+    }
 </style>
 
 <div class="container mt-4" style="max-width: 100%; width: 98%;">
@@ -117,92 +125,94 @@
         <i class="fas fa-plus"></i> Add Product
     </a>
 
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Image</th>
-                <th scope="col">Category</th>
-                <th scope="col">Description</th>
-                <th scope="col">Base Price</th>
-                <th scope="col">Variations</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($products as $product)
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
                 <tr>
-                    <td scope="row">{{ $product->id }}</td>
-                    <td>{{ $product->name }}</td>
-                    <td>
-                        @if ($product->image)
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                                style="width: 50px; height: 50px;">
-                        @else
-                            <span>No Image</span>
-                        @endif
-                    </td>
-                    <td>{{ $product->category->name ?? 'N/A' }}</td>
-                    <td>{{ $product->description }}</td>
-                    <td>₱{{ number_format($product->price, 2) }}</td>
-                    <td>
-                        @if ($product->variations->count() > 0)
-                            <table class="table table-sm table-bordered variation-table">
-                                <thead>
-                                    <tr>
-                                        <th>Type</th>
-                                        <th>Value</th>
-                                        <th>Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($product->variations as $variation)
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Base Price</th>
+                    <th scope="col">Variations</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($products as $product)
+                    <tr>
+                        <td scope="row">{{ $product->id }}</td>
+                        <td>{{ $product->name }}</td>
+                        <td>
+                            @if ($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                    style="width: 50px; height: 50px;">
+                            @else
+                                <span>No Image</span>
+                            @endif
+                        </td>
+                        <td>{{ $product->category->name ?? 'N/A' }}</td>
+                        <td>{{ $product->description }}</td>
+                        <td>₱{{ number_format($product->price, 2) }}</td>
+                        <td>
+                            @if ($product->variations->count() > 0)
+                                <table class="table table-sm table-bordered variation-table">
+                                    <thead>
                                         <tr>
-                                            <td>{{ $variation->type }}</td>
-                                            <td>{{ $variation->value }}</td>
-                                            <td>₱{{ number_format($variation->price, 2) }}</td>
+                                            <th>Type</th>
+                                            <th>Value</th>
+                                            <th>Price</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @else
-                            <span>No Variations</span>
-                        @endif
-                    </td>
-                    <td>
-                        <a href="{{ route('dashboard.products.showEdit', ['id' => $product->id]) }}"
-                            class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
-                        <form action="{{ route('dashboard.products.destroy', ['id' => $product->id]) }}" method="POST"
-                            style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="8" class="text-center">No products found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($product->variations as $variation)
+                                            <tr>
+                                                <td>{{ $variation->type }}</td>
+                                                <td>{{ $variation->value }}</td>
+                                                <td>₱{{ number_format($variation->price, 2) }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <span>No Variations</span>
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('dashboard.products.showEdit', ['id' => $product->id]) }}"
+                                class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form action="{{ route('dashboard.products.destroy', ['id' => $product->id]) }}" method="POST"
+                                style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="8" class="text-center">No products found.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-    <!-- Pagination Links -->
-    <div class="pagination">
-        <!-- Previous arrow -->
-        <a href="#" class="arrow" onclick="changePage('prev')">«</a>
+        <!-- Pagination Links -->
+        <div class="pagination">
+            <!-- Previous arrow -->
+            <a href="#" class="arrow" onclick="changePage('prev')">«</a>
 
-        <!-- Page Numbers -->
-        <span>Page {{ $products->currentPage() }} of {{ $products->lastPage() }}</span>
+            <!-- Page Numbers -->
+            <span>Page {{ $products->currentPage() }} of {{ $products->lastPage() }}</span>
 
-        <!-- Next arrow -->
-        <a href="#" class="arrow" onclick="changePage('next')">»</a>
+            <!-- Next arrow -->
+            <a href="#" class="arrow" onclick="changePage('next')">»</a>
+        </div>
     </div>
 </div>
 

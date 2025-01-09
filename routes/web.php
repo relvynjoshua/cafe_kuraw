@@ -212,8 +212,8 @@ Route::middleware(['auth'])->group(function () {
     // Orders
     Route::prefix('orders')->controller(OrderController::class)->group(function () {
         Route::get('/', 'myOrders')->name('orders.index');
-        Route::get('/{order}', 'show')->name('orders.showDetails');
-        Route::post('/{order}/cancel', 'cancel')->name('orders.cancel');
+        Route::get('/{order}', 'showDetails')->name('orders.showDetails');
+        Route::post('/{order}/cancel', 'cancelOrder')->name('orders.cancelOrder');
     });
 });
 

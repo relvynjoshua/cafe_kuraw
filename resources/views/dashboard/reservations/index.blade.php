@@ -121,6 +121,14 @@
     h6 {
         color: #333;
     }
+
+    .table-responsive {
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+    }
 </style>
 
 <div class="container mt-4" style="max-width: 100%; width: 90%;">
@@ -142,81 +150,83 @@
     </a>
 
     <!-- Reservations Table -->
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Date</th>
-                <th scope="col">Time</th>
-                <th scope="col">Guests</th>
-                <th scope="col">Notes</th>
-                <th scope="col">Status</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($reservations as $reservation)
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
                 <tr>
-                    <td>{{ $reservation->id }}</td>
-                    <td>{{ $reservation->name }}</td>
-                    <td>{{ $reservation->email }}</td>
-                    <td>{{ $reservation->phone_number }}</td>
-                    <td>{{ $reservation->reservation_date }}</td>
-                    <td>{{ $reservation->reservation_time }}</td>
-                    <td>{{ $reservation->number_of_guests }}</td>
-                    <td>{{ $reservation->note ?? 'No Notes' }}</td>
-                    <td>
-                        <form action="{{ route('dashboard.reservations.update-status', $reservation->id) }}" method="POST"
-                            class="d-inline">
-                            @csrf
-                            @method('PATCH')
-                            <select name="status" class="form-select status-dropdown" onchange="this.form.submit()"
-                                data-status="{{ $reservation->status }}" {{ in_array($reservation->status, ['confirmed', 'cancelled']) ? 'disabled' : '' }}>
-                                <option value="pending" {{ $reservation->status == 'pending' ? 'selected' : '' }}>Pending
-                                </option>
-                                <option value="confirmed" {{ $reservation->status == 'confirmed' ? 'selected' : '' }}>
-                                    Confirmed</option>
-                                <option value="cancelled" {{ $reservation->status == 'cancelled' ? 'selected' : '' }}>
-                                    Cancelled</option>
-                            </select>
-                        </form>
-                    </td>
-                    <td>
-
-                        <!-- Delete Form -->
-                        <form action="{{ route('dashboard.reservations.destroy', $reservation->id) }}" method="POST"
-                            style="display:inline;"
-                            onsubmit="return confirm('Are you sure you want to delete this reservation?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
-                        </form>
-                    </td>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Guests</th>
+                    <th scope="col">Notes</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="9" class="text-center">No reservations found.</td>
-                </tr>
-            @endforelse
-        </tbody>
+            </thead>
+            <tbody>
+                @forelse ($reservations as $reservation)
+                    <tr>
+                        <td>{{ $reservation->id }}</td>
+                        <td>{{ $reservation->name }}</td>
+                        <td>{{ $reservation->email }}</td>
+                        <td>{{ $reservation->phone_number }}</td>
+                        <td>{{ $reservation->reservation_date }}</td>
+                        <td>{{ $reservation->reservation_time }}</td>
+                        <td>{{ $reservation->number_of_guests }}</td>
+                        <td>{{ $reservation->note ?? 'No Notes' }}</td>
+                        <td>
+                            <form action="{{ route('dashboard.reservations.update-status', $reservation->id) }}"
+                                method="POST" class="d-inline">
+                                @csrf
+                                @method('PATCH')
+                                <select name="status" class="form-select status-dropdown" onchange="this.form.submit()"
+                                    data-status="{{ $reservation->status }}" {{ in_array($reservation->status, ['confirmed', 'cancelled']) ? 'disabled' : '' }}>
+                                    <option value="pending" {{ $reservation->status == 'pending' ? 'selected' : '' }}>Pending
+                                    </option>
+                                    <option value="confirmed" {{ $reservation->status == 'confirmed' ? 'selected' : '' }}>
+                                        Confirmed</option>
+                                    <option value="cancelled" {{ $reservation->status == 'cancelled' ? 'selected' : '' }}>
+                                        Cancelled</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
 
-    </table>
+                            <!-- Delete Form -->
+                            <form action="{{ route('dashboard.reservations.destroy', $reservation->id) }}" method="POST"
+                                style="display:inline;"
+                                onsubmit="return confirm('Are you sure you want to delete this reservation?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="9" class="text-center">No reservations found.</td>
+                    </tr>
+                @endforelse
+            </tbody>
 
-    <!-- Pagination Links -->
-    <div class="pagination">
-        <!-- Previous arrow -->
-        <a href="#" class="arrow" onclick="changePage('prev')">«</a>
+        </table>
 
-        <!-- Page Numbers -->
-        <span>Page {{ $reservations->currentPage() }} of {{ $reservations->lastPage() }}</span>
+        <!-- Pagination Links -->
+        <div class="pagination">
+            <!-- Previous arrow -->
+            <a href="#" class="arrow" onclick="changePage('prev')">«</a>
 
-        <!-- Next arrow -->
-        <a href="#" class="arrow" onclick="changePage('next')">»</a>
+            <!-- Page Numbers -->
+            <span>Page {{ $reservations->currentPage() }} of {{ $reservations->lastPage() }}</span>
+
+            <!-- Next arrow -->
+            <a href="#" class="arrow" onclick="changePage('next')">»</a>
+        </div>
     </div>
 </div>
 </div>

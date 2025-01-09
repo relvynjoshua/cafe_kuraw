@@ -10,7 +10,8 @@
         border: 1px solid #ccc;
         padding: 5px;
         border-radius: 5px;
-        min-width: 120px; /* Adjust the width to fit longer text */
+        min-width: 120px;
+        /* Adjust the width to fit longer text */
         text-align: center;
     }
 
@@ -35,11 +36,12 @@
         white-space: nowrap;
     }
 
-       /* Scrollable table container */
-       .table-responsive {
+    /* Scrollable table container */
+    .table-responsive {
         overflow-x: auto;
         white-space: nowrap;
-        background-color: #f9f9f9; /* Set the table background to white */
+        background-color: #f9f9f9;
+        /* Set the table background to white */
         padding: 15px;
         border-radius: 8px;
     }
@@ -51,25 +53,28 @@
         border-collapse: collapse;
     }
 
-    th, td {
+    th,
+    td {
         text-align: center;
         vertical-align: middle;
         padding: 10px;
         font-size: 0.9rem;
-        border: 1px solid #ddd; /* Add borders to table cells */
+        border: 1px solid #ddd;
+        /* Add borders to table cells */
     }
 
     th {
-        background-color: #f5f5f5; /* Light gray background for table headers */
+        background-color: #f5f5f5;
+        /* Light gray background for table headers */
         font-weight: bold;
     }
 
     /* Styling for the container */
     .container {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     h1,
@@ -94,8 +99,8 @@
         }
     }
 
-     /* Pagination container */
-     .pagination {
+    /* Pagination container */
+    .pagination {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -160,11 +165,11 @@
     <h1 class="mb-0"><i class="fas fa-shopping-cart"></i> Orders</h1>
     <h6>List of all customer orders</h6>
 
-<!-- Search Form -->
+    <!-- Search Form -->
     <form action="{{ route('dashboard.orders.index') }}" method="GET" class="d-flex mb-3">
-        <input type="text" name="search" class="form-control"
-            placeholder="Search orders by name, email, or phone..." value="{{ request('search') }}">
-            <button class="btn btn-outline-secondary" type="submit">Search</button>
+        <input type="text" name="search" class="form-control" placeholder="Search orders by name, email, or phone..."
+            value="{{ request('search') }}">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
     </form>
 
 
@@ -173,8 +178,8 @@
         <i class="fas fa-plus"></i> Add Order
     </a>
 
-<!-- Orders Table -->
-<div class="table-responsive">
+    <!-- Orders Table -->
+    <div class="table-responsive">
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">
                 <tr>

@@ -164,27 +164,27 @@ class OrderController extends Controller
 
     public function showDetails($orderId)
     {
-        $order = Order::with(['products.variations'])->findOrFail($orderId);
+        $order = Order::with('products')->findOrFail($orderId);
 
-        // Prepare the response data
-        $orderData = [
-            'customerName' => $order->customer_name,
-            'products' => $order->products->map(function ($product) {
-                return [
-                    'name' => $product->name,
-                    'variation' => $product->pivot->variation,
-                    'quantity' => $product->pivot->quantity,
-                    'price' => $product->pivot->price,
-                    'total' => $product->pivot->quantity * $product->pivot->price,
-                ];
-            })->toArray(), // Ensure it's an array
-            'date' => $order->created_at->format('F d, Y h:i A'), // Format date
-            'status' => $order->status, // Add the order status
-        ];
+        if ($order->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
 
-        return response()->json($orderData);
+        return view('frontend.order-show', compact('order'));
     }
 
+    public function cancelOrder(Request $request, $orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        if ($order->user_id !== auth()->id() || $order->status !== 'pending') {
+            abort(403, 'Unauthorized action or the order cannot be canceled.');
+        }
+
+        $order->update(['status' => 'cancelled']);
+
+        return redirect()->route('orders.index')->with('message', 'Order has been canceled successfully.');
+    }
 
     public function show($orderId)
     {

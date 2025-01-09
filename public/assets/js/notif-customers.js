@@ -51,7 +51,7 @@ function markAsRead(event, notificationId, csrfToken, url) {
                                     <td>${product.name}</td>
                                     <td>${product.variation}</td>
                                     <td>${product.quantity}</td>
-                                    <td>${product.unitPrice}</td>
+                                    <td>${product.price}</td>
                                     <td>${product.total}</td>
                                 </tr>
                             `);
@@ -152,11 +152,6 @@ function markAllAndRedirect(event) {
                     forceRefreshNotificationBadge(); // Forcefully refresh the badge after clearing
                 }
             );
-
-            // Optionally, redirect after marking all as read
-            setTimeout(() => {
-                window.location.href = "/reservation/"; // Redirect to
-            }, 500); // Delay to simulate the process
         },
         error: function () {
             alert("Failed to mark all notifications as read!");

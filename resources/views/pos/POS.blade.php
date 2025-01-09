@@ -217,6 +217,14 @@
                 font-size: 1rem;
             }
         }
+
+        .table-responsive {
+            overflow-x: auto;
+            white-space: nowrap;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
@@ -418,8 +426,8 @@
                                     </div>
                                     <div class="mb-2">
                                         <label for="address"><strong>Address:</strong></label>
-                                        <input type="text" id="address" class="form-control"
-                                            placeholder="Enter address" required>
+                                        <input type="text" id="address" class="form-control" placeholder="Enter address"
+                                            required>
                                     </div>
 
                                     <!-- Delivery Method -->
@@ -433,22 +441,24 @@
                                     </div>
 
                                     <!-- Cart Details -->
-                                    <table class="table table-bordered" id="bill-details-table">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Image</th>
-                                                <th>Product Name</th>
-                                                <th>Quantity</th>
-                                                <th>Price</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="bill-details">
-                                            <!-- Cart items will be dynamically inserted here -->
-                                        </tbody>
-                                    </table>
-                                    <hr>
-                                    <!-- <p><strong>Total: ₱<span id="total-price">0.00</span></strong></p> -->
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="bill-details-table">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Image</th>
+                                                    <th>Product Name</th>
+                                                    <th>Quantity</th>
+                                                    <th>Price</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="bill-details">
+                                                <!-- Cart items will be dynamically inserted here -->
+                                            </tbody>
+                                        </table>
+                                        <hr>
+                                        <!-- <p><strong>Total: ₱<span id="total-price">0.00</span></strong></p> -->
+                                    </div>
 
                                     <!-- Payment Method -->
                                     <div class="mb-3">
@@ -492,7 +502,8 @@
                                     </div>
 
                                     <!-- Process Transaction Button -->
-                                    <button class="btn btn-dark w-100 mt-4" onclick="processTransaction()">Place Order</button>
+                                    <button class="btn btn-dark w-100 mt-4" onclick="processTransaction()">Place
+                                        Order</button>
                                 </div>
                             </div>
                         </div>

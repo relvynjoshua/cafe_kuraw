@@ -89,6 +89,14 @@
     h6 {
         color: #333;
     }
+
+    .table-responsive {
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+    }
 </style>
 
 <div class="container mt-4" style="max-width: 100%; width: 90%;">
@@ -131,43 +139,45 @@
         </div>
     </form>
 
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Inventory Item</th>
-                <th>Change Type</th>
-                <th>Quantity Changed</th>
-                <th>Remaining Quantity</th>
-                <th>Updated By</th>
-                <th>Updated At</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($logs as $log)
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
                 <tr>
-                    <td>{{ $log->id }}</td>
-                    <td>{{ $log->inventory ? $log->inventory->item_name : 'N/A' }}</td>
-                    <td>{{ ucfirst($log->change_type) }}</td>
-                    <td>{{ $log->quantity_changed }}</td>
-                    <td>{{ $log->remaining_quantity }}</td>
-                    <td>{{ $log->user ? $log->user->firstname : 'N/A' }}</td>
-                    <td>{{ $log->updated_at->format('Y-m-d H:i:s') }}</td>
+                    <th>ID</th>
+                    <th>Inventory Item</th>
+                    <th>Change Type</th>
+                    <th>Quantity Changed</th>
+                    <th>Remaining Quantity</th>
+                    <th>Updated By</th>
+                    <th>Updated At</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($logs as $log)
+                    <tr>
+                        <td>{{ $log->id }}</td>
+                        <td>{{ $log->inventory ? $log->inventory->item_name : 'N/A' }}</td>
+                        <td>{{ ucfirst($log->change_type) }}</td>
+                        <td>{{ $log->quantity_changed }}</td>
+                        <td>{{ $log->remaining_quantity }}</td>
+                        <td>{{ $log->user ? $log->user->firstname : 'N/A' }}</td>
+                        <td>{{ $log->updated_at->format('Y-m-d H:i:s') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-    <!-- Pagination Links -->
-    <div class="pagination">
-        <!-- Previous arrow -->
-        <a href="#" class="arrow" onclick="changePage('prev')">«</a>
+        <!-- Pagination Links -->
+        <div class="pagination">
+            <!-- Previous arrow -->
+            <a href="#" class="arrow" onclick="changePage('prev')">«</a>
 
-        <!-- Page Numbers -->
-        <span>Page {{ $logs->currentPage() }} of {{ $logs->lastPage() }}</span>
+            <!-- Page Numbers -->
+            <span>Page {{ $logs->currentPage() }} of {{ $logs->lastPage() }}</span>
 
-        <!-- Next arrow -->
-        <a href="#" class="arrow" onclick="changePage('next')">»</a>
+            <!-- Next arrow -->
+            <a href="#" class="arrow" onclick="changePage('next')">»</a>
+        </div>
     </div>
 </div>
 

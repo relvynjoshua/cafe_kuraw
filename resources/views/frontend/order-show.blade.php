@@ -30,13 +30,13 @@
         </ul>
 
         @if ($order->isCancelable())
-            <form method="POST" action="{{ route('orders.cancel', $order->id) }}" class="mt-4">
+            <form method="POST" action="{{ route('orders.cancelOrder', $order->id) }}" class="mt-4">
                 @csrf
                 <button type="submit" class="btn btn-danger">Cancel Order</button>
             </form>
         @endif
     </div>
 
-    <a href="{{ route('orders.index') }}" class="btn btn-primary mt-4">Back to Orders</a>
+    <a href="{{ route('orders.index') }}" class="btn btn-dark mt-4">Back to Orders</a>
 </div>
 @endsection

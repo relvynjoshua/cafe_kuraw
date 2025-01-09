@@ -317,6 +317,9 @@ class CashierController extends Controller
             $ordersQuery->where('status', $request->order_status);
         }
 
+        // Sort orders by created_at (latest first)
+        $ordersQuery->orderByDesc('created_at');
+
         $orders = $ordersQuery->with('products')->get();
 
         // Filter orders by transaction_id or customer_name
@@ -345,6 +348,10 @@ class CashierController extends Controller
         if ($request->filled('reservation_status')) {
             $reservationsQuery->where('status', $request->reservation_status);
         }
+
+        // Sort reservations by reservation_date and reservation_time (latest first)
+        $reservationsQuery->orderByDesc('reservation_date')
+            ->orderByDesc('reservation_time');
 
         $reservations = $reservationsQuery->get();
 

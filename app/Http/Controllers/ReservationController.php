@@ -46,7 +46,12 @@ class ReservationController extends Controller
         return view('dashboard.reservations.index', compact('reservations'));
     }
 
-    // Store reservation
+    // Show the create reservation page
+    public function create()
+    {
+        return view('dashboard.reservations.create');
+    }
+
     // Store reservation
     public function store(Request $request)
     {

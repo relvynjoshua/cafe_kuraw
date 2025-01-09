@@ -80,6 +80,14 @@
     h6 {
         color: #333;
     }
+
+    .table-responsive {
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+    }
 </style>
 
 <div class="container mt-4" style="max-width: 100%; width: 90%;">
@@ -117,51 +125,53 @@
 
     <div class="card shadow">
         <div class="card-body">
-            <table class="table table-striped table-bordered">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($users as $user)
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
                         <tr>
-                            <td>{{ $user->id }}</td>
-                            <td>{{ $user->firstname }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>
-                                @if ($user->is_active)
-                                    <form action="{{ route('dashboard.profile.disable', $user->id) }}" method="POST"
-                                        style="display: inline;">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-ban"></i> Disable
-                                        </button>
-                                    </form>
-                                @else
-                                    <form action="{{ route('dashboard.profile.enable', $user->id) }}" method="POST"
-                                        style="display: inline;">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn btn-success btn-sm">
-                                            <i class="fas fa-check"></i> Enable
-                                        </button>
-                                    </form>
-                                @endif
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($users as $user)
+                            <tr>
+                                <td>{{ $user->id }}</td>
+                                <td>{{ $user->firstname }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>
+                                    @if ($user->is_active)
+                                        <form action="{{ route('dashboard.profile.disable', $user->id) }}" method="POST"
+                                            style="display: inline;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-ban"></i> Disable
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('dashboard.profile.enable', $user->id) }}" method="POST"
+                                            style="display: inline;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="fas fa-check"></i> Enable
+                                            </button>
+                                        </form>
+                                    @endif
 
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center">No users found.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">No users found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

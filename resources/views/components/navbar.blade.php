@@ -142,7 +142,7 @@
                                 </form>
                                 <a href="#" id="see-all-notifications" class="dropdown-item text-dark text-center"
                                     style="font-weight: bold; margin-top: 20px; background-color: #B7C9E2;"
-                                    onclick="markAllAndRedirect(event)">See All Notifications</a>
+                                    onclick="markAllAndRedirect(event)">Delete All Notifications</a>
                             @endif
                         @else
                             <p class="dropdown-item text-center">No notifications available</p>

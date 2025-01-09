@@ -112,6 +112,9 @@ body {
     color: var(--white);
     background-color: transparent;
     transition: background-color 0.3s ease, color 0.3s ease;
+    word-wrap: break-word; 
+    overflow-wrap: break-word; 
+    white-space: normal; 
 }
 
 #sidebar .side-menu li a:hover,
@@ -127,6 +130,10 @@ body {
 /* Responsive Sidebar */
 #sidebar.hide {
     width: 80px;
+}
+
+#sidebar.hide .side-menu li a .text {
+    display: none;
 }
 
 #sidebar.hide .side-menu li a span {
@@ -308,6 +315,15 @@ body {
 
     #content nav .form-input {
         display: none;
+    }
+
+    #sidebar .side-menu li a .text {
+        display: none;
+    }
+
+    #sidebar .side-menu li a {
+        justify-content: center;
+        white-space: nowrap;
     }
 }
 

@@ -7,11 +7,15 @@ function markAsRead(event, notificationId, csrfToken, url) {
         return;
     }
 
-    // Fetch the order ID from the notification data
+    // Fetch both orderId and reservationId from the notification data
     const orderId = $("#notification-" + notificationId).data("order-id");
+    const reservationId = $("#notification-" + notificationId).data(
+        "reservation-id"
+    );
 
-    // Log the orderId to debug the issue
+    // Log the fetched IDs for debugging
     console.log("Fetched Order ID: ", orderId);
+    console.log("Fetched Reservation ID: ", reservationId);
 
     $.ajax({
         url: url, // URL for marking as read
@@ -27,37 +31,85 @@ function markAsRead(event, notificationId, csrfToken, url) {
                 forceRefreshNotificationBadge(); // Forcefully refresh the badge after DOM changes
             });
 
-            // Fetch the order details based on the order ID
-            $.ajax({
-                url: `/orders/${orderId}`, // Correct the route to match your controller
-                method: "GET",
-                success: function (orderData) {
-                    // Populate the modal with order data
-                    $("#modalCustomerName").text(orderData.customerName);
-                    $("#modalOrderDate").text(orderData.date);
-                    $("#modalOrderStatus").text(orderData.status);
-                    let modalProducts = $("#modalProducts");
-                    modalProducts.empty(); // Clear previous data
+            // Check if it's an order notification
+            if (orderId) {
+                // Fetch order details
+                $.ajax({
+                    url: `/orders/${orderId}`, // Correct the route to match your controller
+                    method: "GET",
+                    success: function (orderData) {
+                        // Populate the modal with order data
+                        $("#modalCustomerName").text(orderData.customerName);
+                        $("#modalOrderDate").text(orderData.date);
+                        $("#modalOrderStatus").text(orderData.status);
+                        let modalProducts = $("#modalProducts");
+                        modalProducts.empty(); // Clear previous data
 
-                    orderData.products.forEach((product) => {
-                        modalProducts.append(`
+                        orderData.products.forEach((product) => {
+                            modalProducts.append(`
+                                <tr>
+                                    <td>${product.name}</td>
+                                    <td>${product.variation}</td>
+                                    <td>${product.quantity}</td>
+                                    <td>${product.price}</td>
+                                    <td>${product.total}</td>
+                                </tr>
+                            `);
+                        });
+
+                        // Show the modal
+                        $("#orderDetailsModal").modal("show");
+                    },
+                    error: function () {
+                        alert("Error fetching order details!");
+                    },
+                });
+            }
+
+            // Check if it's a reservation notification
+            else if (reservationId) {
+                // Fetch reservation details
+                $.ajax({
+                    url: `/reservations/${reservationId}`, // Correct the route to match your controller
+                    method: "GET",
+                    success: function (reservationData) {
+                        // Populate the modal with reservation data
+                        let modalReservationDetails = $(
+                            "#modalReservationDetails"
+                        );
+                        modalReservationDetails.empty(); // Clear previous data
+
+                        modalReservationDetails.append(`
                             <tr>
-                                <td>${product.name}</td>
-                                <td>${product.variation}</td>
-                                <td>${product.quantity}</td>
-                                <td>${product.price}</td>
-                                <td>${product.total}</td>
+                                <td>${reservationData.name}</td>
+                                <td>${reservationData.reservation_date}</td>
+                                <td>${reservationData.reservation_time}</td>
+                                <td>${reservationData.number_of_guests}</td>
+                                <td>${reservationData.status}</td>
                             </tr>
                         `);
-                    });
 
-                    // Show the modal
-                    $("#orderDetailsModal").modal("show");
-                },
-                error: function () {
-                    alert("Error fetching order details!");
-                },
-            });
+                        // Optionally, you can add additional data, such as note and email, as separate fields.
+                        modalReservationDetails.append(`
+                            <tr>
+                                <td colspan="5"><strong>Email:</strong> ${reservationData.email}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5"><strong>Phone:</strong> ${reservationData.phone_number}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5"><strong>Note:</strong> ${reservationData.note}</td>
+                            </tr>
+                        `);
+
+                        // Show the modal
+                        $("#reservationDetailsModal").modal("show");
+                    },
+                    error: function () {
+                        alert("Error fetching reservation details!");
+                    },
+                });
+            }
         },
         error: function (xhr, status, error) {
             console.error("Error marking notification as read", error);
@@ -100,11 +152,6 @@ function markAllAndRedirect(event) {
                     forceRefreshNotificationBadge(); // Forcefully refresh the badge after clearing
                 }
             );
-
-            // Optionally, redirect after marking all as read
-            setTimeout(() => {
-                window.location.href = "/orders/"; // Redirect to orders page
-            }, 500); // Delay to simulate the process
         },
         error: function () {
             alert("Failed to mark all notifications as read!");

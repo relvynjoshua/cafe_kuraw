@@ -151,6 +151,14 @@
             grid-template-columns: 1fr;
         }
     }
+
+    .table-responsive {
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: #E8E4D9;
+        padding: 15px;
+        border-radius: 8px;
+    }
 </style>
 
 <div class="container mt-4" style="max-width: 100%; width: 95%;">
@@ -158,97 +166,100 @@
     <div class="dashboard-title">Admin Dashboard</div>
 
     <!-- Dashboard Grid -->
-    <div class="dashboard-container">
-        <!-- Left Section -->
-        <div class="left-section">
-            <!-- KPI Cards -->
-            <div class="kpi-container">
-                <div class="kpi-card">
-                    <i class="fas fa-dollar-sign kpi-icon"></i>
-                    <div class="kpi-value">₱{{ number_format($totalSales, 2) }}</div>
-                    <div class="kpi-title">Overall Sales</div>
+    <div class="table-responsive">
+        <div class="dashboard-container">
+            <!-- Left Section -->
+            <div class="left-section">
+                <!-- KPI Cards -->
+                <div class="kpi-container">
+                    <div class="kpi-card">
+                        <i class="fas fa-dollar-sign kpi-icon"></i>
+                        <div class="kpi-value">₱{{ number_format($totalSales, 2) }}</div>
+                        <div class="kpi-title">Overall Sales</div>
+                    </div>
+                    <div class="kpi-card">
+                        <i class="fas fa-shopping-cart kpi-icon"></i>
+                        <div class="kpi-value">{{ $totalOrders ?? 0 }}</div>
+                        <div class="kpi-title">Total Orders</div>
+                    </div>
+                    <div class="kpi-card">
+                        <i class="fas fa-users kpi-icon"></i>
+                        <div class="kpi-value">{{ $totalCustomers ?? 0 }}</div>
+                        <div class="kpi-title">Total Users</div>
+                    </div>
                 </div>
-                <div class="kpi-card">
-                    <i class="fas fa-shopping-cart kpi-icon"></i>
-                    <div class="kpi-value">{{ $totalOrders ?? 0 }}</div>
-                    <div class="kpi-title">Total Orders</div>
-                </div>
-                <div class="kpi-card">
-                    <i class="fas fa-users kpi-icon"></i>
-                    <div class="kpi-value">{{ $totalCustomers ?? 0 }}</div>
-                    <div class="kpi-title">Total Users</div>
-                </div>
-            </div>
 
-            <!-- Incoming Orders -->
-            <div class="table-card">
-                <h4>Incoming Orders</h4>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Order Count</th>
-                            <th>Last Order</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($latestOrders as $order)
+                <!-- Incoming Orders -->
+                <div class="table-card">
+                    <h4>Incoming Orders</h4>
+                    <table>
+                        <thead>
                             <tr>
-                                <td>{{ $order->customer_name ?? 'Unknown' }}</td>
-                                <td>{{ $order->products->count() }}</td>
-                                <td>{{ $order->created_at->format('Y-m-d') }}</td>
+                                <th>Name</th>
+                                <th>Order Count</th>
+                                <th>Last Order</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            @foreach ($latestOrders as $order)
+                                <tr>
+                                    <td>{{ $order->customer_name ?? 'Unknown' }}</td>
+                                    <td>{{ $order->products->count() }}</td>
+                                    <td>{{ $order->created_at->format('Y-m-d') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
 
 
-            <!-- Incoming Reservations -->
-            <div class="table-card">
-                <h4>Incoming Reservations</h4>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Reservation Count</th>
-                            <th>Last Reservation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($latestReservations as $reservation)
+                <!-- Incoming Reservations -->
+                <div class="table-card">
+                    <h4>Incoming Reservations</h4>
+                    <table>
+                        <thead>
                             <tr>
-                                <td>{{ $reservation->name ?? 'Unknown' }}</td>
-                                <td>{{ $reservation->count ?? 1 }}</td>
-                                <td>{{ $reservation->created_at->format('Y-m-d') }}</td>
+                                <th>Name</th>
+                                <th>Reservation Count</th>
+                                <th>Last Reservation</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach ($latestReservations as $reservation)
+                                <tr>
+                                    <td>{{ $reservation->name ?? 'Unknown' }}</td>
+                                    <td>{{ $reservation->count ?? 1 }}</td>
+                                    <td>{{ $reservation->created_at->format('Y-m-d') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
-        </div>
-
-        <!-- Right Section -->
-        <div class="right-section">
-            <div class="chart-card">
-                <div class="chart-title">Orders by Time</div>
-                <div id="ordersByTimeChart"></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">Inventory Overview</div>
-                <div id="inventoryChart"></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">Reward System</div>
-                <div id="rewardSystemChart"></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">Customer Growth</div>
-                <div id="customerGrowthChart"></div>
+            <!-- Right Section -->
+            <div class="right-section">
+                <div class="chart-card">
+                    <div class="chart-title">Orders by Time</div>
+                    <div id="ordersByTimeChart"></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Inventory Overview</div>
+                    <div id="inventoryChart"></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Reward System</div>
+                    <div id="rewardSystemChart"></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Customer Growth</div>
+                    <div id="customerGrowthChart"></div>
+                </div>
             </div>
         </div>
     </div>
+
 
     <!-- Generate Reports -->
     <div class="report-container">

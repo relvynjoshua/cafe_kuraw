@@ -69,6 +69,14 @@
     h6 {
         color: #333;
     }
+
+    .table-responsive {
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+    }
 </style>
 
 <div class="container mt-4" style="max-width: 100%; width: 90%;">
@@ -90,61 +98,63 @@
     </a>
 
     <!-- Table -->
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Title</th>
-                <th scope="col">Category</th>
-                <th scope="col">Description</th>
-                <th scope="col">Image</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($galleryItems as $item)
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
                 <tr>
-                    <td>{{ $item->id }}</td>
-                    <td>{{ $item->title }}</td>
-                    <td>{{ $item->category }}</td>
-                    <td>{{ $item->description ?? 'No description provided' }}</td>
-                    <td>
-                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" width="100"
-                            class="img-thumbnail">
-                    </td>
-                    <td>
-                        <a href="{{ route('dashboard.gallery.edit', $item->id) }}" class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
-                        <form action="{{ route('dashboard.gallery.destroy', $item->id) }}" method="POST"
-                            style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Are you sure you want to delete this item?')">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
-                        </form>
-                    </td>
+                    <th scope="col">ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Actions</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="6" class="text-center">No gallery items found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @forelse ($galleryItems as $item)
+                    <tr>
+                        <td>{{ $item->id }}</td>
+                        <td>{{ $item->title }}</td>
+                        <td>{{ $item->category }}</td>
+                        <td>{{ $item->description ?? 'No description provided' }}</td>
+                        <td>
+                            <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" width="100"
+                                class="img-thumbnail">
+                        </td>
+                        <td>
+                            <a href="{{ route('dashboard.gallery.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form action="{{ route('dashboard.gallery.destroy', $item->id) }}" method="POST"
+                                style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Are you sure you want to delete this item?')">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center">No gallery items found.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-    <!-- Pagination Links -->
-    <div class="pagination">
-        <!-- Previous arrow -->
-        <a href="#" class="arrow" onclick="changePage('prev')">«</a>
+        <!-- Pagination Links -->
+        <div class="pagination">
+            <!-- Previous arrow -->
+            <a href="#" class="arrow" onclick="changePage('prev')">«</a>
 
-        <!-- Page Numbers -->
-        <span>Page {{ $galleryItems->currentPage() }} of {{ $galleryItems->lastPage() }}</span>
+            <!-- Page Numbers -->
+            <span>Page {{ $galleryItems->currentPage() }} of {{ $galleryItems->lastPage() }}</span>
 
-        <!-- Next arrow -->
-        <a href="#" class="arrow" onclick="changePage('next')">»</a>
+            <!-- Next arrow -->
+            <a href="#" class="arrow" onclick="changePage('next')">»</a>
+        </div>
     </div>
 </div>
 

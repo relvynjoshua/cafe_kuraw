@@ -90,6 +90,14 @@
     h6 {
         color: #333;
     }
+
+    .table-responsive {
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+    }
 </style>
 
 <div class="container mt-4" style="max-width: 100%; width: 90%;">
@@ -109,59 +117,61 @@
         <i class="fas fa-plus"></i> Add Supplier
     </a>
 
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                <th>ID</th>
-                <th>Company Name</th>
-                <!-- <th>Contact Person</th>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Company Name</th>
+                    <!-- <th>Contact Person</th>
                 <th>Phone Number</th>
                 <th>Email</th> -->
-                <th>Address</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($suppliers as $supplier)
-                <tr>
-                    <td>{{ $supplier->id }}</td>
-                    <td>{{ $supplier->company_name }}</td>
-                    <!-- <td>{{ $supplier->contact_person }}</td>
-                        <td>{{ $supplier->phone_number }}</td>
-                        <td>{{ $supplier->email }}</td> -->
-                    <td>{{ $supplier->address }}</td>
-                    <td>
-                        <a href="{{ route('dashboard.supplier.edit', $supplier) }}" class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
-                        <form action="{{ route('dashboard.supplier.destroy', $supplier) }}" method="POST"
-                            style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
-                        </form>
-                    </td>
+                    <th>Address</th>
+                    <th>Actions</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="7" class="text-center">No suppliers found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @forelse ($suppliers as $supplier)
+                    <tr>
+                        <td>{{ $supplier->id }}</td>
+                        <td>{{ $supplier->company_name }}</td>
+                        <!-- <td>{{ $supplier->contact_person }}</td>
+                            <td>{{ $supplier->phone_number }}</td>
+                            <td>{{ $supplier->email }}</td> -->
+                        <td>{{ $supplier->address }}</td>
+                        <td>
+                            <a href="{{ route('dashboard.supplier.edit', $supplier) }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form action="{{ route('dashboard.supplier.destroy', $supplier) }}" method="POST"
+                                style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center">No suppliers found.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-    <!-- Pagination Links -->
-    <div class="pagination">
-        <!-- Previous arrow -->
-        <a href="#" class="arrow" onclick="changePage('prev')">«</a>
+        <!-- Pagination Links -->
+        <div class="pagination">
+            <!-- Previous arrow -->
+            <a href="#" class="arrow" onclick="changePage('prev')">«</a>
 
-        <!-- Page Numbers -->
-        <span>Page {{ $suppliers->currentPage() }} of {{ $suppliers->lastPage() }}</span>
+            <!-- Page Numbers -->
+            <span>Page {{ $suppliers->currentPage() }} of {{ $suppliers->lastPage() }}</span>
 
-        <!-- Next arrow -->
-        <a href="#" class="arrow" onclick="changePage('next')">»</a>
+            <!-- Next arrow -->
+            <a href="#" class="arrow" onclick="changePage('next')">»</a>
+        </div>
     </div>
 </div>
 </div>
