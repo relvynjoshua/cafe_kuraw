@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            background-color: #f9f9f9;
+            background-color: #E8E4D9;
             font-family: 'Poppins', sans-serif;
         }
 
@@ -22,6 +22,10 @@
             color: #fff;
             min-height: 100vh;
             height: 100%h;
+            padding: 10px;
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+            word-wrap: break-word;
         }
 
         .sidebar h4 {
@@ -30,6 +34,7 @@
             margin-bottom: 30px;
             font-size: 1.5rem;
             color: #fff;
+            word-wrap: break-word;
         }
 
         .sidebar a {
@@ -40,6 +45,7 @@
             font-size: 1rem;
             text-decoration: none;
             transition: all 0.3s ease;
+            word-wrap: break-word;
         }
 
         .sidebar a:hover,
@@ -152,6 +158,53 @@
             background-color: #007bff;
             color: white;
         }
+
+        .header-container {
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header-container h3 {
+            margin: 0;
+            margin-top: 15px;
+            line-height: 1;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: absolute;
+                z-index: 10;
+            }
+
+            .sidebar a {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
+
+            .sidebar h4 {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100%;
+            }
+
+            .sidebar a {
+                font-size: 0.8rem;
+                padding: 5px 10px;
+            }
+
+            .sidebar h4 {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 
@@ -160,32 +213,20 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-md-2 sidebar p-3">
-                <h4 class="text-center mb-6"><i class="fas fa-coffee"></i> KURAW CAFE</h4>
+                <h4 class="text-center"><i class="fas fa-coffee"></i> KURAW CAFE</h4>
                 <a href="{{ route('cashier.showPOS') }}">
                     <i class="fas fa-home me-2"></i>Dashboard
                 </a>
-                <a href="{{ route('cashier.index') }}">
-                    <i class="fas fa-cash-register me-2"></i>Cashier
-                </a>
-                <a href="{{ route('cashier.transactions') }}">
-                    <i class="fas fa-receipt me-2"></i>Transaction
+                <a href="{{ route('cashierHistory.index') }}" class="active">
+                    <i class="fas fa-receipt me-2"></i>Order/Reservation History
                 </a>
                 <a href="{{ route('masteritem.index') }}">
-                    <i class="fas fa-box-open me-2"></i>Master Item
-                </a>
-                <a href="{{ route('cashierReservation.index') }}">
-                    <i class="fas fa-calendar-check me-2"></i>Reservation
-                </a>
-                <a href="{{ route('cashierHistory.index') }}" class="active">
-                    <i class="fas fa-history me-2"></i>History
+                    <i class="fas fa-box-open me-2"></i>Products List
                 </a>
                 <a href="{{route(name: 'cashierManage.index')}}">
-                    <i class="fas fa-tasks me-2"></i>Manage Orders
+                    <i class="fas fa-calendar-check me-2"></i>Manage Order/Reservation
                 </a>
                 <a href="{{ route('cashierProfile.index') }}">
-                    <i class="fas fa-user me-2"></i>Profile
-                </a>
-                <a href="{{ route('cashierSettings.index') }}">
                     <i class="fas fa-cogs me-2"></i>Settings
                 </a>
                 <form action="{{ route('cashier.logoutCashier') }}" method="POST" class="d-inline">
@@ -199,8 +240,31 @@
             <!-- Main Content -->
             <div class="col-md-10 p-4">
                 <!-- Order History Section -->
-                <h3 class="mb-4">Order History</h3>
                 <div class="history-table">
+                    <h3 class="mb-4"><i class="fas fa-shopping-cart"></i> Order History</h3>
+                    <form method="GET" action="{{ route('cashierHistory.index') }}" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="text" name="order_search" class="form-control" placeholder="Search orders"
+                                    value="{{ request('order_search') }}">
+                            </div>
+                            <div class="col-md-4">
+                                <select name="order_status" class="form-select">
+                                    <option value="">All Orders - Filter by Status</option>
+                                    <option value="pending" {{ request('order_status') == 'pending' ? 'selected' : '' }}>
+                                        Pending
+                                    </option>
+                                    <option value="completed" {{ request('order_status') == 'completed' ? 'selected' : '' }}>Completed
+                                    </option>
+                                    <option value="cancelled" {{ request('order_status') == 'cancelled' ? 'selected' : '' }}>Cancelled
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary">Apply</button>
+                            </div>
+                        </div>
+                    </form>
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
                             <tr>
@@ -240,10 +304,33 @@
                     </div>
                 </div>
 
+                <hr>
 
                 <!-- Reservation History Section -->
-                <h3 class="mb-4">Reservation History</h3>
                 <div class="history-table">
+                    <h3 class="mb-4"><i class="fas fa-calendar-alt"></i> Reservation History</h3>
+                    <form method="GET" action="{{ route('cashierHistory.index') }}" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="text" name="reservation_search" class="form-control"
+                                    placeholder="Search reservations" value="{{ request('reservation_search') }}">
+                            </div>
+                            <div class="col-md-4">
+                                <select name="reservation_status" class="form-select">
+                                    <option value="">All Reservations - Filter by Status</option>
+                                    <option value="pending" {{ request('reservation_status') == 'pending' ? 'selected' : '' }}>Pending
+                                    </option>
+                                    <option value="confirmed" {{ request('reservation_status') == 'confirmed' ? 'selected' : '' }}>
+                                        Confirmed</option>
+                                    <option value="cancelled" {{ request('reservation_status') == 'cancelled' ? 'selected' : '' }}>
+                                        Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary">Apply</button>
+                            </div>
+                        </div>
+                    </form>
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
                             <tr>
@@ -302,15 +389,18 @@
                     <div class="modal-body">
                         <p><strong>Customer Name:</strong> {{ $order->customer_name }}</p>
                         <p><strong>Total Amount:</strong> ₱{{ number_format($order->total_amount, 2) }}</p>
-                        <p><strong>Status:</strong> {{ ucfirst($order->status) }}</p>
+                        <hr>
                         <p><strong>Order Items:</strong></p>
                         <ul>
                             @foreach($order->products as $product)
-                                <li>{{ $product->name }} (₱{{ number_format($product->pivot->price, 2) }}) x
+                                <li><strong>{{ $product->name }}</strong> | {{ $product->pivot->variation ?? 'No Variation'}} |
+                                    (₱{{ number_format($product->pivot->price, 2) }}) x
                                     {{ $product->pivot->quantity }}
                                 </li>
                             @endforeach
                         </ul>
+                        <hr>
+                        <p><strong>Status:</strong> {{ ucfirst($order->status) }}</p>
                     </div>
                 </div>
             </div>
@@ -328,11 +418,13 @@
                     </div>
                     <div class="modal-body">
                         <p><strong>Customer Name:</strong> {{ $reservation->name }}</p>
-                        <p><strong>Date:</strong> {{ $reservation->reservation_date }}</p>
-                        <p><strong>Time:</strong> {{ $reservation->reservation_time }}</p>
+                        <hr>
+                        <p><strong>Reservation Date:</strong> {{ $reservation->reservation_date }}</p>
+                        <p><strong>Reservation Time:</strong> {{ $reservation->reservation_time }}</p>
                         <p><strong>Number of Guests:</strong> {{ $reservation->number_of_guests }}</p>
+                        <p><strong>Event/Notes:</strong> {{ $reservation->note }}</p>
+                        <hr>
                         <p><strong>Status:</strong> {{ ucfirst($reservation->status) }}</p>
-                        <p><strong>Note:</strong> {{ $reservation->note }}</p>
                     </div>
                 </div>
             </div>

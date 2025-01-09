@@ -66,7 +66,7 @@ class Order extends Model
 
     public function getTransactionIdAttribute()
     {
-        return 'TRID' . str_pad($this->id, 3, '0', STR_PAD_LEFT); // Prefix with TRID and pad with zeros
+        return 'TRID' . str_pad($this->id, 3, '0', STR_PAD_LEFT);
     }
 
 }

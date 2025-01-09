@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            background-color: #f9f9f9;
+            background-color: #E8E4D9;
             font-family: Arial, sans-serif;
         }
 
@@ -22,6 +22,10 @@
             color: #fff;
             min-height: 100vh;
             height: 100%h;
+            padding: 10px;
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+            word-wrap: break-word;
         }
 
         .sidebar h4 {
@@ -30,6 +34,7 @@
             margin-bottom: 30px;
             font-size: 1.5rem;
             color: #fff;
+            word-wrap: break-word;
         }
 
         .sidebar a {
@@ -40,6 +45,7 @@
             font-size: 1rem;
             text-decoration: none;
             transition: all 0.3s ease;
+            word-wrap: break-word;
         }
 
         .sidebar a:hover,
@@ -55,7 +61,8 @@
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);F
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            F
         }
 
         .tab-category {
@@ -91,6 +98,53 @@
         .btn-cancel:hover {
             opacity: 0.9;
         }
+
+        .header-container {
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header-container h3 {
+            margin: 0;
+            margin-top: 15px;
+            line-height: 1;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: absolute;
+                z-index: 10;
+            }
+
+            .sidebar a {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
+
+            .sidebar h4 {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100%;
+            }
+
+            .sidebar a {
+                font-size: 0.8rem;
+                padding: 5px 10px;
+            }
+
+            .sidebar h4 {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 
@@ -99,32 +153,20 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-md-2 sidebar p-3">
-                <h4 class="text-center mb-6"><i class="fas fa-coffee"></i> KURAW CAFE</h4>
+                <h4 class="text-center"><i class="fas fa-coffee"></i> KURAW CAFE</h4>
                 <a href="{{ route('cashier.showPOS') }}">
                     <i class="fas fa-home me-2"></i>Dashboard
                 </a>
-                <a href="{{ route('cashier.index') }}" >
-                    <i class="fas fa-cash-register me-2"></i>Cashier
-                </a>
-                <a href="{{ route('cashier.transactions') }}">
-                    <i class="fas fa-receipt me-2"></i>Transaction
+                <a href="{{ route('cashierHistory.index') }}">
+                    <i class="fas fa-receipt me-2"></i>Order/Reservation History
                 </a>
                 <a href="{{ route('masteritem.index') }}">
-                    <i class="fas fa-box-open me-2"></i>Master Item
-                </a>
-                <a href="{{ route('cashierReservation.index') }}">
-                    <i class="fas fa-calendar-check me-2"></i>Reservation
-                </a>
-                <a href="{{ route('cashierHistory.index') }}">
-                    <i class="fas fa-history me-2"></i>History
+                    <i class="fas fa-box-open me-2"></i>Products List
                 </a>
                 <a href="{{route(name: 'cashierManage.index')}}" class="active">
-                    <i class="fas fa-tasks me-2"></i>Manage Orders
+                    <i class="fas fa-calendar-check me-2"></i>Manage Order/Reservation
                 </a>
                 <a href="{{ route('cashierProfile.index') }}">
-                    <i class="fas fa-user me-2"></i>Profile
-                </a>
-                <a href="{{ route('cashierSettings.index') }}">
                     <i class="fas fa-cogs me-2"></i>Settings
                 </a>
                 <form action="{{ route('cashier.logoutCashier') }}" method="POST" class="d-inline">
@@ -144,15 +186,17 @@
                     </div>
                 @endif
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3>Manage Orders & Reservations</h3>
-                </div>
+                <div class="header-container">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3><i class="fas fa-calendar-check me-2"></i> Manage Orders & Reservations</h3>
+                    </div>
 
-                <!-- Category Tabs -->
-                <div class="tab-category">
-                    <button id="ordersBtn" class="btn active" onclick="showCategory('orders')">Orders</button>
-                    <button id="reservationsBtn" class="btn btn-outline-dark"
-                        onclick="showCategory('reservations')">Reservations</button>
+                    <!-- Category Tabs -->
+                    <div class="tab-category">
+                        <button id="ordersBtn" class="btn active" onclick="showCategory('orders')">Orders</button>
+                        <button id="reservationsBtn" class="btn btn-outline-dark"
+                            onclick="showCategory('reservations')">Reservations</button>
+                    </div>
                 </div>
 
                 <!-- Orders Table -->

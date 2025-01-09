@@ -9,26 +9,30 @@ use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CashierController extends Controller
 {
     public function showPOS()
     {
+        $categories = Category::limitedCategories()->get();
+        $products = Product::whereIn('category_id', $categories->pluck('id'))->get();
+
         // Fetch the latest transactions
         $latestTransactions = Order::orderBy('created_at', 'desc')
-            ->take(5) // Limit to the latest 5 transactions
+            ->take(3) // Limit to the latest 5 transactions
             ->get();
 
         // Fetch popular products by the number of orders
         $popularProducts = Product::withCount('orders') // Assuming a relationship exists
             ->orderBy('orders_count', 'desc')
-            ->take(5) // Limit to the top 5 products
+            ->take(3) // Limit to the top 5 products
             ->get();
 
         // Fetch reservations as receipts
         $recentReceipts = Reservation::where('status', 'confirmed')
             ->orderBy('reservation_date', 'desc')
-            ->take(5)
+            ->take(3)
             ->get();
 
         // Calculate today's gross profit
@@ -52,7 +56,9 @@ class CashierController extends Controller
             'popularProducts',
             'recentReceipts',
             'grossProfit',
-            'netProfit'
+            'netProfit',
+            'categories',
+            'products'
         ));
     }
 
@@ -259,7 +265,7 @@ class CashierController extends Controller
 
     public function masterItem()
     {
-        $allowedCategories = ['Espresso-Based', 'Coffee', 'Milk Tea', 'Non-Coffee', 'Snacks', 'Waffle', 'Ramen'];
+        $allowedCategories = ['Espresso-Based Coffee', 'Milk Tea', 'Non-Coffee', 'Snacks', 'Waffle', 'Ramen'];
         $categories = Category::whereIn('name', $allowedCategories)->get();
         $products = Product::with('category')->get();
 
@@ -304,11 +310,65 @@ class CashierController extends Controller
 
     public function history(Request $request)
     {
-        // Check which table (orders or reservations) is being paginated
-        $orders = Order::orderBy('created_at', 'desc')->paginate(10, ['*'], 'orders_page');
-        $reservations = Reservation::orderBy('created_at', 'desc')->paginate(10, ['*'], 'reservations_page');
+        // Fetch orders with initial filters (excluding transaction_id)
+        $ordersQuery = Order::query();
 
-        return view('pos.cashier-order-history', compact('orders', 'reservations'));
+        if ($request->filled('order_status')) {
+            $ordersQuery->where('status', $request->order_status);
+        }
+
+        $orders = $ordersQuery->with('products')->get();
+
+        // Filter orders by transaction_id or customer_name
+        if ($request->filled('order_search')) {
+            $search = $request->order_search;
+            $orders = $orders->filter(function ($order) use ($search) {
+                return str_contains($order->transaction_id, $search) ||
+                    str_contains($order->customer_name, $search);
+            });
+        }
+
+        // Paginate the results manually
+        $currentPage = $request->get('page', 1);
+        $perPage = 10;
+        $ordersPaginated = new LengthAwarePaginator(
+            $orders->forPage($currentPage, $perPage),
+            $orders->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        // Fetch reservations with filters
+        $reservationsQuery = Reservation::query();
+
+        if ($request->filled('reservation_status')) {
+            $reservationsQuery->where('status', $request->reservation_status);
+        }
+
+        $reservations = $reservationsQuery->get();
+
+        if ($request->filled('reservation_search')) {
+            $search = $request->reservation_search;
+            $reservations = $reservations->filter(function ($reservation) use ($search) {
+                return str_contains($reservation->reservation_id, $search) ||
+                    str_contains($reservation->name, $search);
+            });
+        }
+
+        // Paginate the reservations
+        $reservationsPaginated = new LengthAwarePaginator(
+            $reservations->forPage($currentPage, $perPage),
+            $reservations->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return view('pos.cashier-order-history', [
+            'orders' => $ordersPaginated,
+            'reservations' => $reservationsPaginated,
+        ]);
     }
 
     public function manageOrders()

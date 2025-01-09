@@ -146,7 +146,7 @@ Route::put('/cashier/transactions/{id}/status', [CashierController::class, 'upda
 Route::get('/cashier', [CashierController::class, 'index'])->name('cashier.index');
 Route::post('/cashier', [CashierController::class, 'checkout'])->name('cashier.checkout');
 
-Route::get('/cashier/masteritem', [CashierController::class, 'masterItem'])->name('masteritem.index');
+Route::get('/cashier/products_list', [CashierController::class, 'masterItem'])->name('masteritem.index');
 
 // Cashier Reservations
 Route::get('/cashier/reservations', [CashierController::class, 'reservationIndex'])->name('cashierReservation.index');
