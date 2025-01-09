@@ -15,23 +15,28 @@
                         @csrf
                         <div class="input-group">
                             <i class='bx bxs-user'></i>
-                            <input type="text" name="firstname" placeholder="Name" value="{{ old('firstname') }}" required>
+                            <input type="text" name="firstname" placeholder="Name" value="{{ old('firstname') }}"
+                                required>
                         </div>
                         <div class="input-group">
                             <i class='bx bx-mail-send'></i>
-                            <input type="email" name="email" id="email" placeholder="Enter your Email" value="{{ old('email') }}" required>
+                            <input type="email" name="email" id="email" placeholder="Enter your Email"
+                                value="{{ old('email') }}" required>
                         </div>
                         <div class="input-group password-group">
                             <i class='bx bxs-lock-alt'></i>
-                            <input type="password" name="password" id="signup-password" placeholder="Password" minlength="5" required>
+                            <input type="password" name="password" id="signup-password" placeholder="Password"
+                                minlength="5" required>
                             <span class="toggle-password" onclick="togglePassword('signup-password', this)">
                                 <i class="bx bx-show"></i>
                             </span>
                         </div>
                         <div class="input-group password-group">
                             <i class='bx bxs-lock-alt'></i>
-                            <input type="password" name="password_confirmation" id="signup-password-confirmation" placeholder="Confirm password" minlength="5" required>
-                            <span class="toggle-password" onclick="togglePassword('signup-password-confirmation', this)">
+                            <input type="password" name="password_confirmation" id="signup-password-confirmation"
+                                placeholder="Confirm password" minlength="5" required>
+                            <span class="toggle-password"
+                                onclick="togglePassword('signup-password-confirmation', this)">
                                 <i class="bx bx-show"></i>
                             </span>
                         </div>
@@ -64,11 +69,13 @@
                         @csrf
                         <div class="input-group">
                             <i class='bx bx-mail-send'></i>
-                            <input type="email" name="email" placeholder="Enter your Email" value="{{ old('email') }}" required>
+                            <input type="email" name="email" placeholder="Enter your Email" value="{{ old('email') }}"
+                                required>
                         </div>
                         <div class="input-group password-group">
                             <i class='bx bxs-lock-alt'></i>
-                            <input type="password" name="password" id="signin-password" placeholder="Password" minlength="5" required>
+                            <input type="password" name="password" id="signin-password" placeholder="Password"
+                                minlength="5" required>
                             <span class="toggle-password" onclick="togglePassword('signin-password', this)">
                                 <i class="bx bx-show"></i>
                             </span>
@@ -88,60 +95,78 @@
     </div>
 </div>
 
+<!-- Send OTP Button -->
+<button onclick="sendOTPWithLoader()">Send OTP</button>
+<div id="loading-spinner" class="spinner" style="display: none;"></div>
+
 <!-- OTP Verification Modal -->
 <div id="otpModal" class="modal">
     <div class="modal-content">
-        <!-- Error messages container (inside the OTP modal) -->
-        <div id="otp-error-messages"></div>
+        <div class="modal-header">
+            <h2>One-Time PIN Sent!</h2>
+        </div>
+        <div class="modal-body">
+            <p>
+                We have sent a PIN to your email. Please enter OTP below.
+            </p>
 
-        <!-- OTP Input and Verify Button -->
-        <label for="otp-input">Please Enter OTP sent to your email:</label>
-        <input type="text" id="otp-input" placeholder="Enter OTP" />
-
-        <button onclick="verifyOTP()">Verify OTP</button>
-
-        <!-- Cancel Button -->
-        <button onclick="closeOTPModal()" class="cancel-btn">Cancel</button>
-        <!-- Timer and Resend Button -->
-        <div id="otp-timer">
-            <span id="time-left">01:00</span> <!-- Countdown timer -->
-            <button id="resend-btn" onclick="sendOTP(event)" style="display: none;">Resend OTP</button>
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
+            </div>
+            <div id="otp-error-messages"></div> <!-- Error messages container -->
+            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
+                <div style="display: flex; gap: 10px;">
+                    <button id="resend-otp" style="display: none;" onclick="resendOTP()">Resend OTP</button>
+                    <button onclick="verifyOTP()">Proceed</button>
+                </div>
+                <p id="resend-timer" style="margin-top: 10px;">Resend OTP (<span id="timer">01:00</span>)</p>
+            </div>
         </div>
     </div>
 </div>
 
 
 <script>
-let timer;
-let countdownTime = 60;  // Initial countdown time (60 seconds)
-let otpSent = false; // Flag to track if OTP was sent
+    // Function to toggle password visibility
+    function togglePassword(inputId, toggleIcon) {
+        const inputField = document.getElementById(inputId);
+        const icon = toggleIcon.querySelector('i');
 
-
-// Function to toggle password visibility
-function togglePassword(inputId, toggleIcon) {
-    const inputField = document.getElementById(inputId);
-    const icon = toggleIcon.querySelector('i');
-
-    if (inputField.type === 'password') {
-        inputField.type = 'text';
-        icon.classList.replace('bx-show', 'bx-hide');
-    } else {
-        inputField.type = 'password';
-        icon.classList.replace('bx-hide', 'bx-show');
+        if (inputField.type === 'password') {
+            inputField.type = 'text';
+            icon.classList.replace('bx-show', 'bx-hide');
+        } else {
+            inputField.type = 'password';
+            icon.classList.replace('bx-hide', 'bx-show');
+        }
     }
-}
+
+    function moveToNext(input) {
+        if (input.value.length === 1) {
+            const nextInput = input.nextElementSibling;
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+    }
 
     // Start the countdown timer
     function startTimer() {
-        const timeLeftElement = document.getElementById('time-left');  // Element to display time
-        const resendBtn = document.getElementById('resend-btn');  // Reference to resend button
+        const timeLeftElement = document.getElementById('timer');  // Element to display time
+        const resendBtn = document.getElementById('resend-otp');  // Reference to resend button
         const otpErrorMessages = document.getElementById('otp-error-messages'); // Reference to error messages container
 
         resendBtn.style.display = 'none';  // Hide resend button initially
         otpErrorMessages.innerHTML = ''; // Clear any previous error messages
 
         // Start the countdown timer
-        timer = setInterval(() => {
+        let countdownTime = 60; // 1 minute countdown (1 * 60 seconds)
+        let timer = setInterval(() => {
             const minutes = Math.floor(countdownTime / 60);
             const seconds = countdownTime % 60;
             timeLeftElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`; // Format time
@@ -154,9 +179,9 @@ function togglePassword(inputId, toggleIcon) {
 
                 // Show OTP expired message
                 otpErrorMessages.innerHTML = `
-                    <div class="alert alert-danger mt-3" style="display: block;">
-                        <strong>Error:</strong> OTP expired. Please resend OTP.
-                    </div>`;
+                <div class="alert alert-danger mt-3" style="display: block;">
+                    <strong>Error:</strong> OTP expired. Please resend OTP.
+                </div>`;
 
                 resendBtn.style.display = 'block';  // Show the resend button again
                 resendBtn.disabled = false;  // Enable the resend button after timer expires
@@ -166,267 +191,240 @@ function togglePassword(inputId, toggleIcon) {
 
     // Function to handle Resending OTP
     function resendOTP() {
-        const resendBtn = document.getElementById('resend-btn');
+        const resendBtn = document.getElementById('resend-otp');
+        const loadingSpinner = document.getElementById('loading-spinner');
         resendBtn.disabled = true; // Disable the resend button immediately to prevent spamming
 
-        // Call the function to resend OTP, this could be the same as sendOTP or a new function
-        sendOTP(); // Resend OTP when clicked (you can define sendOTP logic here)
+        // Show loading spinner
+        loadingSpinner.style.display = 'block';
 
-        // After OTP is resent, start the timer again and hide the resend button
-        countdownTime = 60; // Reset countdown time to 60 seconds
-        startTimer();  // Restart the timer
-    }
+        // Show "Resending..." loader
+        resendBtn.innerText = "resending...";
 
-// Function to Send OTP
-async function sendOTP(event) {
-    event.preventDefault();  // Prevent form submission
-    
-    // Disable the "Send OTP" button to prevent further clicks
-    const sendOtpButton = event.target;  // Get the button that was clicked
-    sendOtpButton.disabled = true;  // Disable the button
-
-    // Reference to the error messages container
-    const errorMessages = document.getElementById('error-messages');
-
-    // Get form field values
-    const email = document.getElementById('email');
-    const password = document.getElementsByName('password')[0];
-    const confirmPassword = document.getElementsByName('password_confirmation')[0];
-
-    // Define password regex for validation
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    // Define email regex for validation
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-    // Reset previous errors
-    email.classList.remove('error');
-    password.classList.remove('error');
-    confirmPassword.classList.remove('error');
-    errorMessages.innerHTML = ''; // Clear error messages
-
-    // Start with no errors
-    let errors = [];
-
-    // Check if email field is empty
-    if (!email.value.trim()) {
-        email.classList.add('error');
-        errors.push('Please fill out the email field.');
-    } else if (!emailRegex.test(email.value)) { // Check if email format is correct
-        email.classList.add('error');
-        errors.push('Please enter a valid email address.');
-    }
-
-    // Check if password field is empty
-    if (!password.value) {
-        password.classList.add('error');
-        errors.push('Please fill out the password field.');
-    }
-
-    // Check if confirm password field is empty
-    if (!confirmPassword.value) {
-        confirmPassword.classList.add('error');
-        errors.push('Please fill out the confirm password field.');
-    }
-
-    // If there are any errors, display the first one and stop further validation
-    if (errors.length > 0) {
-        errorMessages.innerHTML = `
-            <div class="alert alert-danger mt-3" style="display: block;">
-                <strong>Error:</strong> ${errors[0]}
-            </div>`;
-        // Re-enable the button so the user can fix the error and try again
-        sendOtpButton.disabled = false;
-        return;  // Stop further validation and display the first error
-    }
-
-    // Check if passwords match
-    if (password.value && confirmPassword.value && password.value !== confirmPassword.value) {
-        password.classList.add('error');
-        confirmPassword.classList.add('error');
-        errors.push('Passwords do not match.');
-    }
-
-    // If there are any errors, display the first one and stop further validation
-    if (errors.length > 0) {
-        errorMessages.innerHTML = `
-            <div class="alert alert-danger mt-3" style="display: block;">
-                <strong>Error:</strong> ${errors[0]}
-            </div>`;
-        // Re-enable the button so the user can fix the error and try again
-        sendOtpButton.disabled = false;
-        return;  // Stop further validation and display the first error
-    }
-
-    // Validate password strength
-    if (password.value && !passwordRegex.test(password.value)) {
-        password.classList.add('error');
-        errors.push('Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.');
-    }
-
-    // If there are any errors, display the first one and stop further validation
-    if (errors.length > 0) {
-        errorMessages.innerHTML = `
-            <div class="alert alert-danger mt-3" style="display: block;">
-                <strong>Error:</strong> ${errors[0]}
-            </div>`;
-        // Re-enable the button so the user can fix the error and try again
-        sendOtpButton.disabled = false;
-        return;  // Stop further validation and display the first error
-    }
-
-    // Check if email is already taken
-    const emailTaken = await checkEmailAvailability(email.value);
-    if (emailTaken) {
-        email.classList.add('error');
-        errorMessages.innerHTML = `
-            <div class="alert alert-danger mt-3" style="display: block;">
-                <strong>Error:</strong> Email is already taken. Please use another email.
-            </div>`;
-        // Re-enable the button so the user can fix the error and try again
-        sendOtpButton.disabled = false;
-        return;
-    }
-
-    // Send OTP request to the backend if validations pass
-    fetch('/send-otp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ email: email.value })
-    })
-    .then(response => {
-        if (response.ok) {
-            errorMessages.innerHTML = `
-                <div class="alert alert-success mt-3" style="display: block;">
-                    <strong>Success:</strong> OTP sent to your email!
-                </div>`;
-            document.getElementById('otpModal').style.display = 'flex';
-            startTimer();  // Start OTP timer
-        } else {
-            errorMessages.innerHTML = `
-                <div class="alert alert-danger mt-3" style="display: block;">
-                    <strong>Error:</strong> Failed to send OTP. Please try again.
-                </div>`;
-        }
-
-        // Re-enable the button after the OTP request is complete (success or failure)
-        sendOtpButton.disabled = false;
-    })
-    .catch(() => {
-        errorMessages.innerHTML = `
-            <div class="alert alert-danger mt-3" style="display: block;">
-                <strong>Error:</strong> An error occurred. Please try again later.
-            </div>`;
-        
-        // Re-enable the button after the error is handled
-        sendOtpButton.disabled = false;
-    });
-}
-
-async function checkEmailAvailability(email) {
-    try {
-        const response = await fetch('/check-email', {
+        // Call the function to resend OTP
+        fetch('/send-otp', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            body: JSON.stringify({ email: email })
-        });
+            body: JSON.stringify({ email: document.getElementById('email').value })
+        })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('otpModal').style.display = 'flex';
+                    startTimer();  // Start OTP timer
+                } else {
+                    throw new Error('Failed to send OTP');  // Handle errors appropriately
+                }
+            })
+            .catch(error => {
+                console.error('Error resending OTP:', error);
+                // Show error message in the modal
+                document.getElementById('otp-error-messages').innerHTML = `
+            <div class="alert alert-danger mt-3" style="display: block;">
+                <strong>Error:</strong> An error occurred while resending the OTP. Please try again later.
+            </div>`;
+            })
+            .finally(() => {
+                loadingSpinner.style.display = 'none'; // Hide spinner after completion
+                resendBtn.disabled = false;  // Re-enable the button
+            });
+    }
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+
+
+    async function sendOTP(event) {
+        event.preventDefault();  // Prevent form submission
+
+        // Get the button that was clicked
+        const sendOtpButton = event.target;
+        // Reference to the error messages container
+        const errorMessages = document.getElementById('error-messages');
+
+        // Get form field values
+        const firstname = document.getElementsByName('firstname')[0];
+        const email = document.getElementById('email');
+        const password = document.getElementsByName('password')[0];
+        const confirmPassword = document.getElementsByName('password_confirmation')[0];
+
+        // Define password and email regex for validation
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+        // Reset previous errors
+        [firstname, email, password, confirmPassword].forEach(input => input.classList.remove('error'));
+        errorMessages.innerHTML = ''; // Clear previous error messages
+
+        // Start with no errors
+        let errors = [];
+
+        // Validate fields
+        if (!firstname.value.trim()) {
+            firstname.classList.add('error');
+            errors.push('Name field is required.');
         }
 
-        const result = await response.json();
-        return result.taken; // true if email is already taken
-    } catch (error) {
-        console.error("Error checking email availability:", error);
-        return false; // Default to false when there's an error
-    }
-}
+        if (!email.value.trim()) {
+            email.classList.add('error');
+            errors.push('Please fill out the email field.');
+        } else if (!emailRegex.test(email.value)) {
+            email.classList.add('error');
+            errors.push('Please enter a valid email address.');
+        }
 
-// Function to Verify OTP
+        if (!password.value) {
+            password.classList.add('error');
+            errors.push('Please fill out the password field.');
+        }
 
-function verifyOTP() {
-    const enteredOTP = document.getElementById('otp-input').value;
-    const errorMessages = document.getElementById('otp-error-messages'); // Reference to error messages inside OTP modal
+        if (!confirmPassword.value) {
+            confirmPassword.classList.add('error');
+            errors.push('Please fill out the confirm password field.');
+        }
 
-    // Reset previous errors
-    errorMessages.innerHTML = '';  // Clear any previous error messages inside the modal
+        if (password.value !== confirmPassword.value) {
+            password.classList.add('error');
+            confirmPassword.classList.add('error');
+            errors.push('Passwords do not match.');
+        }
 
-    // Check if the OTP input is empty (basic validation)
-    if (!enteredOTP) {
-        errorMessages.innerHTML = `
+        if (password.value && !passwordRegex.test(password.value)) {
+            password.classList.add('error');
+            errors.push('Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.');
+        }
+
+        // If there are any errors, display the first one and stop further validation
+        if (errors.length > 0) {
+            errorMessages.innerHTML = `
             <div class="alert alert-danger mt-3" style="display: block;">
-                <strong>Error:</strong> OTP cannot be empty. Please enter the OTP.
+                <strong>Error:</strong> ${errors[0]}
+            </div>`;
+            sendOtpButton.disabled = false;  // Re-enable the button
+            return;
+        }
+
+        // Show "Sending..." loader after all validations are successful
+        sendOtpButton.innerText = "Sending...";
+        sendOtpButton.disabled = true;
+
+        // Send OTP request to the backend
+        fetch('/send-otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ email: email.value })
+        })
+            .then(response => {
+                if (response.ok) {
+                    errorMessages.innerHTML = `
+                <div class="alert alert-success mt-3" style="display: block;">
+                    <strong>Success:</strong> OTP sent to your email!
+                </div>`;
+                    document.getElementById('otpModal').style.display = 'flex';
+                    startTimer();  // Start OTP timer
+                } else {
+                    // If email is already taken, show this message
+                    errorMessages.innerHTML = `
+                <div class="alert alert-danger mt-3" style="display: block;">
+                    <strong>Error:</strong> Email is already taken. Please use another email.
+                </div>`;
+                }
+            })
+            .catch(() => {
+                errorMessages.innerHTML = `
+            <div class="alert alert-danger mt-3" style="display: block;">
+                <strong>Error:</strong> An error occurred. Please try again later.
+            </div>`;
+            })
+            .finally(() => {
+                sendOtpButton.innerText = "Send OTP";  // Reset button text after completion
+                sendOtpButton.disabled = false;  // Re-enable the button
+            });
+    }
+
+
+    // Function to Verify OTP
+    function verifyOTP() {
+        const otpInputs = document.querySelectorAll('.otp-digit');
+        const enteredOTP = Array.from(otpInputs).map(input => input.value).join('');
+        const errorMessages = document.getElementById('otp-error-messages'); // Reference to error messages inside OTP modal
+
+        // Reset previous errors
+        errorMessages.innerHTML = '';  // Clear any previous error messages inside the modal
+
+        // Check if the OTP input is empty (basic validation)
+        if (enteredOTP.length !== 6) {
+            errorMessages.innerHTML = `
+            <div class="alert alert-danger mt-3" style="display: block;">
+                <strong>Error:</strong> Please enter a 6-digit OTP.
             </div>
         `;
-        return; // Stop further execution if OTP is empty
-    }
-
-    // Make a POST request to verify OTP
-    fetch('/verify-otp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ otp: enteredOTP })
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();  // Proceed if OTP verification is successful
-        } else {
-            // Display an error if response is not OK
-            throw new Error('Invalid OTP');
+            return; // Stop further execution if OTP is incomplete
         }
-    })
-    .then(() => {
-        // Success: OTP verified
-        alert("OTP verified successfully!");
-        document.getElementById('otp-hidden').value = enteredOTP;
-        document.getElementById('otpModal').style.display = 'none';
-        document.getElementById('signup-form').submit();
-    })
-    .catch((error) => {
-        // Error handling: Display error message inside the OTP modal
-        errorMessages.innerHTML = `
+
+        // Make a POST request to verify OTP
+        fetch('/verify-otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ otp: enteredOTP })
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();  // Proceed if OTP verification is successful
+                } else {
+                    // Display an error if response is not OK
+                    throw new Error('Invalid OTP');
+                }
+            })
+            .then(() => {
+                // Success: OTP verified
+                alert("OTP verified successfully!");
+                document.getElementById('otp-hidden').value = enteredOTP;
+                document.getElementById('otpModal').style.display = 'none';
+                document.getElementById('signup-form').submit();
+            })
+            .catch((error) => {
+                // Error handling: Display error message inside the OTP modal
+                errorMessages.innerHTML = `
             <div class="alert alert-danger mt-3" style="display: block;">
                 <strong>Error:</strong> Invalid OTP. Please try again.
             </div>
         `;
+            });
+    }
+
+
+    // Function to close OTP modal
+    function closeOTPModal() {
+        document.getElementById('otpModal').style.display = 'none';
+        clearInterval(timer);
+    }
+
+
+    document.getElementById('signup-form').addEventListener('submit', function (e) {
+        const password = document.getElementsByName('password')[0].value;
+        const confirmPassword = document.getElementsByName('password_confirmation')[0].value;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        // Password strength validation
+        if (!passwordRegex.test(password)) {
+            e.preventDefault();
+            alert('Password must be at least 8 characters long, include an uppercase letter, a number, and a special character.');
+            return;
+        }
+
+        // Confirm password match validation
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Passwords do not match.');
+            return;
+        }
     });
-}
-
-// Function to close OTP modal
-function closeOTPModal() {
-    document.getElementById('otpModal').style.display = 'none';
-    clearInterval(timer);
-}
-
-
-document.getElementById('signup-form').addEventListener('submit', function (e) {
-    const password = document.getElementsByName('password')[0].value;
-    const confirmPassword = document.getElementsByName('password_confirmation')[0].value;
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/; 
-
-    // Password strength validation
-    if (!passwordRegex.test(password)) {
-        e.preventDefault();
-        alert('Password must be at least 8 characters long, include an uppercase letter, a number, and a special character.');
-        return;
-    }
-
-    // Confirm password match validation
-    if (password !== confirmPassword) {
-        e.preventDefault();
-        alert('Passwords do not match.');
-        return;
-    }
-});
 </script>
 @endsection
