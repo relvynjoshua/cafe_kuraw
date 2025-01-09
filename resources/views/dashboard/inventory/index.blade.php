@@ -30,7 +30,6 @@
     .pagination a {
         display: inline-block;
         padding: 6px 12px;
-        /* Adjusted padding for better button size */
         color: #007bff;
         text-decoration: none;
         border: 1px solid #ddd;
@@ -38,7 +37,6 @@
         background-color: #fff;
         transition: background-color 0.3s, color 0.3s;
         font-size: 1rem;
-        /* Adjusted font size for page numbers */
         line-height: 1.5;
     }
 
@@ -58,41 +56,120 @@
     /* Arrow buttons */
     .pagination .arrow {
         font-size: 1.2rem;
-        /* Make the arrows a bit bigger */
         padding: 6px 10px;
     }
 
-    /* Arrow hover effect */
-    .pagination .arrow:hover {
-        background-color: #007bff;
+    /* Scrollable table container */
+    .table-responsive {
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: #f9f9f9; /* Set the table background to white */
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    table {
+        width: 100%;
+        max-width: 100%;
+        table-layout: auto;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+        font-size: 0.9rem;
+        border: 1px solid #ddd; /* Add borders to table cells */
+    }
+
+    th {
+        background-color: #f5f5f5; /* Light gray background for table headers */
+        font-weight: bold;
+    }
+
+    /* Adjusting the Actions column */
+    td:nth-child(10),
+    th:nth-child(10) {
+        min-width: 150px; /* Adjust the width to make it spacious */
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .action-buttons a,
+    .action-buttons button {
+        display: inline-block;
+        font-size: 0.85rem;
+        padding: 5px 8px;
+        border-radius: 5px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
         color: white;
     }
 
-    /* Adjust spacing and layout for responsiveness */
-    @media (max-width: 768px) {
-        .pagination .page-link {
-            font-size: 10px;
-            /* Smaller font size on smaller screens */
-            padding: 3px 6px;
-            /* Adjust padding for compact display */
-        }
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    /* Adjust Stock Adjustment column */
+    td:nth-child(12),
+    th:nth-child(12) {
+        min-width: 280px; /* Ensure the column is wide enough */
     }
 
     /* Styling for the container */
     .container {
-        background-color: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     h1,
     h6 {
         color: #333;
     }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 768px) {
+        table {
+            font-size: 0.8rem;
+        }
+
+        th, td {
+            padding: 5px;
+        }
+
+        .action-buttons {
+            flex-direction: column; /* Stack buttons on smaller screens */
+        }
+
+        .pagination a {
+            font-size: 0.85rem;
+            padding: 4px 8px;
+        }
+    }
 </style>
 
-<div class="container mt-4" style="max-width: 100%; width: 90%;">
+<div class="container mt-4" style="max-width: 100%; width: 98%;">
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
@@ -113,111 +190,97 @@
         <i class="fas fa-plus"></i> Add Inventory Item
     </a>
 
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Item Name</th>
-                <th scope="col">Description</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Unit</th>
-                <th scope="col">Price</th>
-                <th scope="col">Category</th>
-                <th scope="col">Supplier of Item</th>
-                <th scope="col">Bought Location</th>
-                <th scope="col">Actions</th>
-                <th scope="col">Stock Level</th>
-                <th scope="col">Stock Adjustment</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($inventories as $inventory)
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
                 <tr>
-                    <td>{{ $inventory->id }}</td>
-                    <td>{{ $inventory->item_name }}</td>
-                    <td>{{ $inventory->description }}</td>
-                    <td>{{ $inventory->quantity }}</td>
-                    <td>{{ $inventory->unit }}</td>
-                    <td>{{ $inventory->price }}</td>
-                    <td>{{ $inventory->category->name ?? 'N/A' }}</td>
-                    <td>{{ $inventory->supplier->company_name ?? 'N/A' }}</td>
-                    <td>{{ $inventory->location ?? 'N/A' }}</td>
-                    <td>
-                        <a href="{{ route('dashboard.inventory.edit', $inventory->id) }}" class="btn btn-warning btn-sm">
+                    <th scope="col">ID</th>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Unit</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Supplier of Item</th>
+                    <th scope="col">Bought Location</th>
+                    <th scope="col">Actions</th>
+                    <th scope="col">Stock Level</th>
+                    <th scope="col">Stock Adjustment</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($inventories as $inventory)
+                    <tr>
+                        <td>{{ $inventory->id }}</td>
+                        <td>{{ $inventory->item_name }}</td>
+                        <td>{{ $inventory->description }}</td>
+                        <td>{{ $inventory->quantity }}</td>
+                        <td>{{ $inventory->unit }}</td>
+                        <td>{{ $inventory->price }}</td>
+                        <td>{{ $inventory->category->name ?? 'N/A' }}</td>
+                        <td>{{ $inventory->supplier->company_name ?? 'N/A' }}</td>
+                        <td>{{ $inventory->location ?? 'N/A' }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ route('dashboard.inventory.edit', $inventory->id) }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i> Edit
                         </a>
-                        <form action="{{ route('dashboard.inventory.destroy', $inventory->id) }}" method="POST"
-                            style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
-                        </form>
-                    </td>
-                    <td>
-                        @if ($inventory->quantity <= $inventory->low_stock_threshold)
-                            <span class="badge badge-warning" style="color: red; font-size: 1.0em;">Low Stock</span>
-                        @endif
-                    </td>
-                    <td>
-                        <!-- Display current quantity -->
-                        <div style="margin-bottom: 10px;">
-                            <label for="current_quantity_{{ $inventory->id }}" class="font-weight-bold">Current
-                                Quantity:</label>
-                            <input type="number" id="current_quantity_{{ $inventory->id }}"
-                                value="{{ $inventory->quantity }}" class="form-control text-center" readonly
-                                style="background-color: #f8f9fa; border: 1px solid #ced4da; width: 100px; margin-bottom: 5px;">
-                        </div>
-
-                        <!-- Form for Add/Subtract -->
-                        <form action="{{ route('dashboard.inventory.updateQuantity', $inventory->id) }}" method="POST">
-                            @csrf
-                            <div class="input-group" style="max-width: 300px;">
-                                <!-- Dropdown for Add/Subtract -->
-                                <select name="change_type" class="form-control" style="width: 40%;" required>
-                                    <option value="add">Add Item</option>
-                                    <option value="subtract">Subtract Item</option>
-                                </select>
-
-                                <!-- Input field for quantity -->
-                                <input type="number" name="quantity" class="form-control text-center"
-                                    placeholder="Enter Quantity" min="1" required style="width: 50%;">
-
-                                <!-- Submit Button -->
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-primary">
-                                        Update
-                                    </button>
-                                </div>
+                                </a>
+                                <form action="{{ route('dashboard.inventory.destroy', $inventory->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
+                                </form>
                             </div>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="9" class="text-center">No inventory items found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+                        </td>
+                        <td>
+                            @if ($inventory->quantity == 0)
+                                <span class="badge badge-danger" style="background-color: red; color: white;">Out of Stock</span>
+                            @elseif ($inventory->quantity > 0 && $inventory->quantity <= 10)
+                                <span class="badge badge-warning" style="background-color: red; color: white;">Low Stock</span>
+                            @elseif ($inventory->quantity > 10 && $inventory->quantity <= 50)
+                                <span class="badge badge-success" style="background-color: green; color: white;">Sufficient</span>
+                            @elseif ($inventory->quantity > 50 && $inventory->quantity <= 100)
+                                <span class="badge badge-info" style="background-color: blue; color: white;">High</span>
+                            @elseif ($inventory->quantity > 100)
+                                <span class="badge badge-primary" style="background-color: purple; color: white;">Overstocked</span>
+                            @endif
+                        </td>
+                        <td>
+                            <div>
+                                <label>Current Quantity:</label>
+                                <input type="number" value="{{ $inventory->quantity }}" readonly class="form-control text-center" style="width: 60px; display: inline;">
+                            </div>
+                            <form>
+                                <div class="input-group" style="margin-top: 10px;">
+                                    <select class="form-select">
+                                        <option value="add">Add</option>
+                                        <option value="subtract">Subtract</option>
+                                    </select>
+                                    <input type="number" class="form-control" placeholder="Qty">
+                                    <button class="btn btn-primary" type="submit">Update</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="12" class="text-center">No inventory items found.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
     <!-- Pagination Links -->
     <div class="pagination">
-        <!-- Previous arrow -->
         <a href="#" class="arrow" onclick="changePage('prev')">«</a>
-
-        <!-- Page Numbers -->
         <span>Page {{ $inventories->currentPage() }} of {{ $inventories->lastPage() }}</span>
-
-        <!-- Next arrow -->
         <a href="#" class="arrow" onclick="changePage('next')">»</a>
     </div>
 </div>
-</div>
 
 <script>
-    // Function to change pages
     function changePage(direction) {
         const currentPage = {{ $inventories->currentPage() }};
         let newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;

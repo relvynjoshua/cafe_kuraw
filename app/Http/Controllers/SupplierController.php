@@ -36,17 +36,17 @@ class SupplierController extends Controller
     {
         $request->validate([
             'company_name' => 'required|string|max:255',
-            'contact_person' => 'required|string|max:255',
-            'phone_number' => 'required|numeric',
-            'email' => 'required|email|unique:suppliers,email',
+            // 'contact_person' => 'required|string|max:255',
+            // 'phone_number' => 'required|numeric',
+            // 'email' => 'required|email|unique:suppliers,email',
             'address' => 'required|string|max:500',
         ]);
 
         Supplier::create([
             'company_name' => $request->company_name,
-            'contact_person' => $request->contact_person,
-            'phone_number' => $request->phone_number,
-            'email' => $request->email,
+            // 'contact_person' => $request->contact_person,
+            // 'phone_number' => $request->phone_number,
+            // 'email' => $request->email,
             'address' => $request->address,
         ]);
 
@@ -67,9 +67,9 @@ class SupplierController extends Controller
     {
         $request->validate([
             'company_name' => 'required|string|max:255',
-            'contact_person' => 'required|string|max:255',
-            'phone_number' => 'required|numeric',
-            'email' => 'required|email|unique:suppliers,email,' . $supplier->id,
+            // 'contact_person' => 'required|string|max:255',
+            // 'phone_number' => 'required|numeric',
+            // 'email' => 'required|email|unique:suppliers,email,' . $supplier->id,
             'address' => 'required|string|max:500',
         ]);
 

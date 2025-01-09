@@ -92,7 +92,6 @@ body {
     text-transform: uppercase;
     padding: 20px;
     color: var(--white);
-    background-color: var(--highlight);
     border-radius: 8px;
 }
 

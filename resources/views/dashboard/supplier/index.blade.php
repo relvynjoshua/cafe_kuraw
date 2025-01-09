@@ -114,9 +114,9 @@
             <tr>
                 <th>ID</th>
                 <th>Company Name</th>
-                <th>Contact Person</th>
+                <!-- <th>Contact Person</th>
                 <th>Phone Number</th>
-                <th>Email</th>
+                <th>Email</th> -->
                 <th>Address</th>
                 <th>Actions</th>
             </tr>
@@ -126,9 +126,9 @@
                 <tr>
                     <td>{{ $supplier->id }}</td>
                     <td>{{ $supplier->company_name }}</td>
-                    <td>{{ $supplier->contact_person }}</td>
+                    <!-- <td>{{ $supplier->contact_person }}</td>
                     <td>{{ $supplier->phone_number }}</td>
-                    <td>{{ $supplier->email }}</td>
+                    <td>{{ $supplier->email }}</td> -->
                     <td>{{ $supplier->address }}</td>
                     <td>
                         <a href="{{ route('dashboard.supplier.edit', $supplier) }}" class="btn btn-warning btn-sm">

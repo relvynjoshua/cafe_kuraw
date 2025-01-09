@@ -37,7 +37,7 @@
         </div>
 
         <!-- Contact Person -->
-        <div class="form-group mb-3">
+        <!-- <div class="form-group mb-3">
             <label for="contact_person" class="form-label fw-bold">Contact Person</label>
             <input 
                 type="text" 
@@ -50,10 +50,10 @@
             @error('contact_person')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
-        </div>
+        </div> -->
 
         <!-- Phone Number -->
-        <div class="form-group mb-3">
+        <!-- <div class="form-group mb-3">
             <label for="phone_number" class="form-label fw-bold">Phone Number</label>
             <input 
                 type="text" 
@@ -66,10 +66,10 @@
             @error('phone_number')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
-        </div>
+        </div> -->
 
         <!-- Email -->
-        <div class="form-group mb-3">
+        <!-- <div class="form-group mb-3">
             <label for="email" class="form-label fw-bold">Company Email</label>
             <input 
                 type="email" 
@@ -82,7 +82,7 @@
             @error('email')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
-        </div>
+        </div> -->
 
         <!-- Address -->
         <div class="form-group mb-3">

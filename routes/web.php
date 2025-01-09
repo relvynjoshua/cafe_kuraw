@@ -347,6 +347,12 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
         Route::get('/', [LogController::class, 'index'])->name('index');
         Route::get('/export-pdf/{timeframe?}', [LogController::class, 'exportPdf'])->name('pdf');
     });
+
+    // Admin Profile
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    });
+    
 });
 
 // ----------------------------

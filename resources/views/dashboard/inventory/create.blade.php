@@ -43,7 +43,11 @@
                 <option value="liters">Liters</option>
                 <option value="grams">Grams</option>
                 <option value="boxes">Boxes</option>
+                <option value="pack">Pack</option>
+                <option value="tray">Tray</option>
                 <option value="bags">Bags</option>
+                <option value="bottle">Bottle</option>
+                <option value="unit">Unit</option>
             </select>
             @error('unit')
                 <span class="text-danger">{{ $message }}</span>

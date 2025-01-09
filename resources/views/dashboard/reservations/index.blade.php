@@ -152,7 +152,9 @@
                 <th scope="col">Date</th>
                 <th scope="col">Time</th>
                 <th scope="col">Guests</th>
+                <th scope="col">Notes</th>
                 <th scope="col">Status</th>
+                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -165,6 +167,7 @@
                     <td>{{ $reservation->reservation_date }}</td>
                     <td>{{ $reservation->reservation_time }}</td>
                     <td>{{ $reservation->number_of_guests }}</td>
+                    <td>{{ $reservation->note ?? 'No Notes' }}</td>
                     <td>
                         <form action="{{ route('dashboard.reservations.update-status', $reservation->id) }}" method="POST"
                             class="d-inline">

@@ -96,6 +96,7 @@
                 <th scope="col">ID</th>
                 <th scope="col">Title</th>
                 <th scope="col">Category</th>
+                <th scope="col">Description</th>
                 <th scope="col">Image</th>
                 <th scope="col">Actions</th>
             </tr>
@@ -106,6 +107,7 @@
                     <td>{{ $item->id }}</td>
                     <td>{{ $item->title }}</td>
                     <td>{{ $item->category }}</td>
+                    <td>{{ $item->description ?? 'No description provided' }}</td>
                     <td>
                         <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" width="100"
                             class="img-thumbnail">
@@ -127,7 +129,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="text-center">No gallery items found.</td>
+                    <td colspan="6" class="text-center">No gallery items found.</td>
                 </tr>
             @endforelse
         </tbody>

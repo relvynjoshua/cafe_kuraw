@@ -3,7 +3,6 @@
 @section('content')
 
 @include('components.alert')
-
 <style>
     .status-dropdown {
         background-color: #f0f0f0;
@@ -11,6 +10,8 @@
         border: 1px solid #ccc;
         padding: 5px;
         border-radius: 5px;
+        min-width: 120px; /* Adjust the width to fit longer text */
+        text-align: center;
     }
 
     .status-dropdown[data-status="pending"] {
@@ -28,8 +29,73 @@
         color: #fff;
     }
 
-    /* Pagination container */
-    .pagination {
+    /* Ensure the table fits within the container */
+    .card-body {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+       /* Scrollable table container */
+       .table-responsive {
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: #f9f9f9; /* Set the table background to white */
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    table {
+        width: 100%;
+        max-width: 100%;
+        table-layout: auto;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+        font-size: 0.9rem;
+        border: 1px solid #ddd; /* Add borders to table cells */
+    }
+
+    th {
+        background-color: #f5f5f5; /* Light gray background for table headers */
+        font-weight: bold;
+    }
+
+    /* Styling for the container */
+    .container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1,
+    h6 {
+        color: #333;
+    }
+
+    /* Responsive adjustments for small screens */
+    @media (max-width: 768px) {
+        table {
+            font-size: 0.8rem;
+        }
+
+        th,
+        td {
+            padding: 5px;
+        }
+
+        .status-dropdown {
+            font-size: 0.8rem;
+            min-width: 100px;
+        }
+    }
+
+     /* Pagination container */
+     .pagination {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -89,31 +155,27 @@
     }
 </style>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+
+<div class="container mt-4" style="max-width: 100%; width: 98%;">
     <h1 class="mb-0"><i class="fas fa-shopping-cart"></i> Orders</h1>
     <h6>List of all customer orders</h6>
+
+<!-- Search Form -->
+    <form action="{{ route('dashboard.orders.index') }}" method="GET" class="d-flex mb-3">
+        <input type="text" name="search" class="form-control"
+            placeholder="Search orders by name, email, or phone..." value="{{ request('search') }}">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </form>
+
+
+
     <a href="{{ route('dashboard.orders.create') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Add Order
     </a>
-</div>
-
-<!-- Search Form -->
-<div class="mb-4">
-    <form action="{{ route('dashboard.orders.index') }}" method="GET">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control"
-                placeholder="Search orders by name, email, or phone..." value="{{ request('search') }}">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="submit">Search</button>
-            </div>
-        </div>
-    </form>
-</div>
 
 <!-- Orders Table -->
-<div class="card shadow">
-    <div class="card-body">
-        <table class="table table-striped table-responsive-sm table-bordered">
+<div class="table-responsive">
+        <table class="table table-striped table-bordered">
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">ID</th>

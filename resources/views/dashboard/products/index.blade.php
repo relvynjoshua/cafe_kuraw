@@ -100,7 +100,7 @@
     }
 </style>
 
-<div class="container mt-4" style="max-width: 100%; width: 90%;">
+<div class="container mt-4" style="max-width: 100%; width: 98%;">
     <h1>
         <i class="fas fa-box"></i> Products
     </h1>

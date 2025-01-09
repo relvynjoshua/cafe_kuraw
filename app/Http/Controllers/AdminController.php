@@ -19,4 +19,10 @@ class AdminController extends Controller
             'error' => 'Access denied. Admins only.',
         ]);
     }
+
+    public function profile()
+    {
+        $user = Auth::user(); // Get logged-in admin details
+        return view('dashboard.profile.AdminProfile', compact('user'));
+    }
 }
