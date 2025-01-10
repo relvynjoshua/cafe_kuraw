@@ -14,9 +14,6 @@ class SupplierSeeder extends Seeder
      */
     public function run()
     {
-        // Clear all existing records in the suppliers table
-        Supplier::truncate();
-
         // Updated supplier data
         $suppliers = [
             [
