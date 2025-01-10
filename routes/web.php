@@ -90,7 +90,6 @@ Route::get('/gallery/{galleryItem}', [GalleryController::class, 'show'])->name('
 Route::get('/reservation', [ReservationController::class, 'showReservationPage'])->name('reservation.page');
 Route::post('/reservation', [ReservationController::class, 'store'])->name('reservation.store');
 Route::get('/reservations/{id}', [ReservationController::class, 'show'])->name('reservation.show');
-Route::get('/reservation/{id}', [ReservationController::class, 'show'])->name('reservation.show');
 
 
 // ----------------------------
