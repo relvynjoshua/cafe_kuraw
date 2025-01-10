@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Cashier Dashboard & POS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -772,8 +774,8 @@
                 return;
             }
 
-            // Prepare the data for submission
-            const orderData = new FormData();
+            // Prepare data for submission
+            const orderData = new FormData(); // Use FormData to handle file uploads
             orderData.append('customer_name', customerName);
             orderData.append('email', email);
             orderData.append('phone', phone);
@@ -784,10 +786,10 @@
             if (referenceNumber) orderData.append('reference_number', referenceNumber);
             if (proofOfPayment) orderData.append('proof_of_payment', proofOfPayment);
             orderData.append('status', 'pending');
-            orderData.append('cart', JSON.stringify(cart)); // Cart items as JSON string
+            orderData.append('cart', JSON.stringify(cart)); // Include cart details as JSON string
 
             // Send the request
-            fetch('/save-order', {
+            fetch('{{ route("cashier.checkout") }}', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, // CSRF Token
@@ -798,6 +800,17 @@
                 .then(data => {
                     if (data.success) {
                         alert('Order placed successfully!');
+
+                        // Reset fields
+                        document.getElementById('customer_name').value = '';
+                        document.getElementById('email').value = '';
+                        document.getElementById('phone').value = '';
+                        document.getElementById('address').value = '';
+                        document.getElementById('delivery_method').value = 'pickup';
+                        document.getElementById('payment_method').value = '';
+                        document.getElementById('cash-amount').value = '';
+                        document.getElementById('gcash_reference_number').value = '';
+                        document.getElementById('gcash_proof').value = '';
                         // Reset cart and UI
                         cart = [];
                         updateBillDetails();

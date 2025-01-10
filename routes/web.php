@@ -147,7 +147,7 @@ Route::post('/cashier/transactions/save-order', [OrderController::class, 'store'
 Route::put('/cashier/transactions/{id}/status', [CashierController::class, 'updateStatus'])->name('cashier.updateStatus');
 
 Route::get('/cashier', [CashierController::class, 'index'])->name('cashier.index');
-Route::post('/cashier', [CashierController::class, 'checkout'])->name('cashier.checkout');
+Route::post('/cashier/checkout', [CashierController::class, 'checkout'])->name('cashier.checkout');
 
 Route::get('/cashier/products_list', [CashierController::class, 'masterItem'])->name('masteritem.index');
 
@@ -281,7 +281,11 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
         Route::put('/{order}/status', 'updateStatus')->name('updateStatus');
         Route::put('/{order}', 'update')->name('update');
         Route::delete('/{order}', 'destroy')->name('destroy');
+
+        // API route for product variations
+        Route::get('/variations/{product}', 'getProductVariations')->name('getProductVariations');
     });
+
 
     // Inventory
     Route::prefix('inventory')->controller(InventoryController::class)->name('dashboard.inventory')->group(function () {
@@ -355,7 +359,7 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     });
-    
+
 });
 
 // ----------------------------

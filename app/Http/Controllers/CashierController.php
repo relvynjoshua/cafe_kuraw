@@ -160,59 +160,53 @@ class CashierController extends Controller
 
     public function checkout(Request $request)
     {
-        // Validate request data
-        $request->validate([
+        $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:15',
             'total_amount' => 'required|numeric|min:0',
             'payment_method' => 'required|string|in:cash,gcash',
-            'delivery_method' => 'required|string|in:pickup,delivery',
-            'cart' => 'required|array',
-            'cart.*.id' => 'required|integer|exists:products,id',
-            'cart.*.quantity' => 'required|integer|min:1',
-            'reference_number' => 'nullable|string|max:255',
-            'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'delivery_method' => 'required|string|in:dinein,pickup,delivery',
+            'cart' => 'required|string', // Cart is sent as JSON string
+            'reference_number' => 'nullable|string|max:255|required_if:payment_method,gcash',
+            'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048|required_if:payment_method,gcash',
         ]);
 
         try {
+            // Decode the cart JSON string
+            $cart = json_decode($request['cart'], true);
+            if (!$cart) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid cart data.'
+                ], 400);
+            }
+
             // Create new order
             $order = new Order();
-            $order->customer_name = $request->customer_name;
-            $order->email = $request->email;
-            $order->phone = $request->phone;
-            $order->address = $request->address; // Optional
-            $order->total_amount = $request->total_amount;
-            $order->status = 'pending'; // Default to pending
-            $order->payment_method = $request->payment_method;
-            $order->delivery_method = $request->delivery_method;
+            $order->customer_name = $validated['customer_name'];
+            $order->email = $validated['email'];
+            $order->phone = $validated['phone'];
+            $order->address = $request->address ?? null;
+            $order->total_amount = $validated['total_amount'];
+            $order->status = 'pending';
+            $order->payment_method = $validated['payment_method'];
+            $order->delivery_method = $validated['delivery_method'];
 
-            // Handle file upload for GCash proof of payment
+            // Handle GCash proof of payment
             if ($request->hasFile('proof_of_payment')) {
                 $file = $request->file('proof_of_payment');
                 $path = $file->store('proofs', 'public');
                 $order->proof_of_payment = $path;
             }
 
-            $order->reference_number = $request->reference_number; // Optional
-            $order->gcash_reference_number = $request->gcash_reference_number; // Optional
-            $order->user_id = auth()->id(); // Assign the authenticated user
+            $order->reference_number = $validated['reference_number'] ?? null;
+            $order->user_id = auth()->id(); // Optional: Assign authenticated user
             $order->save();
 
             // Save cart items to pivot table (order_product)
-            foreach ($request->cart as $item) {
+            foreach ($cart as $item) {
                 $product = Product::find($item['id']);
-
-                if ($product->stock < $item['quantity']) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Insufficient stock for {$product->name}."
-                    ]);
-                }
-
-                // Deduct stock
-                $product->stock -= $item['quantity'];
-                $product->save();
 
                 // Attach product to the order
                 $order->products()->attach($product->id, [
@@ -229,10 +223,11 @@ class CashierController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to place order. ' . $e->getMessage(),
+                'message' => 'Failed to place order: ' . $e->getMessage(),
             ], 500);
         }
     }
+
 
     public function pos()
     {

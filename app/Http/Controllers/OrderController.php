@@ -148,19 +148,20 @@ class OrderController extends Controller
             session()->forget('cart_discount');
             session()->put('cart_count', 0);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Order created successfully!',
-            ]);
+            return redirect()->route('dashboard.orders.index')->with(['success' => 'Order created successfully!', 'alert' => 'alert-success']);
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create order: ' . $e->getMessage(),
-            ]);
+            return back()->withErrors(['error' => 'Failed to create order: ' . $e->getMessage()]);
         }
     }
+
+    public function getProductVariations($productId)
+    {
+        $variations = \App\Models\ProductVariation::where('product_id', $productId)->get();
+
+        return response()->json($variations);
+    }
+
 
     public function showDetails($orderId)
     {

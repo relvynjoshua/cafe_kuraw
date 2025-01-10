@@ -4,6 +4,7 @@
     <script src="{{ asset('assets/js/notifications.js') }}"></script>
     <script src="{{ asset('assets/js/notif-customer.js') }}"></script>
 
+
     <!-- START LOGO AREA -->
     <div class="logo-area">
         <div class="auto-container">
@@ -51,11 +52,14 @@
     <!-- START NAVIGATION AREA -->
     <div class="mainmenu-area bg-theme">
         <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="navbar navbar-expand-lg navbar-dark">
+                <!-- Hamburger Menu (Toggler) -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                <!-- Navigation Menu -->
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
@@ -98,11 +102,10 @@
                             </span>
                         @endif
                     </a>
-
                     <!-- Notifications Dropdown -->
                     <div class="dropdown-menu dropdown-menu-end bg-white shadow border-0"
                         aria-labelledby="notificationDropdown"
-                        style="width: 500px; position: absolute; top: 60%; z-index: 1050;">
+                        style="width: 350px; position: absolute; top: 60%; z-index: 1050;">
                         <div class="dropdown-item text-dark text-center"
                             style="font-weight: bold; background-color: #f8f9fa;">
                             Notifications
@@ -119,15 +122,7 @@
                                             <strong>Order #{{ $notification->data['order_id'] }}</strong>:
                                             {{ $notification->data['message'] }}
                                         </a>
-                                    @elseif($notification->type === 'App\Notifications\NewReservationNotification' || $notification->type === 'App\Notifications\ReservationStatusUpdated')
-                                        <a class="dropdown-item text-dark notification-item"
-                                            id="notification-{{ $notification->id }}" data-notification-id="{{ $notification->id }}"
-                                            data-reservation-id="{{ $notification->data['reservation_id'] }}"
-                                            href="javascript:void(0)"
-                                            onclick="markAsRead(event, '{{ $notification->id }}', '{{ csrf_token() }}', '{{ route('notifications.mark-read', ['notificationId' => $notification->id]) }}')">
-                                            <strong>Reservation #{{ $notification->data['reservation_id'] }}</strong>:
-                                            {{ $notification->data['message'] }}
-                                        </a>
+
                                     @endif
                                 @empty
                                     <p class="dropdown-item text-center">No new notifications</p>
@@ -142,13 +137,12 @@
                                 </form>
                                 <a href="#" id="see-all-notifications" class="dropdown-item text-dark text-center"
                                     style="font-weight: bold; margin-top: 20px; background-color: #B7C9E2;"
-                                    onclick="markAllAndRedirect(event)">Delete All Notifications</a>
+                                    onclick="markAllAndRedirect(event)">See All Notifications</a>
                             @endif
                         @else
                             <p class="dropdown-item text-center">No notifications available</p>
                         @endif
                     </div>
-
 
                     <!-- Order Details Modal -->
                     <div class="modal fade" id="orderDetailsModal" tabindex="-1"
@@ -175,35 +169,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Reservation Details Modal -->
-                    <div class="modal fade" id="reservationDetailsModal" tabindex="-1"
-                        aria-labelledby="reservationDetailsModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content" style="width: 800px;">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="reservationDetailsModalLabel">Reservation Details</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Customer Name</th>
-                                                <th>Reservation Date</th>
-                                                <th>Time</th>
-                                                <th>Guests</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="modalReservationDetails">
-                                        </tbody>
-                                    </table>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -218,7 +184,6 @@
                             {{ session('cart_count', 0) }}
                         </span>
                     </a>
-
                     <!-- Profile Dropdown -->
                     <div class="dropdown">
                         <a href="#" class="dropdown-toggle text-dark" id="profileDropdown" role="button"
@@ -229,8 +194,9 @@
                             aria-labelledby="profileDropdown" style="width: 200px;">
                             @if(Auth::check())
                                 <li class="dropdown-header bg-black text-white py-3 px-3">
-                                    <strong style="font-size: 1.25rem; font-family: 'Arial', sans-serif;">Hello,
-                                        {{ Auth::user()->firstname }}</strong>
+                                    <strong style="font-size: 1.25rem; font-family: 'Arial', sans-serif;">
+                                        Hello, {{ Auth::user()->firstname }}
+                                    </strong>
                                 </li>
                                 <li>
                                     <hr class="dropdown-divider my-1">
@@ -245,16 +211,18 @@
                                 </li>
                             @else
                                 <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Login</a></li>
-                                <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Register</a></li>
+                                <li><a class="dropdown-item text-dark" href="{{ url('/login-signup') }}">Register</a>
+                                </li>
                             @endif
                         </ul>
                     </div>
 
                 </div>
+            </div>
+            </nav>
         </div>
-        </nav>
     </div>
-    </div>
+
 
     <!-- END NAVIGATION AREA -->
 </header>
@@ -263,4 +231,9 @@
     $(document).ready(function () {
         forceRefreshNotificationBadge(); // Refresh the notification badge on page load
     });
+
+    document.querySelector('.navbar-toggler').addEventListener('click', function () {
+        document.querySelector('#navbarNav').classList.toggle('show');
+    });
+
 </script>

@@ -158,3 +158,33 @@ function markAllAndRedirect(event) {
         },
     });
 }
+function fetchOrderDetails(orderId) {
+    $.ajax({
+        url: `/orders/${orderId}`, // Correct URL for fetching order details
+        method: "GET",
+        success: function (orderData) {
+            // Update modal content with fetched order data
+            $("#modalOrderStatus").text(orderData.status);
+            $("#modalOrderDate").text(orderData.created_at); // Assuming 'created_at' holds the date
+
+            let modalProducts = $("#modalProducts");
+            modalProducts.empty(); // Clear any previous data
+
+            // Populate table rows with product details
+            orderData.products.forEach(function (product) {
+                modalProducts.append(`
+                    <tr>
+                        <td>${product.name}</td>
+                        <td>${product.variation}</td>
+                        <td>${product.quantity}</td>
+                        <td>${product.price}</td>
+                        <td>${product.total}</td>
+                    </tr>
+                `);
+            });
+
+            // Open the modal
+            $("#orderDetailsModal").modal("show");
+        },
+    });
+}
