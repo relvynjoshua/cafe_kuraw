@@ -164,6 +164,7 @@ class CashierController extends Controller
             'customer_name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:15',
+            'address' => 'nullable|string|max:65535',
             'total_amount' => 'required|numeric|min:0',
             'payment_method' => 'required|string|in:cash,gcash',
             'delivery_method' => 'required|string|in:dinein,pickup,delivery',
@@ -187,7 +188,7 @@ class CashierController extends Controller
             $order->customer_name = $validated['customer_name'];
             $order->email = $validated['email'];
             $order->phone = $validated['phone'];
-            $order->address = $request->address ?? null;
+            $order->address = $validated['address'];
             $order->total_amount = $validated['total_amount'];
             $order->status = 'pending';
             $order->payment_method = $validated['payment_method'];
@@ -206,15 +207,24 @@ class CashierController extends Controller
 
             // Save cart items to pivot table (order_product)
             foreach ($cart as $item) {
+                \Log::info('Processing Cart Item:', $item); // Debugging
+
                 $product = Product::find($item['id']);
 
-                // Attach product to the order
+                $variation = null;
+                if (!empty($item['variation'])) { // Check if variation exists
+                    $variation = $item['variation']; // Use the combined variation directly
+                }
+
+                \Log::info("Variation to Store: {$variation}"); // Debugging
+
                 $order->products()->attach($product->id, [
                     'quantity' => $item['quantity'],
-                    'price' => $product->price,
-                    'variation' => $item['variation'] ?? null,
+                    'price' => $item['price'],
+                    'variation' => $variation,
                 ]);
             }
+
 
             return response()->json([
                 'success' => true,
@@ -227,6 +237,7 @@ class CashierController extends Controller
             ], 500);
         }
     }
+
 
 
     public function pos()

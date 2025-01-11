@@ -1,4 +1,24 @@
 $(document).ready(function () {
+    // Get the notification bell icon and dropdown menu
+    const notificationIcon = document.querySelector(".header-notification");
+    const dropdownMenu = document.querySelector(".dropdown-menu");
+
+    // Add event listener for clicking the notification icon
+    notificationIcon.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent the default action of the link
+        dropdownMenu.classList.toggle("show"); // Toggle the dropdown visibility
+    });
+
+    // Add event listener for clicking outside the dropdown to close it
+    document.addEventListener("click", function (event) {
+        if (
+            !notificationIcon.contains(event.target) &&
+            !dropdownMenu.contains(event.target)
+        ) {
+            dropdownMenu.classList.remove("show"); // Close the dropdown if clicked outside
+        }
+    });
+
     // Function to mark all notifications as read
     function markAllRead(event) {
         event.preventDefault();

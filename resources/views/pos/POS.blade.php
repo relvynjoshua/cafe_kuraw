@@ -227,6 +227,12 @@
             padding: 15px;
             border-radius: 8px;
         }
+
+        <style>.is-invalid {
+            border-color: #dc3545;
+        }
+
+        
     </style>
 </head>
 
@@ -382,9 +388,11 @@
                                                     <select id="variation-{{ $product->id }}"
                                                         class="form-select variation-dropdown">
                                                         @foreach ($product->variations as $variation)
-                                                            <option value="{{ $variation['type'] }}"
+                                                            <option value="{{ $variation['type'] }}|{{ $variation['value'] }}"
+                                                                data-type="{{ $variation['type'] }}"
+                                                                data-value="{{ $variation['value'] }}"
                                                                 data-price="{{ $variation['price'] }}">
-                                                                {{ $variation['type'] }} -
+                                                                {{ $variation['type'] }}: {{ $variation['value'] }} -
                                                                 ₱{{ number_format($variation['price'], 2) }}
                                                             </option>
                                                         @endforeach
@@ -415,31 +423,36 @@
                                         <label for="customer_name"><strong>Customer Name:</strong></label>
                                         <input type="text" id="customer_name" class="form-control"
                                             placeholder="Enter name" required>
+                                        <div class="invalid-feedback">Please enter the customer name.</div>
                                     </div>
                                     <div class="mb-2">
                                         <label for="email"><strong>Email:</strong></label>
                                         <input type="email" id="email" class="form-control" placeholder="Enter email"
                                             required>
+                                        <div class="invalid-feedback">Please enter a valid email address.</div>
                                     </div>
                                     <div class="mb-2">
                                         <label for="phone"><strong>Phone:</strong></label>
                                         <input type="text" id="phone" class="form-control"
                                             placeholder="Enter phone number" required>
+                                        <div class="invalid-feedback">Please enter the phone number.</div>
                                     </div>
                                     <div class="mb-2">
                                         <label for="address"><strong>Address:</strong></label>
                                         <input type="text" id="address" class="form-control" placeholder="Enter address"
                                             required>
+                                        <div class="invalid-feedback">Please enter the address.</div>
                                     </div>
 
                                     <!-- Delivery Method -->
                                     <div class="mb-2">
                                         <label for="delivery_method"><strong>Delivery Method:</strong></label>
                                         <select id="delivery_method" class="form-select" required>
-                                            <option value="pickup">Dine In</option>
+                                            <option value="dinein">Dine In</option>
                                             <option value="pickup">Pickup</option>
                                             <option value="delivery">Delivery</option>
                                         </select>
+                                        <div class="invalid-feedback">Please select a delivery method.</div>
                                     </div>
 
                                     <!-- Cart Details -->
@@ -471,6 +484,7 @@
                                             <option value="cash">Cash</option>
                                             <option value="gcash">GCash</option>
                                         </select>
+                                        <div class="invalid-feedback">Please select a payment method.</div>
                                     </div>
 
                                     <!-- Cash Payment Section -->
@@ -480,10 +494,9 @@
                                             <input type="number" id="cash-amount" class="form-control"
                                                 placeholder="Enter payment amount">
                                         </div>
-                                        <p><strong>Total: ₱<span id="cash-total-amount">0.00</span></strong></p>
-                                        <p><strong>Change: ₱<span id="cash-change">0.00</span></strong></p>
                                         <button class="btn btn-primary w-100" onclick="processCashPayment()">Confirm
                                             Payment</button>
+                                        <div class="invalid-feedback">Please enter the payment amount.</div>
                                     </div>
 
                                     <!-- GCash Payment Section -->
@@ -493,12 +506,13 @@
                                                 Number</label>
                                             <input type="text" id="gcash_reference_number" class="form-control"
                                                 placeholder="Enter reference number">
+                                            <div class="invalid-feedback">Please enter the GCash reference number.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="gcash_proof" class="form-label">Proof of Payment</label>
                                             <input type="file" id="gcash_proof" class="form-control">
+                                            <div class="invalid-feedback">Please upload proof of payment.</div>
                                         </div>
-                                        <p><strong>Total: ₱<span id="gcash-total-amount">0.00</span></strong></p>
                                         <button class="btn btn-primary w-100" onclick="processGCashPayment()">Confirm
                                             Payment</button>
                                     </div>
@@ -512,6 +526,25 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Warning Modal -->
+    <div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="warningModalLabel">Form Validation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Please fill out all required fields.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -605,36 +638,43 @@
 
         function addToCart(productId, productName, basePrice, productImage) {
             const variationDropdown = document.getElementById(`variation-${productId}`);
-            let selectedVariation = null;
+            let selectedVariationType = null;
+            let selectedVariationValue = null;
             let variationPrice = basePrice;
 
             if (variationDropdown) {
-                selectedVariation = variationDropdown.value;
-                variationPrice = parseFloat(variationDropdown.options[variationDropdown.selectedIndex].getAttribute('data-price'));
+                const selectedOption = variationDropdown.options[variationDropdown.selectedIndex];
+                selectedVariationType = selectedOption.getAttribute('data-type');
+                selectedVariationValue = selectedOption.getAttribute('data-value');
+                variationPrice = parseFloat(selectedOption.getAttribute('data-price'));
             }
 
+            const variation = selectedVariationType && selectedVariationValue
+                ? `${selectedVariationType} - ${selectedVariationValue}`
+                : null;
+
+            console.log(`Adding to cart: Product ID: ${productId}, Variation: ${variation}`); // Debugging
+
             const existingProduct = cart.find(
-                (item) => item.id === productId && item.variation === selectedVariation
+                (item) => item.id === productId && item.variation === variation
             );
 
             if (existingProduct) {
-                // If the product with the selected variation exists in the cart, increase the quantity
                 existingProduct.quantity += 1;
                 existingProduct.totalPrice = existingProduct.quantity * variationPrice;
             } else {
-                // Add new product with the selected variation to the cart
                 cart.push({
                     id: productId,
                     name: productName,
                     price: variationPrice,
                     image: productImage,
-                    variation: selectedVariation,
+                    variation: variation,
                     quantity: 1,
                     totalPrice: variationPrice,
                 });
             }
 
-            updateBillDetails(); // Update the bill details display
+            updateBillDetails(); // Update the cart UI
         }
 
         function updateBillDetails() {
@@ -642,36 +682,33 @@
             billDetails.innerHTML = ''; // Clear existing content
             totalAmount = 0; // Reset total amount
 
-            // Add all cart items to the table
             cart.forEach((item, index) => {
                 const row = `
-            <tr>
-                <td><img src="${item.image}" alt="${item.name}" class="bill-item-image"></td>
-                <td>${item.name}<br>
-                    <small>${item.variation ? `Variation: ${item.variation}` : ''}</small>
-                </td>
-                <td>
-                    <button class="btn btn-sm btn-light" onclick="updateQuantity(${index}, 'decrease')">-</button>
-                    ${item.quantity}
-                    <button class="btn btn-sm btn-light" onclick="updateQuantity(${index}, 'increase')">+</button>
-                </td>
-                <td>₱${item.totalPrice.toFixed(2)}</td>
-                <td>
-                    <button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">Remove</button>
-                </td>
-            </tr>
-            `;
-                billDetails.innerHTML += row;
-                totalAmount += item.totalPrice; // Accumulate the total amount
-            });
-
-            // Add the total row to the table
-            const totalRow = `
         <tr>
-            <td colspan="3"><strong>Total</strong></td>
-            <td colspan="2"><strong>₱${totalAmount.toFixed(2)}</strong></td>
+            <td><img src="${item.image}" alt="${item.name}" class="bill-item-image"></td>
+            <td>${item.name}<br>
+                <small>${item.variation ? `Variation: ${item.variation}` : ''}</small>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-light" onclick="updateQuantity(${index}, 'decrease')">-</button>
+                ${item.quantity}
+                <button class="btn btn-sm btn-light" onclick="updateQuantity(${index}, 'increase')">+</button>
+            </td>
+            <td>₱${item.totalPrice.toFixed(2)}</td>
+            <td>
+                <button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">Remove</button>
+            </td>
         </tr>
         `;
+                billDetails.innerHTML += row;
+                totalAmount += item.totalPrice;
+            });
+
+            const totalRow = `
+    <tr>
+        <td colspan="3"><strong>Total</strong></td>
+        <td colspan="2"><strong>₱${totalAmount.toFixed(2)}</strong></td>
+    </tr>`;
             billDetails.innerHTML += totalRow;
         }
 
@@ -699,7 +736,8 @@
             const paymentAmount = paymentMethod === 'cash' ? parseFloat(document.getElementById('cash-amount').value) : null;
 
             if (!paymentMethod) {
-                alert('Please select a payment method and confirm payment!');
+                document.querySelector('.modal-body').textContent = 'Please select a payment method and confirm payment!';
+                warningModal.show();
                 return;
             }
 
@@ -735,7 +773,8 @@
                 </tr>`;
                         billDetails.innerHTML += paymentRow;
 
-                        alert('Order saved successfully!');
+                        document.querySelector('.modal-body').textContent = 'Order saved successfully!';
+                        warningModal.show();
                         // Clear the cart and reset the UI
                         cart = [];
                         updateBillDetails();
@@ -753,24 +792,54 @@
             const customerName = document.getElementById('customer_name').value || 'Guest';
             const email = document.getElementById('email').value || '';
             const phone = document.getElementById('phone').value || '';
+            const address = document.getElementById('address').value || '';
             const deliveryMethod = document.getElementById('delivery_method').value || 'pickup';
             const cashAmount = paymentMethod === 'cash' ? parseFloat(document.getElementById('cash-amount').value) : null;
             const referenceNumber = paymentMethod === 'gcash' ? document.getElementById('gcash_reference_number').value : null;
             const proofOfPayment = paymentMethod === 'gcash' ? document.getElementById('gcash_proof').files[0] : null;
 
+            const fields = [
+                { id: 'customer_name', type: 'text' },
+                { id: 'email', type: 'email' },
+                { id: 'phone', type: 'text' },
+                { id: 'address', type: 'text' },
+                { id: 'delivery_method', type: 'select' },
+                { id: 'payment_method', type: 'select' }
+            ];
+
+            let isValid = true;
+
+            fields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if ((field.type === 'text' || field.type === 'email') && !element.value.trim()) {
+                    element.classList.add('is-invalid');
+                    isValid = false;
+                } else if (field.type === 'select' && !element.value) {
+                    element.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    element.classList.remove('is-invalid');
+                }
+            });
+
+            const warningModal = new bootstrap.Modal(document.getElementById('warningModal'));
+
             // Validation
             if (!paymentMethod) {
-                alert('Please select a payment method.');
+                document.querySelector('.modal-body').textContent = 'Please select a payment method.';
+                warningModal.show();
                 return;
             }
 
-            if (paymentMethod === 'cash' && cashAmount < totalAmount) {
-                alert('Insufficient payment amount for cash.');
+            if (paymentMethod === 'cash' && (isNaN(cashAmount) || cashAmount < totalAmount)) {
+                document.querySelector('.modal-body').textContent = 'Insufficient payment amount for cash.';
+                warningModal.show();
                 return;
             }
 
             if (paymentMethod === 'gcash' && (!referenceNumber || !proofOfPayment)) {
-                alert('Please provide a GCash reference number and proof of payment.');
+                document.querySelector('.modal-body').textContent = 'Please provide a GCash reference number and proof of payment.';
+                warningModal.show();
                 return;
             }
 
@@ -779,6 +848,7 @@
             orderData.append('customer_name', customerName);
             orderData.append('email', email);
             orderData.append('phone', phone);
+            orderData.append('address', address);
             orderData.append('delivery_method', deliveryMethod);
             orderData.append('total_amount', totalAmount);
             orderData.append('payment_method', paymentMethod);
@@ -799,7 +869,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Order placed successfully!');
+                        document.querySelector('.modal-body').textContent = 'Order placed successfully!';
+                        warningModal.show();
 
                         // Reset fields
                         document.getElementById('customer_name').value = '';
@@ -817,10 +888,15 @@
                         document.getElementById('cash-section').classList.add('d-none');
                         document.getElementById('gcash-section').classList.add('d-none');
                     } else {
-                        alert(`Failed to place order: ${data.message}`);
+                        document.querySelector('.modal-body').textContent = `Failed to place order: ${data.message}`;
+                        warningModal.show();
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.querySelector('.modal-body').textContent = 'An unexpected error occurred. Please try again.';
+                    warningModal.show();
+                });
         }
 
     </script>

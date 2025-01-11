@@ -61,6 +61,7 @@
         </div>
     @endif
 
+
     <div class="container1-wrapper">
         <!-- Calendar Section -->
         <div class="calendar-container">
@@ -106,7 +107,8 @@
                 </div>
                 <div class="form-group mb-3">
                     <label for="number_of_guests" class="form-label">Number of Guests:</label>
-                    <input type="number" name="number_of_guests" id="number_of_guests" class="form-control" required>
+                    <input type="number" name="number_of_guests" id="number_of_guests" class="form-control" min="1"
+                        required>
                 </div>
                 <div class="form-group mb-3">
                     <label for="note" class="form-label">Notes:</label>
@@ -215,6 +217,14 @@
     });
 
     generateCalendar(currentMonth, currentYear);
+
+    document.getElementById("number_of_guests").addEventListener("input", function (e) {
+        const value = parseInt(e.target.value, 10);
+        if (value < 1) {
+            alert("Number of guests must be at least 1.");
+            e.target.value = ""; // Clear the invalid input
+        }
+    });
 </script>
 
 
@@ -239,4 +249,5 @@
 <script src="{{ asset('assets/js/scrolltopcontrol.js') }}"></script>
 <script src="{{ asset('assets/venobox/js/venobox.min.js') }}"></script>
 <script src="{{ asset('assets/js/wow.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

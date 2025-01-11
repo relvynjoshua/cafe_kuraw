@@ -189,7 +189,11 @@ Route::post('/notifications/mark-read', function () {
     return back();
 })->name('notifications.mark-read');
 Route::post('/notifications/{id}/mark-read', [NotificationController::class, 'markRead'])->name('notifications.mark-single-read');
-Route::get('notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.get-unread-count');
+Route::get('notifications/unread-count', [NotificationController::class, 'getNotifications'])->name('notifications.get-unread-count');
+Route::get('/notifications/fetch', function () {
+    return auth()->user()->unreadNotifications;
+})->middleware('auth');
+
 // ----------------------------
 // Analytics Routes
 // ----------------------------
@@ -359,7 +363,6 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     });
-
 });
 
 // ----------------------------
@@ -372,3 +375,6 @@ Route::post('/clear-order-session', function () {
 
 // Fallback
 Route::fallback(fn() => view('errors.404'))->name('fallback');
+
+// ORDER MODAL IN NOTIFICATION 
+Route::get('/order/{id}/details', [OrderController::class, 'getOrderDetails'])->name('getOrderDetails');

@@ -105,13 +105,17 @@ class CartController extends Controller
         if (isset($cart[$itemId])) {
             $cart[$itemId]['quantity'] = $quantity;
             session()->put('cart', $cart);
+
+            session()->flash('success', 'Quantity updated successfully!'); // Flash message
         }
 
         $cartCount = collect($cart)->sum('quantity');
         session()->put('cart_count', $cartCount);
 
-        return response()->json(['status' => 'success', 'message' => 'Cart updated successfully!', 'cart_count' => $cartCount]);
+        return redirect()->back(); // Redirect back with the success message
     }
+
+
     /**
      * Remove an item from the cart.
      */
@@ -119,18 +123,29 @@ class CartController extends Controller
     {
         $itemId = $request->input('item_id');
 
+        // Get the current cart from the session
         $cart = session()->get('cart', []);
 
+        // Check if the item exists in the cart
         if (isset($cart[$itemId])) {
+            // Remove the item from the cart
             unset($cart[$itemId]);
+
+            // Update the cart in the session
             session()->put('cart', $cart);
         }
 
+        // Recalculate the cart count
         $cartCount = collect($cart)->sum('quantity');
         session()->put('cart_count', $cartCount);
 
-        return response()->json(['status' => 'success', 'message' => 'Item removed from cart.', 'cart_count' => $cartCount]);
+        // Set a success flash message
+        session()->flash('success', 'Item removed successfully!');
+
+        // Redirect back to the cart page (or another route as needed)
+        return redirect()->route('cart.index');
     }
+
     /**
      * Checkout the cart and create an order.
      */
@@ -140,25 +155,28 @@ class CartController extends Controller
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
             'email' => 'required|email',
-            'phone' => 'required|string|max:15',
-            'payment_method' => 'required|string',
-            'delivery_method' => 'required|string',
-            'address' => 'nullable|string|max:255',
-            'reference_number' => 'nullable|required_if:payment_method,Gcash|string|size:13',
-            'proof_of_payment' => 'nullable|image|required_if:payment_method,Gcash|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'phone' => ['required', 'regex:/^0[0-9]{10}$/'], // Validates exactly 11 digits starting with 0
+            'payment_method' => 'required|in:credit_card,paypal,Gcash',
+            'reference_number' => 'required_if:payment_method,Gcash|digits:13',
+            'proof_of_payment' => 'required_if:payment_method,Gcash|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'delivery_method' => 'required|in:pickup,delivery',
+            'address' => 'required_if:delivery_method,delivery|string|max:255',
+        ], [
+            'phone.regex' => 'The phone number must start with 0 and be exactly 11 digits.',
+            'reference_number.required_if' => 'The GCash reference number is required when paying with GCash.',
+            'reference_number.digits' => 'The GCash reference number must be exactly 13 digits.',
+            'proof_of_payment.required_if' => 'Proof of payment is required for GCash payments.',
+            'address.required_if' => 'The delivery address is required for delivery.',
         ]);
 
-        if ($validated['delivery_method'] === 'pickup') {
-            $validated['address'] = 'Kuraw Cafe';
-        }
-
+        // Handle empty cart scenario
         $cart = session()->get('cart', []);
         $discount = session('cart_discount', 0);
-
         if (empty($cart)) {
             return redirect()->route('cart.index')->withErrors('Your cart is empty.');
         }
 
+        // Handle the total and final amounts
         $totalAmount = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
         $finalAmount = max(0, $totalAmount - $discount);
 
@@ -167,11 +185,13 @@ class CartController extends Controller
             return redirect()->route('login')->withErrors('You must be logged in to place an order.');
         }
 
+        // Handle payment proof storage
         $gcashProofPath = null;
         if ($request->payment_method === 'Gcash' && $request->hasFile('proof_of_payment')) {
             $gcashProofPath = $request->file('proof_of_payment')->store('gcash_proofs', 'public');
         }
 
+        // Create order
         $order = Order::create([
             'user_id' => $user->id,
             'customer_name' => $validated['customer_name'],
@@ -196,23 +216,11 @@ class CartController extends Controller
             ]);
         }
 
-        if ($discount > 0) {
-            \App\Models\PointsHistory::create([
-                'user_id' => $user->id,
-                'activity' => 'Redeemed points for cart checkout',
-                'points' => -$discount,
-            ]);
-        }
-
-        $admins = User::where('role', 'admin')->get();
-        foreach ($admins as $admin) {
-            $admin->notify(new NewOrderPlaced($order));
-        }
-
-        // Clear the cart session and reset cart count
+        // Clear the cart session
         session()->forget(['cart', 'cart_discount']);
-        session()->put('cart_count', 0); // Reset cart count to zero
+        session()->put('cart_count', 0);
 
-        return redirect()->route('cart.index')->with('success', 'Order placed successfully!');
+        // Return success message
+        return redirect()->route('orders.index')->with('success', 'Your order has been successfully placed! Your order is currently being processed.');
     }
 }

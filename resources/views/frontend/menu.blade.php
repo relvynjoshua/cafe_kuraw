@@ -102,8 +102,9 @@
       .container.my-4 {
          display: flex;
          justify-content: center;
-         margin-bottom: 20px;
+         flex-wrap: wrap;
          gap: 10px;
+         margin-bottom: 20px;
       }
 
       .container.my-4 a {
@@ -114,6 +115,7 @@
          color: #000;
          font-weight: 600;
          transition: background-color 0.3s;
+         white-space: nowrap;
       }
 
       .container.my-4 a:hover {
@@ -124,6 +126,42 @@
       .container.my-4 a.active {
          background-color: #333;
          color: #fff;
+      }
+
+      @media (max-width: 768px) {
+         .container.my-4 a {
+            font-size: 0.85rem;
+            padding: 8px 12px;
+         }
+
+         .card-title {
+            font-size: 1rem;
+         }
+
+         .card-body {
+            padding: 1rem;
+         }
+      }
+
+      @media (max-width: 576px) {
+         .container.my-4 {
+            flex-direction: column;
+            align-items: center;
+         }
+
+         .container.my-4 a {
+            width: 100%;
+            text-align: center;
+         }
+
+         .col-md-4 {
+            flex: 0 0 100%;
+            max-width: 100%;
+         }
+
+         .btn-primary {
+            width: 100%;
+         }
       }
    </style>
 </head>
@@ -203,12 +241,13 @@
                  <div>
                    <label for="quantity_{{ $product->id }}" class="form-label">Quantity</label>
                    <input type="number" id="quantity_{{ $product->id }}" name="quantity" value="1" min="1"
-                     class="form-control w-75">
+                     class="form-control w-75" oninput="validateQuantity(this)">
                  </div>
                  <button type="button" onclick="addToCart({{ $product->id }})" class="btn btn-primary rounded-pill">
                    Add to Cart
                  </button>
                </div>
+
             </div>
           </div>
         </div>
@@ -266,7 +305,7 @@
       const variationSelect = document.querySelector(`#variation_${productId}`);
       const variationId = variationSelect ? variationSelect.value : null; // Get the selected variation ID if it exists
 
-      fetch('{{ route('cart.add') }}', {
+      fetch("{{ route('cart.add') }}", {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
@@ -294,6 +333,12 @@
             }
          })
          .catch(error => console.error('Error:', error));
+   }
+
+   function validateQuantity(input) {
+      if (input.value < 1) {
+         input.value = 1; // Reset to 1 if the value is less than the minimum
+      }
    }
 </script>
 

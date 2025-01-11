@@ -3,7 +3,13 @@
 @section('title', 'Kuraw Coffee Shop - Login / Register')
 
 @section('content')
+
 <div id="container" class="container">
+    <!-- Welcome Message -->
+    <div class="welcome-message">
+        <h1>Welcome to Kuraw Coffee Shop</h1>
+    </div>
+
     <!-- FORM SECTION -->
     <div class="row">
         <!-- SIGN UP SECTION -->
@@ -57,29 +63,44 @@
         <!-- SIGN IN SECTION -->
         <div class="col align-items-center flex-col sign-in">
             <div class="form-wrapper align-items-center">
-                <div class="form sign-in">
-                    <h2>Sign In</h2>
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-                    @if($errors->any())
-                        <div class="alert alert-danger">{{ $errors->first() }}</div>
-                    @endif
-                    <form action="{{ route('login') }}" method="POST">
-                        @csrf
-                        <div class="input-group">
-                            <i class='bx bx-mail-send'></i>
-                            <input type="email" name="email" placeholder="Enter your Email" value="{{ old('email') }}"
-                                required>
-                        </div>
-                        <div class="input-group password-group">
-                            <i class='bx bxs-lock-alt'></i>
-                            <input type="password" name="password" id="signin-password" placeholder="Password"
-                                minlength="5" required>
-                            <span class="toggle-password" onclick="togglePassword('signin-password', this)">
-                                <i class="bx bx-show"></i>
-                            </span>
-                        </div>
+            <div class="form sign-in">
+    <h2>Sign In</h2>
+    
+                <!-- Success Message -->
+                @if(session('success'))
+                    <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+
+                <!-- Error Message -->
+                @if($errors->any())
+                    <div class="alert alert-danger">{{ $errors->first() }}</div>
+                @endif
+
+                <form action="{{ route('login') }}" method="POST">
+                    @csrf
+
+                    <!-- Email Input -->
+                    <div class="input-group">
+                        <i class='bx bx-mail-send'></i>
+                        <input type="email" name="email" 
+                            placeholder="Enter your Email" 
+                            value="{{ old('email') }}" 
+                            class="{{ $errors->has('email') ? 'error' : '' }}" 
+                            required>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="input-group password-group">
+                        <i class='bx bxs-lock-alt'></i>
+                        <input type="password" name="password" 
+                            id="signin-password" 
+                            placeholder="Password" 
+                            minlength="5" 
+                            required>
+                        <span class="toggle-password" onclick="togglePassword('signin-password', this)">
+                            <i class="bx bx-show"></i>
+                        </span>
+                    </div>
                         <button type="submit">Sign in</button>
                     </form>
                     <p class="forgot-password">
@@ -111,20 +132,21 @@
             </p>
 
             <div class="otp-inputs">
-                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
-                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
-                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
-                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
-                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
-                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" onkeydown="moveToPrevious(this, event)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" onkeydown="moveToPrevious(this, event)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" onkeydown="moveToPrevious(this, event)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" onkeydown="moveToPrevious(this, event)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" onkeydown="moveToPrevious(this, event)" />
+                <input type="text" maxlength="1" class="otp-digit" oninput="moveToNext(this)" onkeydown="moveToPrevious(this, event)" />
             </div>
+
             <div id="otp-error-messages"></div> <!-- Error messages container -->
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
                 <div style="display: flex; gap: 10px;">
                     <button id="resend-otp" style="display: none;" onclick="resendOTP()">Resend OTP</button>
                     <button onclick="verifyOTP()">Proceed</button>
                 </div>
-                <p id="resend-timer" style="margin-top: 10px;">Resend OTP (<span id="timer">01:00</span>)</p>
+                <p id="resend-timer" style="margin-top: 10px;">Resend OTP (<span id="timer">15:00</span>)</p>
             </div>
         </div>
     </div>
@@ -165,7 +187,7 @@
         otpErrorMessages.innerHTML = ''; // Clear any previous error messages
 
         // Start the countdown timer
-        let countdownTime = 60; // 1 minute countdown (1 * 60 seconds)
+        let countdownTime = 15*60; // 15 minute countdown (4 * 60 seconds)
         let timer = setInterval(() => {
             const minutes = Math.floor(countdownTime / 60);
             const seconds = countdownTime % 60;
@@ -426,5 +448,46 @@
             return;
         }
     });
+
+    function moveToNext(current) {
+    if (current.value.length === current.maxLength) {
+        let next = current.nextElementSibling; // Get the next sibling
+        if (next && next.classList.contains('otp-digit')) {
+            next.focus(); // Focus the next input
+        }
+    }
+}
+
+function moveToPrevious(current, event) {
+    if (event.key === "Backspace" && current.value === "") {
+        let previous = current.previousElementSibling; // Get the previous sibling
+        if (previous && previous.classList.contains('otp-digit')) {
+            previous.focus(); // Focus the previous input
+        }
+    }
+}
+
+// Select the input fields and error message container
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('signin-password');
+const errorMessage = document.querySelector('.alert.alert-danger');
+
+// Check if error message exists
+if (errorMessage) {
+    const errorText = errorMessage.textContent.trim();
+
+    // Check for specific errors
+    if (errorText.includes("Invalid email") || errorText.includes("password")) {
+        emailInput.classList.add('error');
+        passwordInput.classList.add('error');
+    } else {
+        emailInput.classList.remove('error');
+        passwordInput.classList.remove('error');
+    }
+} else {
+    // No error message, remove the error state
+    emailInput.classList.remove('error');
+    passwordInput.classList.remove('error');
+}
 </script>
 @endsection

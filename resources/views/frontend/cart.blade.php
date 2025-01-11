@@ -39,12 +39,73 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- Responsive CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+
+
 </head>
+
+<style>
+    /* Simple modal styling */
+    .simple-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .simple-modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        max-width: 500px;
+        margin: auto;
+        text-align: center;
+    }
+
+    .simple-close-btn {
+        background: transparent;
+        border: none;
+        font-size: 20px;
+        color: black;
+        cursor: pointer;
+    }
+
+    .simple-close-btn:hover {
+        color: red;
+    }
+
+    .modal {
+        z-index: 1050;
+    }
+
+    .modal-backdrop {
+        z-index: 1040;
+    }
+
+    .invalid-feedback {
+        display: block;
+        color: #dc3545;
+        /* Red color for error */
+        font-size: 0.875rem;
+    }
+</style>
 
 <div class="container py-5">
     <h1 class="text-center mb-4"><i class="fas fa-shopping-cart"></i> My Cart</h1>
 
     <!-- Cart Section -->
+    <!-- Flash Messages -->
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <div id="cartSection" class="toggle-section">
         @if ($cart && count($cart) > 0)
             <!-- Cart Items Table -->
@@ -81,13 +142,42 @@
                                     </td>
                                     <td>₱{{ number_format($item['price'], 2) }}</td>
                                     <td>
-                                        <form action="{{ route('cart.update') }}" method="POST" class="d-inline">
+                                        <form action="{{ route('cart.update') }}" method="POST" class="d-inline"
+                                            id="updateForm_{{ $id }}">
                                             @csrf
                                             <input type="hidden" name="item_id" value="{{ $id }}">
                                             <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1"
-                                                class="form-control form-control-sm w-auto d-inline">
-                                            <button type="submit" class="btn btn-sm btn-primary mt-1">Update</button>
+                                                class="form-control form-control-sm w-auto d-inline" id="quantity_{{ $id }}">
+                                            <button type="submit" class="btn btn-sm btn-primary mt-1"
+                                                id="updateBtn_{{ $id }}">Update</button>
                                         </form>
+
+                                        <!-- Call Us Notification Modal -->
+                                        <div class="modal fade" id="callUsModal" tabindex="-1"
+                                            aria-labelledby="callUsModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="callUsModalLabel">Order Limit Exceeded</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <i class="fas fa-phone-alt text-warning fa-3x mb-3"></i>
+                                                        <p>You have exceeded the maximum order limit of 10 items. Please
+                                                            <strong>call us</strong> at <strong>0956
+                                                                165 7495</strong> to place a larger order.
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                        <a href="tel:+639561657495" class="btn btn-primary">Call Us</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </td>
                                     <td>₱{{ number_format($item['price'] * $item['quantity'], 2) }}</td>
                                     <td>
@@ -126,192 +216,299 @@
                     <p><strong>Available Reward Points:</strong> {{ auth()->user()->reward_points }}</p>
 
                     <!-- Checkout Form -->
-                    <form action="{{ route('order.store') }}" method="POST" class="mt-3" enctype="multipart/form-data">
+                    <form action="{{ route('order.store') }}" method="POST" class="mt-3" enctype="multipart/form-data"
+                        id="checkoutForm">
                         @csrf
                         <input type="hidden" name="applied_points" id="appliedPoints" value="0">
                         <input type="hidden" name="customer_name" value="{{ auth()->user()->firstname }}">
                         <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+
+                        <!-- Phone -->
                         <div class="mb-3">
                             <label for="phone" class="form-label">Phone</label>
-                            <input type="text" name="phone" id="phone" class="form-control"
-                                placeholder="Enter your phone number" required>
+                            <input type="text" name="phone" id="phone"
+                                class="form-control @error('phone') is-invalid @enderror"
+                                placeholder="Enter your phone number" value="{{ old('phone') }}">
+                            @error('phone')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
+
+
+                        <!-- Payment Method -->
                         <div class="mb-3">
                             <label for="payment_method" class="form-label">Payment Method</label>
-                            <select name="payment_method" id="payment_method" class="form-select" required>
-                                <option value="" disabled selected>Select a payment method</option>
-                                <option value="credit_card">Credit Card</option>
-                                <option value="paypal">Paypal</option>
-                                <option value="Gcash">GCash</option>
+                            <select name="payment_method" id="payment_method"
+                                class="form-select @error('payment_method') is-invalid @enderror" required>
+                                <option value="" disabled {{ old('payment_method') ? '' : 'selected' }}>Select a payment
+                                    method</option>
+                                <option value="Gcash" {{ old('payment_method') == 'Gcash' ? 'selected' : '' }}>GCash</option>
                             </select>
+                            @error('payment_method')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
-                        <!-- GCash Payment Details (Hidden by Default) -->
-                        <div id="gcashDetails" class="d-none">
+                        <!-- GCash Payment Details -->
+                        <div id="gcashDetails" class="{{ old('payment_method') == 'Gcash' ? '' : 'd-none' }}">
                             <h5>GCash Payment</h5>
-                            <img src="assets/img/kuraw/qr-code.jpg" alt="GCash QR Code"
+                            <img src="assets/img/kuraw/gcash.jpg" alt="GCash QR Code"
                                 class="img-fluid mb-3 w-20 h-20 mx-auto" />
 
+                            <!-- GCash Reference Number -->
                             <div class="mb-3">
                                 <label for="reference_number" class="form-label">GCash Reference Number</label>
-                                <input type="text" name="reference_number" id="reference_number" class="form-control"
-                                    placeholder="Enter your GCash reference number" />
+                                <input type="text" name="reference_number" id="reference_number"
+                                    class="form-control @error('reference_number') is-invalid @enderror"
+                                    placeholder="Enter your GCash reference number (must be a 13-digit number)"
+                                    value="{{ old('reference_number') }}">
+                                @error('reference_number')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
+                            <!-- Proof of Payment -->
                             <div class="mb-3">
                                 <label for="proof_of_payment" class="form-label">Upload Proof of Payment</label>
-                                <input type="file" name="proof_of_payment" id="proof_of_payment" class="form-control" />
+                                <input type="file" name="proof_of_payment" id="proof_of_payment"
+                                    class="form-control @error('proof_of_payment') is-invalid @enderror">
+                                @error('proof_of_payment')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
 
+                        <!-- Delivery Method -->
                         <div class="mb-3">
                             <label for="delivery_method" class="form-label">Delivery Method</label>
-                            <select name="delivery_method" id="delivery_method" class="form-select" required>
-                                <option value="" disabled selected>Select a delivery method</option>
-                                <option value="pickup">Pick-Up</option>
-                                <option value="delivery">Delivery</option>
+                            <select name="delivery_method" id="delivery_method"
+                                class="form-select @error('delivery_method') is-invalid @enderror" required>
+                                <option value="" disabled {{ old('delivery_method') ? '' : 'selected' }}>Select a delivery
+                                    method</option>
+                                <option value="pickup" {{ old('delivery_method') == 'pickup' ? 'selected' : '' }}>Pick-Up
+                                </option>
+                                <option value="delivery" {{ old('delivery_method') == 'delivery' ? 'selected' : '' }}>Delivery
+                                </option>
                             </select>
+                            @error('delivery_method')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
-                        <!-- Delivery Address (Initially Hidden) -->
-                        <div id="address" class="mb-3" style="display:none;">
+                        <!-- Delivery Address -->
+                        <div id="address" class="{{ old('delivery_method') == 'delivery' ? '' : 'd-none' }}">
                             <label for="address" class="form-label">Delivery Address</label>
-                            <textarea name="address" id="address" class="form-control" rows="3"
-                                placeholder="Enter your delivery address"></textarea>
+                            <textarea name="address" id="address"
+                                class="form-control @error('address') is-invalid @enderror" rows="3"
+                                placeholder="Enter your delivery address">{{ old('address') }}</textarea>
+                            @error('address')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
-                        <button type="submit" class="btn btn-success w-100">Place Order</button>
+                        <button type="submit" class="btn btn-success w-100" id="placeOrderBtn">Place Order</button>
                     </form>
-                </div>
-            </div>
+
+
+                    <!-- Success Notification Modal -->
+                    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="successModalLabel">Order Confirmation</h5>
+                                    <button type="button" class="btn-close" id="closeModalBtn" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                                    <p>Your order has been successfully placed! Your order is currently being processed.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" id="closeModalBtn"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" id="confirmOrderBtn">OK</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
         @else
             <div class="alert alert-warning text-center">
                 <h4>Your cart is empty.</h4>
                 <p><a href="{{ route('menu') }}" class="btn btn-primary mt-3">Browse Menu</a></p>
             </div>
         @endif
-    </div>
-</div>
+            </div>
+        </div>
 
-<!-- JavaScript -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const paymentMethodSelect = document.getElementById('payment_method');
-        const gcashDetailsSection = document.getElementById('gcashDetails');
-        const referenceNumberInput = document.getElementById('reference_number');
-        const deliveryMethodSelect = document.getElementById('delivery_method');
-        const addressField = document.getElementById('address');
-        const addressTextarea = addressField.querySelector('textarea'); // The address textarea
-        const form = document.querySelector('form'); // The checkout form
 
-        // Show/Hide the GCash details section when the payment method is changed
-        paymentMethodSelect.addEventListener('change', function () {
-            if (this.value === 'Gcash') {
-                gcashDetailsSection.classList.remove('d-none');
-            } else {
-                gcashDetailsSection.classList.add('d-none');
-            }
-        });
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const paymentMethodSelect = document.getElementById('payment_method');
+                const gcashDetailsSection = document.getElementById('gcashDetails');
+                const referenceNumberInput = document.getElementById('reference_number');
+                const proofOfPaymentInput = document.getElementById('proof_of_payment');
+                const deliveryMethodSelect = document.getElementById('delivery_method');
+                const addressField = document.getElementById('address');
+                const addressTextarea = addressField.querySelector('textarea');
+                const form = document.getElementById('checkoutForm');
 
-        // Show/Hide the address input and set default address based on the delivery method
-        deliveryMethodSelect.addEventListener('change', function () {
-            if (this.value === 'delivery') {
-                addressField.style.display = 'block';
-                addressTextarea.value = ''; // Clear the address for delivery
-            } else if (this.value === 'pickup') {
-                addressField.style.display = 'none';
-                addressTextarea.value = 'Kuraw Cafe'; // Set default address for pickup
-            }
-        });
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+                const placeOrderBtn = document.getElementById('placeOrderBtn');
 
-        // Form submission validation
-        form.addEventListener('submit', function (e) {
-            const referenceNumber = referenceNumberInput.value.trim();
-            if (paymentMethodSelect.value === 'Gcash') {
-                // Check if the reference number is exactly 13 characters
-                if (referenceNumber.length !== 13) {
-                    e.preventDefault(); // Prevent form submission
-                    alert('The GCash reference number must be exactly 13 characters.');
-
-                    // Add the red border to the reference number input
-                    referenceNumberInput.classList.add('border-red-500', 'border-2');
-                    referenceNumberInput.focus();
-                } else {
-                    // Remove red border if the reference number is valid
-                    referenceNumberInput.classList.remove('border-red-500', 'border-2');
-                }
-            }
-        });
-
-        // Optional: Real-time validation (while typing)
-        referenceNumberInput.addEventListener('input', function () {
-            if (referenceNumberInput.value.trim().length !== 13) {
-                referenceNumberInput.classList.add('border-red-500', 'border-2');
-            } else {
-                referenceNumberInput.classList.remove('border-red-500', 'border-2');
-            }
-        });
-    });
-
-    document.querySelectorAll('.btn-danger').forEach(button => {
-        button.addEventListener('click', function (event) {
-            event.preventDefault();
-
-            const form = event.target.closest('form');
-            const action = form.getAttribute('action');
-            const csrfToken = form.querySelector('input[name="_token"]').value;
-            const itemId = form.querySelector('input[name="item_id"]').value;
-
-            fetch(action, {
-                method: 'DELETE', // Use DELETE method
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ item_id: itemId }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Update the cart badge
-                        document.getElementById('cart-badge').innerText = data.cart_count;
-
-                        // Redirect if the cart is empty
-                        if (data.cart_count === 0) {
-                            window.location.href = "{{ route('cart.index') }}"; // Redirect to the cart page
-                        } else {
-                            // Optionally refresh the current cart page to reflect changes
-                            window.location.reload();
-                        }
+                paymentMethodSelect.addEventListener('change', function () {
+                    if (this.value === 'Gcash') {
+                        gcashDetailsSection.classList.remove('d-none');
                     } else {
-                        alert(data.message);
+                        gcashDetailsSection.classList.add('d-none');
+                        referenceNumberInput.value = '';
+                        proofOfPaymentInput.value = '';
+                        referenceNumberInput.classList.remove('border-red-500', 'border-2');
                     }
-                })
-                .catch(error => console.error('Error removing item from cart:', error));
-        });
-    });
-</script>
+                });
 
-<script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/bootstrap/js/popper.min.js') }}"></script>
-<script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/js/form-contact.js') }}"></script>
-<script src="{{ asset('assets/js/isotope.3.0.6.min.js') }}"></script>
-<script src="{{ asset('assets/js/jquery-2.2.4.min.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.appear.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.inview.min.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.meanmenu.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.sticky.js') }}"></script>
-<script src="{{ asset('assets/js/main.js') }}"></script>
-<script src="{{ asset('assets/js/modal.js') }}"></script>
-<script src="{{ asset('assets/js/order-summary.js') }}"></script>
-<script src="{{ asset('assets/js/ordermodal.js') }}"></script>
-<script src="{{ asset('assets/js/proceed.js') }}"></script>
-<script src="{{ asset('assets/js/redirectorder.js') }}"></script>
-<script src="{{ asset('assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
-<script src="{{ asset('assets/js/scripts.js') }}"></script>
-<script src="{{ asset('assets/js/scrolltopcontrol.js') }}"></script>
-<script src="{{ asset('assets/venobox/js/venobox.min.js') }}"></script>
-<script src="{{ asset('assets/js/wow.min.js') }}"></script>
-@endsection
+                deliveryMethodSelect.addEventListener('change', function () {
+                    if (this.value === 'delivery') {
+                        addressField.classList.remove('d-none');
+                        addressTextarea.value = '';
+                    } else if (this.value === 'pickup') {
+                        addressField.classList.add('d-none');
+                        addressTextarea.value = 'Kuraw Cafe';
+                    }
+                });
+
+                if (deliveryMethodSelect.value === 'delivery') {
+                    addressField.classList.remove('d-none');
+                } else {
+                    addressField.classList.add('d-none');
+                }
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault(); // Prevent default form submission
+
+                    let hasError = false;
+
+                    // Clear previous error messages
+                    document.querySelectorAll('.invalid-feedback').forEach(function (msg) {
+                        msg.remove();
+                    });
+
+                    // Validate Phone
+                    const phoneInput = document.getElementById('phone');
+                    const phoneError = document.createElement('small');
+                    phoneError.classList.add('invalid-feedback');
+
+                    if (!phoneInput.value.match(/^0[0-9]{10,12}$/)) {
+                        phoneInput.classList.add('is-invalid');
+                        phoneError.innerText = 'Please enter a valid phone number. Must be exactly 11 digits.';
+                        if (!phoneInput.parentElement.contains(phoneError)) {
+                            phoneInput.parentElement.appendChild(phoneError);
+                        }
+                        hasError = true;
+                    } else {
+                        phoneInput.classList.remove('is-invalid');
+                        if (phoneInput.parentElement.contains(phoneError)) {
+                            phoneInput.parentElement.removeChild(phoneError);
+                        }
+                    }
+
+                    // Validate Payment Method
+                    if (!paymentMethodSelect.value) {
+                        paymentMethodSelect.classList.add('is-invalid');
+                        const paymentError = document.createElement('small');
+                        paymentError.classList.add('invalid-feedback');
+                        paymentError.innerText = 'Please select a payment method.';
+                        paymentMethodSelect.parentElement.appendChild(paymentError);
+                        hasError = true;
+                    } else {
+                        paymentMethodSelect.classList.remove('is-invalid');
+                    }
+
+                    // Validate GCash Reference Number and Proof of Payment
+                    if (paymentMethodSelect.value === 'Gcash') {
+                        const referenceNumber = referenceNumberInput.value.trim();
+                        const proofOfPayment = proofOfPaymentInput.value.trim();
+
+                        if (referenceNumber.length !== 13) {
+                            referenceNumberInput.classList.add('border-red-500', 'border-2');
+                            const refError = document.createElement('small');
+                            refError.classList.add('invalid-feedback');
+                            refError.innerText = 'GCash Reference Number must be exactly 13 digits.';
+                            referenceNumberInput.parentElement.appendChild(refError);
+                            hasError = true;
+                        } else {
+                            referenceNumberInput.classList.remove('border-red-500', 'border-2');
+                        }
+
+                        if (!proofOfPayment) {
+                            proofOfPaymentInput.classList.add('border-red-500', 'border-2');
+                            const proofError = document.createElement('small');
+                            proofError.classList.add('invalid-feedback');
+                            proofError.innerText = 'Please upload your proof of payment.';
+                            proofOfPaymentInput.parentElement.appendChild(proofError);
+                            hasError = true;
+                        } else {
+                            proofOfPaymentInput.classList.remove('border-red-500', 'border-2');
+                        }
+                    }
+
+                    // Validate Delivery Method
+                    if (!deliveryMethodSelect.value) {
+                        deliveryMethodSelect.classList.add('is-invalid');
+                        const deliveryError = document.createElement('small');
+                        deliveryError.classList.add('invalid-feedback');
+                        deliveryError.innerText = 'Please select a delivery method.';
+                        deliveryMethodSelect.parentElement.appendChild(deliveryError);
+                        hasError = true;
+                    } else {
+                        deliveryMethodSelect.classList.remove('is-invalid');
+                    }
+
+                    // Validate Address (if Delivery is selected)
+                    if (deliveryMethodSelect.value === 'delivery' && !addressTextarea.value.trim()) {
+                        addressTextarea.classList.add('is-invalid');
+                        const addressError = document.createElement('small');
+                        addressError.classList.add('invalid-feedback');
+                        addressError.innerText = 'Please provide a delivery address.';
+                        addressTextarea.parentElement.appendChild(addressError);
+                        hasError = true;
+                    } else {
+                        addressTextarea.classList.remove('is-invalid');
+                    }
+
+                    // If there is an error, stop the form from submitting
+                    if (hasError) {
+                        return;
+                    }
+
+                    // Show the modal
+                    successModal.show();
+                });
+
+                confirmOrderBtn.addEventListener('click', function () {
+                    form.submit(); // Submit the form when "OK" is clicked
+                });
+
+                // Quantity Update exceeds 10
+                const updateBtns = document.querySelectorAll('button[id^="updateBtn_"]');
+                updateBtns.forEach(function (btn) {
+                    btn.addEventListener('click', function (e) {
+                        const form = this.closest('form'); // Get the form
+                        const quantityInput = form.querySelector('input[name="quantity"]'); // Get the quantity input
+                        const quantity = parseInt(quantityInput.value, 10); // Get the entered quantity
+
+                        // If quantity exceeds 10, prevent form submission and show modal
+                        if (quantity > 9) {
+                            e.preventDefault(); // Prevent form submission
+                            const callUsModal = new bootstrap.Modal(document.getElementById('callUsModal'));
+                            callUsModal.show(); // Show the modal
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('assets/js/main.js') }}"></script>
+        @endsection

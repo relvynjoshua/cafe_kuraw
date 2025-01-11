@@ -47,31 +47,39 @@
     @if ($orders->isNotEmpty())
         <div class="space-y-4">
             @foreach ($orders as $order)
-                <div class="border rounded-lg shadow p-4 hover:bg-gray-50 transition">
-                    <a href="{{ route('orders.showDetails', $order->id) }}"
-                        class="flex justify-between items-center text-decoration-none text-dark">
-                        <div>
-                            <h4 class="font-semibold">Order #{{ $order->id }}</h4>
-                            <p class="text-sm text-gray-500">Date: {{ $order->created_at->format('F d, Y h:i A') }}</p>
-                            <p class="text-sm">
-                                Status:
-                                <span
-                                    class="badge bg-{{ $order->status === 'completed' ? 'success' : ($order->status === 'pending' ? 'warning' : 'danger') }}">
-                                    {{ ucfirst($order->status) }}
-                                </span>
-                            </p>
-                        </div>
-                        <div class="text-lg font-bold">₱{{ number_format($order->total_amount, 2) }}</div>
-                    </a>
-                    @if ($order->isCancelable())
-                        <form method="POST" action="{{ route('orders.cancel', $order->id) }}" class="mt-2">
-                            @csrf
-                            <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
-                        </form>
-                    @endif
+                <div
+                    class="border rounded-lg shadow p-4 hover:bg-gray-50 transition d-flex justify-content-between align-items-start mb-4">
+                    <!-- Add mb-4 for space between orders -->
+                    <div class="flex-grow-1">
+                        <h4 class="font-semibold">Order #{{ $order->id }}</h4>
+                        <p class="text-sm text-gray-500">Date: {{ $order->created_at->format('F d, Y h:i A') }}</p>
+                        <p class="text-sm">
+                            Status:
+                            <span
+                                class="badge bg-{{ $order->status === 'completed' ? 'success' : ($order->status === 'pending' ? 'warning' : 'danger') }}">
+                                {{ ucfirst($order->status) }}
+                            </span>
+                        </p>
+                        <div class="text-lg font-bold me-3">₱{{ number_format($order->total_amount, 2) }}</div>
+                    </div>
+
+                    <!-- Buttons Section aligned to the right with margin-top -->
+                    <div class="d-flex flex-column align-items-end mt-3"> <!-- Add mt-3 for spacing above the buttons -->
+                        <button class="btn btn-primary btn-sm mb-2" style="width: 100px;" data-bs-toggle="modal"
+                            data-bs-target="#orderDetailsModal" onclick="fetchOrderDetails('{{ $order->id }}')">View
+                            Details</button>
+
+                        @if ($order->isCancelable())
+                            <form method="POST" action="{{ route('orders.cancel', $order->id) }}" class="mt-2">
+                                @csrf
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
             @endforeach
         </div>
+
     @else
         <div class="alert alert-warning text-center">
             <h4>No orders found.</h4>
@@ -80,6 +88,40 @@
         </div>
     @endif
 </div>
+
+
+
+
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModal">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <h6>Order Status: <span id="modalOrderStatus" class="badge"></span></h6>
+                    <h6>Order Date: <span id="modalOrderDate"></span></h6>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Variation</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalProducts"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Scripts -->
 <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -103,4 +145,6 @@
 <script src="{{ asset('assets/js/scrolltopcontrol.js') }}"></script>
 <script src="{{ asset('assets/venobox/js/venobox.min.js') }}"></script>
 <script src="{{ asset('assets/js/wow.min.js') }}"></script>
+<script src="{{ asset('assets/js/notif-customer.js') }}"></script>
+
 @endsection
