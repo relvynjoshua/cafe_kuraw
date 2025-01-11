@@ -14,25 +14,34 @@ class SupplierSeeder extends Seeder
      */
     public function run()
     {
-        // Clear all existing records in the suppliers table
-        Supplier::truncate();
-
         // Updated supplier data
         $suppliers = [
             [
                 'company_name' => 'Gaisano City Mall CDO',
+                'contact_person' => 'John Smith',
+                'phone_number' => '09123456789',
+                'email' => 'john@coffeebeansco.com',
                 'address' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
             ],
             [
                 'company_name' => 'S&R Membership Shopping Cagayan de Oro',
+                'contact_person' => 'Jane Doe',
+                'phone_number' => '09234567890',
+                'email' => 'jane@bakeryessentials.com',
                 'address' => 'Kauswagan Highway, Cagayan de Oro City, 9000, Misamis Oriental',
             ],
             [
                 'company_name' => 'Equilibrium Intertrade Corporation',
+                'contact_person' => 'Mike Johnson',
+                'phone_number' => '09345678901',
+                'email' => 'mike@kitchensupply.com',
                 'address' => '2nd Floor, Cagayan Town Center, Capt. Vicente Roa Street, Cagayan de Oro City',
             ],
             [
                 'company_name' => 'All-About Baking',
+                'contact_person' => 'Anna Cruz',
+                'phone_number' => '09456789012',
+                'email' => 'anna@freshdairyfarms.com',
                 'address' => 'Limketkai Center, Cagayan de Oro City',
             ],
         ];
