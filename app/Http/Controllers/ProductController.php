@@ -12,11 +12,10 @@ class ProductController extends Controller
     // Show the list of products
     public function index(Request $request)
     {
-        // Get search query
         $search = $request->input('search');
 
-        // Fetch products with optional search filters and paginate results
-        $products = Product::with('category')
+        // Fetch products with optional search filters, category, and variations
+        $products = Product::with(['category', 'variations'])
             ->when($search, function ($query, $search) {
                 $query->where('name', 'like', "%$search%")
                     ->orWhere('price', 'like', "%$search%")
@@ -24,10 +23,46 @@ class ProductController extends Controller
                         $q->where('name', 'like', "%$search%");
                     });
             })
-            ->orderBy('created_at', 'desc')
-            ->paginate(10); // Display 10 products per page
+            ->orderBy('id', 'asc') // Ensure IDs are returned in ascending order
+            ->paginate(10);
 
+        // Check if the request is an API call
+        if ($request->is('api/*')) {
+            return response()->json([
+                'status' => 'success',
+                'products' => $products->items(),
+                'pagination' => [
+                    'current_page' => $products->currentPage(),
+                    'last_page' => $products->lastPage(),
+                    'total' => $products->total(),
+                ],
+            ], 200);
+        }
+
+        // For web response
         return view('dashboard.products.index', compact('products'));
+    }
+
+    public function allProducts(Request $request)
+    {
+        $search = $request->input('search');
+
+        // Fetch products with category and variations without pagination
+        $products = Product::with(['category', 'variations'])
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%$search%")
+                    ->orWhere('price', 'like', "%$search%")
+                    ->orWhereHas('category', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    });
+            })
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'products' => $products,
+        ], 200);
     }
 
     // Show the form to add a new product
@@ -38,9 +73,20 @@ class ProductController extends Controller
     }
 
     // Show a single product by its ID
-    public function show($id)
+    public function show($id, Request $request)
     {
-        $product = Product::findOrFail($id);
+        // Fetch product with category and variations
+        $product = Product::with('category', 'variations')->findOrFail($id);
+
+        // API Response
+        if ($request->is('api/*')) {
+            return response()->json([
+                'status' => 'success',
+                'product' => $product,
+            ], 200);
+        }
+
+        // Web Response
         return view('dashboard.products.show', compact('product'));
     }
 
@@ -75,6 +121,14 @@ class ProductController extends Controller
             foreach ($request->variations as $variation) {
                 $product->variations()->create($variation);
             }
+        }
+
+        if ($request->is('api/*')) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Product created successfully.',
+                'product' => $product,
+            ], 201);
         }
 
         return redirect()->route('dashboard.products.index')->with(['message' => 'Product added successfully!', 'alert' => 'alert-success']);
@@ -145,24 +199,37 @@ class ProductController extends Controller
         }
 
         // Redirect with success message
-        return redirect()->route('dashboard.products.index')
-            ->with(['message' => 'Product updated successfully!', 'alert' => 'alert-success']);
+        if ($request->is('api/*')) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Product updated successfully.',
+                'product' => $product,
+            ], 200);
+        }
+
+        return redirect()->route('dashboard.products.index')->with(['message' => 'Product updated successfully!', 'alert' => 'alert-success']);
     }
 
     // Delete a product from the database
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         $product = Product::with('variations')->findOrFail($id);
 
-        // Delete variations first
         $product->variations()->delete();
 
-        // Delete product image from storage
         if ($product->image) {
             \Storage::delete('public/' . $product->image);
         }
 
         $product->delete();
+
+        // API Response
+        if ($request->is('api/*')) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Product deleted successfully.',
+            ], 200);
+        }
 
         return redirect()->route('dashboard.products.index')->with(['message' => 'Product deleted successfully!', 'alert' => 'alert-danger']);
     }

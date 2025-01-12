@@ -243,37 +243,36 @@
                             </div>
                         </td>
                         <td>
-                            @if ($inventory->quantity == 0)
-                                <span class="badge badge-danger" style="background-color: red; color: white;">Out of
-                                    Stock</span>
-                            @elseif ($inventory->quantity > 0 && $inventory->quantity <= 10)
-                                <span class="badge badge-warning" style="background-color: orange; color: white;">Low
-                                    Stock</span>
-                            @elseif ($inventory->quantity > 10 && $inventory->quantity <= 50)
-                                <span class="badge badge-success"
-                                    style="background-color: green; color: white;">Sufficient</span>
-                            @elseif ($inventory->quantity > 50 && $inventory->quantity <= 100)
-                                <span class="badge badge-info" style="background-color: blue; color: white;">High</span>
-                            @else
-                                <span class="badge badge-primary"
-                                    style="background-color: purple; color: white;">Overstocked</span>
-                            @endif
-                        </td>
+                        @if ($inventory->quantity < 0)
+                            <span class="badge badge-danger" style="background-color: red; color: white;">Invalid Quantity</span>
+                        @elseif ($inventory->quantity == 0)
+                            <span class="badge badge-danger" style="background-color: red; color: white;">Out of Stock</span>
+                        @elseif ($inventory->quantity > 0 && $inventory->quantity <= 10)
+                            <span class="badge badge-warning" style="background-color: orange; color: white;">Low Stock</span>
+                        @elseif ($inventory->quantity > 10 && $inventory->quantity <= 50)
+                            <span class="badge badge-success" style="background-color: green; color: white;">Sufficient</span>
+                        @elseif ($inventory->quantity > 50 && $inventory->quantity <= 100)
+                            <span class="badge badge-info" style="background-color: blue; color: white;">High</span>
+                        @else
+                            <span class="badge badge-primary" style="background-color: purple; color: white;">Overstocked</span>
+                        @endif
+                    </td>
 
-                        <td>
-                            <form action="{{ route('dashboard.inventory.updateQuantity', $inventory->id) }}" method="POST">
-                                @csrf
-                                <div class="input-group" style="margin-top: 10px;">
-                                    <select name="change_type" class="form-select">
-                                        <option value="add">Add</option>
-                                        <option value="subtract">Subtract</option>
-                                    </select>
-                                    <input type="number" name="quantity" class="form-control" placeholder="Qty" required>
-                                    <button class="btn btn-primary" type="submit">Update</button>
-                                </div>
-                            </form>
-                        </td>
-                    </tr>
+                    <td>
+                        <form action="{{ route('dashboard.inventory.updateQuantity', $inventory->id) }}" method="POST" onsubmit="return validateQuantityForm(this)">
+                            @csrf
+                            <div class="input-group" style="margin-top: 10px;">
+                                <select name="change_type" class="form-select">
+                                    <option value="add">Add</option>
+                                    <option value="subtract">Subtract</option>
+                                </select>
+                                <input type="number" name="quantity" class="form-control" placeholder="Qty" required min="1">
+                                <button class="btn btn-primary" type="submit">Update</button>
+                            </div>
+                            <span id="quantityError" class="text-danger d-none">Quantity must be a positive number.</span>
+                        </form>
+                    </td>
+
                 @empty
                     <tr>
                         <td colspan="12" class="text-center">No inventory items found.</td>
@@ -298,6 +297,19 @@
         if (newPage < 1) newPage = 1;
         if (newPage > {{ $inventories->lastPage() }}) newPage = {{ $inventories->lastPage() }};
         window.location.href = '{{ route('dashboard.inventory.index') }}?page=' + newPage;
+    }
+
+    function validateQuantityForm(form) {
+        const quantityInput = form.querySelector('input[name="quantity"]');
+        const errorSpan = form.querySelector('#quantityError');
+
+        if (quantityInput.value <= 0) {
+            errorSpan.classList.remove('d-none');
+            return false; // Prevent form submission
+        }
+
+        errorSpan.classList.add('d-none');
+        return true; // Allow form submission
     }
 </script>
 

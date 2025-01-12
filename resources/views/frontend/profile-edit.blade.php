@@ -3,6 +3,43 @@
 @section('title', 'Edit Profile')
 
 @section('content')
+<head>
+    <!--Meta Tags-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+
+    <!--Favicons-->
+    <link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico') }}" />
+
+    <!--Page Title-->
+    <title>Kuraw - Edit Profile </title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Dosis:300,400,500,600,700,800|Roboto:300,400,400i,500,500i,700,700i,900,900i"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Meanmenu CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/meanmenu.min.css') }}">
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.theme.default.min.css') }}">
+    <!-- Animate CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}">
+    <!-- Venobox -->
+    <link rel="stylesheet" href="{{ asset('assets/venobox/css/venobox.min.css') }}" />
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+</head>
+
 <!-- Profile CSS -->
 <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}">
 
@@ -25,17 +62,10 @@
                         </div>
                         <div class="mb-2">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" value="{{ $user->email }}"
-                                required>
+                            <input type="email" name="email" id="email" class="form-control" value="{{ $user->email }}" readonly>
                         </div>
                         <div class="mb-2">
-                            <label for="current_password" class="form-label">Current Password <small
-                                    class="text-muted">(Required to change password)</small></label>
-                            <input type="password" name="current_password" id="current_password" class="form-control">
-                        </div>
-                        <div class="mb-2">
-                            <label for="password" class="form-label">New Password <small class="text-muted">(Leave blank
-                                    to keep current password)</small></label>
+                            <label for="password" class="form-label">New Password <small class="text-muted"></small></label>
                             <input type="password" name="password" id="password" class="form-control">
                         </div>
                         <div class="mb-2">

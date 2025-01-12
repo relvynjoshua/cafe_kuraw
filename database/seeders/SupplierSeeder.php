@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use App\Models\Supplier;
 
 class SupplierSeeder extends Seeder
@@ -14,34 +15,31 @@ class SupplierSeeder extends Seeder
      */
     public function run()
     {
-        // Updated supplier data
+        // Disable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Clear all existing records in the suppliers table
+        Supplier::truncate();
+
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Updated supplier data with only 'company_name' and 'address'
         $suppliers = [
             [
                 'company_name' => 'Gaisano City Mall CDO',
-                'contact_person' => 'John Smith',
-                'phone_number' => '09123456789',
-                'email' => 'john@coffeebeansco.com',
                 'address' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
             ],
             [
                 'company_name' => 'S&R Membership Shopping Cagayan de Oro',
-                'contact_person' => 'Jane Doe',
-                'phone_number' => '09234567890',
-                'email' => 'jane@bakeryessentials.com',
                 'address' => 'Kauswagan Highway, Cagayan de Oro City, 9000, Misamis Oriental',
             ],
             [
                 'company_name' => 'Equilibrium Intertrade Corporation',
-                'contact_person' => 'Mike Johnson',
-                'phone_number' => '09345678901',
-                'email' => 'mike@kitchensupply.com',
                 'address' => '2nd Floor, Cagayan Town Center, Capt. Vicente Roa Street, Cagayan de Oro City',
             ],
             [
                 'company_name' => 'All-About Baking',
-                'contact_person' => 'Anna Cruz',
-                'phone_number' => '09456789012',
-                'email' => 'anna@freshdairyfarms.com',
                 'address' => 'Limketkai Center, Cagayan de Oro City',
             ],
         ];
@@ -52,6 +50,6 @@ class SupplierSeeder extends Seeder
         }
 
         // Optional success message
-        $this->command->info('Suppliers table truncated and seeded successfully with updated entries!');
+        $this->command->info('Suppliers table truncated and seeded successfully with company_name and address only!');
     }
 }

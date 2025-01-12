@@ -201,4 +201,6 @@ class InventoryController extends Controller
             'location' => ['nullable', 'string', 'max:255'],
         ]);
     }
+
+    
 }

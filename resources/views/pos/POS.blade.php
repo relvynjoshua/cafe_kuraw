@@ -231,8 +231,6 @@
         <style>.is-invalid {
             border-color: #dc3545;
         }
-
-        
     </style>
 </head>
 
@@ -446,13 +444,14 @@
 
                                     <!-- Delivery Method -->
                                     <div class="mb-2">
-                                        <label for="delivery_method"><strong>Delivery Method:</strong></label>
+                                        <label for="delivery_method"><strong>Service Options:</strong></label>
                                         <select id="delivery_method" class="form-select" required>
                                             <option value="dinein">Dine In</option>
-                                            <option value="pickup">Pickup</option>
+                                            <option value="takeout">Take Out</option>
+                                            <option value="pickup">Pick Up</option>
                                             <option value="delivery">Delivery</option>
                                         </select>
-                                        <div class="invalid-feedback">Please select a delivery method.</div>
+                                        <div class="invalid-feedback">Please select a service options.</div>
                                     </div>
 
                                     <!-- Cart Details -->
@@ -790,19 +789,16 @@
         function processTransaction() {
             const paymentMethod = document.getElementById('payment_method').value;
             const customerName = document.getElementById('customer_name').value || 'Guest';
-            const email = document.getElementById('email').value || '';
-            const phone = document.getElementById('phone').value || '';
-            const address = document.getElementById('address').value || '';
-            const deliveryMethod = document.getElementById('delivery_method').value || 'pickup';
+            const email = document.getElementById('email').value.trim() || 'kurawcoffee@gmail.com'; // Default email if blank
+            const phone = document.getElementById('phone').value.trim() || '09111111111';
+            const address = document.getElementById('address').value.trim() || 'Kuraw Cafe'; // Default address if blank
+            const deliveryMethod = document.getElementById('delivery_method').value || 'dinein';
             const cashAmount = paymentMethod === 'cash' ? parseFloat(document.getElementById('cash-amount').value) : null;
             const referenceNumber = paymentMethod === 'gcash' ? document.getElementById('gcash_reference_number').value : null;
             const proofOfPayment = paymentMethod === 'gcash' ? document.getElementById('gcash_proof').files[0] : null;
 
             const fields = [
                 { id: 'customer_name', type: 'text' },
-                { id: 'email', type: 'email' },
-                { id: 'phone', type: 'text' },
-                { id: 'address', type: 'text' },
                 { id: 'delivery_method', type: 'select' },
                 { id: 'payment_method', type: 'select' }
             ];
@@ -898,6 +894,7 @@
                     warningModal.show();
                 });
         }
+
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>

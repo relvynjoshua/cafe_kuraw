@@ -173,7 +173,7 @@
                 <!-- KPI Cards -->
                 <div class="kpi-container">
                     <div class="kpi-card">
-                        <i class="fas fa-dollar-sign kpi-icon"></i>
+                        <i class="fas fa-money-bill kpi-icon"></i>
                         <div class="kpi-value">₱{{ number_format($totalSales, 2) }}</div>
                         <div class="kpi-title">Overall Sales</div>
                     </div>

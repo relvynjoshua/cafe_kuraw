@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
+
+use App\Notifications\ReservationStatusNotification;
 use App\Notifications\NewReservationNotification;
+use App\Notifications\ReservationCompletedNotification;
 use App\Notifications\ReservationStatusUpdated;
+
 
 class ReservationController extends Controller
 {
@@ -28,35 +32,47 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $reservations = Reservation::when($search, function ($query, $search) {
+
+        // Common query logic for both API and web
+        $query = Reservation::when($search, function ($query, $search) {
             $query->where('name', 'like', "%$search%")
                 ->orWhere('reservation_date', 'like', "%$search%")
                 ->orWhere('reservation_time', 'like', "%$search%")
                 ->orWhere('number_of_guests', 'like', "%$search%");
-        })
-            ->orderBy('id', 'DESC')
-            ->paginate(10);
+        })->orderBy('id', 'DESC');
 
         // API Response
         if ($request->is('api/*')) {
-            return response()->json(['reservations' => $reservations], 200);
+            // Simple response for API with only relevant data
+            $reservations = $query->paginate(10)->toArray(); // Includes pagination metadata
+            return response()->json([
+                'status' => 'success',
+                'reservations' => $reservations['data'], // Only the data portion of the paginated results
+                'pagination' => [
+                    'current_page' => $reservations['current_page'],
+                    'last_page' => $reservations['last_page'],
+                    'total' => $reservations['total'],
+                ],
+            ], 200);
         }
 
         // Web Response
+        $reservations = $query->paginate(10); // For Blade views, retain the full paginator object
         return view('dashboard.reservations.index', compact('reservations'));
     }
 
-    // Show the create reservation page
-    public function create()
-    {
-        return view('dashboard.reservations.create');
-    }
 
     // Store reservation
     public function store(Request $request)
     {
         // Ensure the user is authenticated
         if (!Auth::check()) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Authentication required to make a reservation.',
+                ], 401);
+            }
             return redirect()->route('login-signup.form')->withErrors('You need to log in to make a reservation.');
         }
 
@@ -86,8 +102,13 @@ class ReservationController extends Controller
         $storeClose = $storeHours[$dayOfWeek]['close'];
 
         if ($validated['reservation_time'] < $storeOpen || $validated['reservation_time'] > $storeClose) {
-            return redirect()->route('reservation.page')
-                ->withErrors("Please select a time between $storeOpen and $storeClose.");
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "Reservation time must be between $storeOpen and $storeClose.",
+                ], 422);
+            }
+            return back()->withErrors("Reservation time must be between $storeOpen and $storeClose.");
         }
 
         // Check if a reservation with the same date and time already exists
@@ -97,8 +118,13 @@ class ReservationController extends Controller
             ->exists();
 
         if ($existingReservation) {
-            return redirect()->route('reservation.page')
-                ->withErrors('The selected date and time are already booked. Please choose another slot.');
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'This slot is already booked.',
+                ], 422);
+            }
+            return back()->withErrors('This slot is already booked.');
         }
 
         // Use authenticated user's name and email
@@ -110,7 +136,6 @@ class ReservationController extends Controller
             'status' => $request->input('status', 'pending'),
         ]));
 
-
         // Notify admins for frontend reservations
         if ($request->route()->getName() === 'reservation.store') {
             $admins = \App\Models\User::where('role', 'admin')->get();
@@ -118,39 +143,31 @@ class ReservationController extends Controller
                 $admin->notify(new NewReservationNotification($reservation));
             }
 
-            // Notify the user (this could be when the reservation is confirmed)
-            Auth::user()->notify(new ReservationStatusUpdated($reservation));
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Reservation created successfully.',
+                    'reservation' => $reservation,
+                ], 201);
+            }
 
+            // Handle web response
             return redirect()->route('reservation.page')
                 ->with('success', 'Your reservation has been submitted successfully!');
         }
-
-        return redirect()->route('dashboard.reservations.index')
-            ->with('message', 'Reservation created successfully.')
-            ->with('alert', 'alert-success');
     }
 
-
+    // Show reservation details
     public function show($id)
     {
-        try {
-            $reservation = Reservation::findOrFail($id);
+        $reservation = Reservation::findOrFail($id);
 
-            // Check if the request is an AJAX request
-            if (request()->ajax()) {
-                return response()->json($reservation, 200); // Return JSON for AJAX requests
-            }
-
-            // For regular requests, return a view
-            return view('dashboard.reservations.show', compact('reservation'));
-        } catch (\Exception $e) {
-            \Log::error("Error fetching reservation details: " . $e->getMessage()); // Log the error
-            return response()->json(['error' => 'Failed to fetch reservation details.'], 500);
+        if (request()->is('api/*')) {
+            return response()->json(['reservation' => $reservation], 200);
         }
+
+        return view('dashboard.reservations.show', compact('reservation'));
     }
-
-
-
 
     // Edit reservation
     public function edit($id)
@@ -177,9 +194,6 @@ class ReservationController extends Controller
 
         $reservation->update($validated);
 
-        // Notify the user about the status update
-        Auth::user()->notify(new ReservationStatusUpdated($reservation));
-
         if ($request->is('api/*')) {
             return response()->json([
                 'message' => 'Reservation updated successfully',
@@ -201,10 +215,16 @@ class ReservationController extends Controller
             'status' => 'required|string|in:pending,confirmed,cancelled',
         ]);
 
+        $oldStatus = $reservation->status;
+
         $reservation->update(['status' => $validated['status']]);
 
-        // Notify the user about the reservation status change
-        Auth::user()->notify(new ReservationStatusUpdated($reservation));
+
+
+        if ($validated['status'] === 'completed') {
+            $reservation->user->notify(new ReservationCompletedNotification($reservation));
+        }
+
 
         if ($request->is('api/*')) {
             return response()->json([

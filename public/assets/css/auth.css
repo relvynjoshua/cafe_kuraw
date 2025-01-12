@@ -42,23 +42,98 @@ html, body {
 
 .password-group {
     position: relative;
+    width: 100%; /* Match the width of the input group */
+    margin: 1.5rem 0; /* Same margin as other input fields */
 }
 
+/* Input Styling */
+.input-group input,
+.password-group input {
+    width: 100%; /* Full width */
+    padding: 1rem 3rem; /* Consistent padding for spacing */
+    font-size: 1rem; /* Consistent font size */
+    border: 1px solid #cccccc; /* Light gray border */
+    border-radius: 0.9rem; /* Same curve for both inputs */
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text for contrast */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+}
+
+/* Focus State for Both Inputs */
+.input-group input:focus,
+.password-group input:focus {
+    border-color: #000000; /* Black border on focus */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    outline: none;
+}
+
+/* Error State */
+.input-group input.error {
+    border-color: #e74c3c; /* Red border for error */
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.5); /* Subtle red shadow */
+}
+
+/* Error Message Styling */
+.error-message {
+    background-color: #f8d7da; /* Light red background */
+    color: red; /* Dark red text */
+    border: 1px solid #f5c6cb; /* Matching red border */
+    padding: 0.75rem 1rem; /* Spacing for readability */
+    border-radius: 10px; /* Rounded corners */
+    margin-bottom: 1rem; /* Space below the error message */
+    text-align: center; /* Center align the text */
+    font-size: 0.9rem; /* Slightly smaller font size */
+}
+
+/* Password Input Error State */
+.password-group input.error {
+    border-color: #e74c3c; /* Red border for password error */
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.5); /* Subtle red shadow for password */
+}
+
+/* Password Error Message Styling (Reuses Error Message Styles) */
+.error-message {
+    background-color: #f8d7da; /* Light red background */
+    color:red; /* Dark red text */
+    border: 1px solid #f5c6cb; /* Matching red border */
+    padding: 0.75rem 1rem; /* Spacing for readability */
+    border-radius: 10px; /* Rounded corners */
+    margin-bottom: 1rem; /* Space below the error message */
+    text-align: center; /* Center align the text */
+    font-size: 0.9rem; /* Slightly smaller font size */
+}
+
+/* Placeholder Styling */
+.input-group input::placeholder,
+.password-group input::placeholder {
+    color: #999999; /* Light gray placeholder */
+}
+
+/* Toggle Password Icon */
 .toggle-password {
     position: absolute;
     top: 50%;
-    right: 1.5rem; /* Adjust as needed to align with the input's padding */
+    left: 21.5rem; /* Inside the input box */
     transform: translateY(-50%);
     cursor: pointer;
+    z-index: 10; /* Ensure it's above the input */
 }
 
 .toggle-password i {
-    font-size: 1.5rem; /* Adjust icon size */
-    color: var(--gray-2);
+    font-size: 1.5rem;
+    color: #999999; /* Subtle gray icon color */
+    transition: color 0.3s ease;
 }
 
 .toggle-password:hover i {
-    color: var(--primary-color);
+    color: #000000; /* Black color on hover */
+}
+
+/* Input Group Styling */
+.input-group {
+    position: relative;
+    width: 100%;
+    margin: 1.5rem 0; /* Ensure consistency across all inputs */
 }
 
 
@@ -67,6 +142,34 @@ html, body {
     align-items: center;
     justify-content: center;
     text-align: center;
+}
+
+/* Responsive form styles for tablets and smaller devices */
+@media (max-width: 768px) {
+    .form-wrapper {
+        max-width: 95%; /* Increase form width */
+        padding: 2rem; /* Add more padding for better spacing */
+    }
+}
+
+/* Further adjust for smaller screens (mobile) */
+@media (max-width: 480px) {
+    .form-wrapper {
+        max-width: 100%; /* Use full screen width */
+        margin: 0 auto; /* Center form */
+        padding: 1.8rem; /* Increase padding */
+    }
+}
+
+/* Adjust for mobile screens in landscape orientation */
+@media (max-width: 480px) and (orientation: landscape) {
+    .container {
+        display: flex;
+        flex-direction: column; /* Stack the content vertically */
+        justify-content: center; /* Center content */
+        align-items: center; /* Center horizontally */
+        height: 100vh; /* Full height */
+    }
 }
 
 .form-wrapper {
@@ -99,22 +202,6 @@ html, body {
     transform: translateY(-50%);
     font-size: 1.5rem;
     color: var(--gray-2);
-}
-
-.input-group input {
-    width: 100%;
-    padding: 1rem 4rem;
-    font-size: 1.1rem;
-    background-color: var(--gray);
-    border-radius: .8rem;
-    border: 0.125rem solid var(--white);
-    outline: none;
-    transition: all 0.3s ease-in-out;
-}
-
-.input-group input:focus {
-    border: 0.125rem solid var(--primary-color);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
 }
 
 input.error {
@@ -204,6 +291,9 @@ input.error {
     cursor: pointer;
 }
 
+
+
+/* Form and Content Styling */
 .container.sign-in .form.sign-in,
 .container.sign-in .social-list.sign-in,
 .container.sign-in .social-list.sign-in>div,
@@ -211,8 +301,19 @@ input.error {
 .container.sign-up .social-list.sign-up,
 .container.sign-up .social-list.sign-up>div {
     transform: scale(1);
+    opacity: 1;
+    transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
+.container.sign-in .form.sign-up,
+.container.sign-up .form.sign-in,
+.container.sign-in .social-list.sign-up,
+.container.sign-up .social-list.sign-in {
+    transform: scale(0);
+    opacity: 0;
+}
+
+/* Content Row */
 .content-row {
     position: absolute;
     top: 0;
@@ -224,38 +325,42 @@ input.error {
 
 .text {
     margin: 4rem;
-    color: var(--black);
+    color: #000000; /* Black text */
 }
 
 .text h2 {
-    font-size: 3.5rem;
+    font-size: 3rem;
     font-weight: 800;
     margin: 2rem 0;
-    transition: 1s ease-in-out;
+    transition: transform 1s ease-in-out, opacity 1s ease-in-out;
 }
 
 .text p {
     font-weight: 600;
-    transition: 1s ease-in-out;
-    transition-delay: .2s;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+    transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+    transition-delay: 0.2s;
 }
 
 .img img {
     width: 30vw;
-    transition: 1s ease-in-out;
-    transition-delay: .4s;
+    transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+    transition-delay: 0.4s;
 }
 
 .text.sign-in h2,
 .text.sign-in p,
 .img.sign-in img {
     transform: translateX(-250%);
+    opacity: 0;
 }
 
 .text.sign-up h2,
 .text.sign-up p,
 .img.sign-up img {
     transform: translateX(250%);
+    opacity: 0;
 }
 
 .container.sign-in .text.sign-in h2,
@@ -265,21 +370,104 @@ input.error {
 .container.sign-up .text.sign-up p,
 .container.sign-up .img.sign-up img {
     transform: translateX(0);
+    opacity: 1;
 }
 
-/* BACKGROUND */
+/* Input Group Styling with Toggle Password */
+.input-group {
+    position: relative;
+    width: 100%;
+    margin: 1.5rem 0;
+}
+
+.input-group input::placeholder {
+    color: #999999; /* Light gray placeholder */
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 1.5rem;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.toggle-password i {
+    font-size: 1.5rem;
+    color: #999999; /* Subtle gray for the icon */
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover i {
+    color: #000000; /* Black on hover */
+}
+
+/* Button Styling */
+.form button {
+    cursor: pointer;
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 0.8rem;
+    background-color: #000000; /* Black button */
+    color: #ffffff; /* White text */
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.form button:hover {
+    background-color: #333333; /* Dark gray on hover */
+    transform: translateY(-2px);
+}
+
+/* Responsive styles for smaller screens (tablets and below) */
+@media (max-width: 768px) {
+    .col {
+        width: 100%; /* Columns take full width */
+    }
+}
+
+/* Welcome message styling */
+.container .welcome-message {
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 25%; /* Center horizontally by default */
+    transform: translate(-50%, -50%); /* Adjust for perfect centering */
+    z-index: 7; /* Ensure it's above the ::before pseudo-element */
+    text-align: center;
+    color: #ffffff; /* White text for contrast on black background */
+    font-family: 'Poppins', sans-serif; /* Modern font */
+    font-size: 2.5rem; /* Bold and eye-catching */
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7); /* Add depth with a subtle shadow */
+
+    padding: 30px 40px; /* Increased padding for spacing */
+    width: 350px; /* Increased width */
+    height: 200px; /* Increased height */
+    transition: 0.5s ease-in-out; /* Smooth transition effect */
+}
+
+
+/* Move the message when in sign-up state */
+.container.sign-up .welcome-message {
+    left: 75%; /* Move to the right */
+    transform: translate(-50%, -50%); /* Adjust for perfect centering */
+}
+
+/* Solid black-and-white background for the container */
 .container::before {
     content: "";
     position: absolute;
     height: 100vh;
     width: 300vw;
     transform: translate(35%, 0);
-    background-image: linear-gradient(-45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    transition: 1s ease-in-out;
-    z-index: 6;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #000000; /* Solid black background */
+    transition: 1s ease-in-out; /* Smooth transitions */
+    z-index: 6; /* Below the welcome message */
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1); /* Subtle white highlight */
 }
 
+/* Transformations for sign-in and sign-up states */
 .container.sign-in::before {
     transform: translate(0, 0);
     right: 50%;
@@ -290,71 +478,19 @@ input.error {
     right: 50%;
 }
 
-/* RESPONSIVE */
-@media only screen and (max-width: 425px) {
 
-    .container::before,
-    .container.sign-in::before,
-    .container.sign-up::before {
-        height: 100vh;
-        border-bottom-right-radius: 0;
-        border-top-left-radius: 0;
-        z-index: 0;
-        transform: none;
-        right: 0;
+/* Gradient background animation */
+@keyframes gradientBackground {
+    0% {
+        background-position: 0% 50%;
     }
-
-    .container.sign-in .col.sign-in,
-    .container.sign-up .col.sign-up {
-        transform: translateY(0);
+    50% {
+        background-position: 100% 50%;
     }
-
-    .content-row {
-        align-items: flex-start !important;
-    }
-
-    .content-row .col {
-        transform: translateY(0);
-        background-color: unset;
-    }
-
-    .col {
-        width: 100%;
-        position: absolute;
-        padding: 2rem;
-        background-color: var(--white);
-        border-top-left-radius: 2rem;
-        border-top-right-radius: 2rem;
-        transform: translateY(100%);
-        transition: 1s ease-in-out;
-    }
-
-    .row {
-        align-items: flex-end;
-        justify-content: flex-end;
-    }
-
-    .form,
-    .social-list {
-        box-shadow: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .text {
-        margin: 0;
-    }
-
-    .text p {
-        display: none;
-    }
-
-    .text h2 {
-        margin: .5rem;
-        font-size: 2rem;
+    100% {
+        background-position: 0% 50%;
     }
 }
-
 
 
 /* Modal Style */
@@ -386,17 +522,40 @@ input.error {
   .otp-inputs {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 15px; /* Consistent spacing */
     margin: 20px 0;
-    border-radius: 10;
-  }
-  
-  .otp-digit {
-    width: 40px;
-    height: 40px;
+    border-radius: 10px; /* Smooth layout */
+}
+
+.otp-digit {
+    width: 50px; /* Balanced size for usability */
+    height: 50px;
     text-align: center;
-    font-size: 1.2em;
-  }
+    font-size: 1.5em; /* Larger font for better readability */
+    border: 2px solid black; /* Black border for structure */
+    border-radius: 8px; /* Rounded corners for a modern look */
+    background-color: white; /* Simple white background */
+    color: black; /* Black text for contrast */
+    outline: none; /* Remove default outline */
+    transition: all 0.3s ease; /* Smooth transitions for focus and hover */
+}
+
+.otp-digit:focus {
+    border-color: black; /* Keep focus border black */
+    background-color: #f0f0f0; /* Slightly lighter background for focus */
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for focus */
+}
+
+.otp-digit::placeholder {
+    color: #aaa; /* Light gray placeholder for subtlety */
+}
+
+.otp-digit:hover {
+    border-color: black; /* Keep border black on hover */
+    background-color: #eaeaea; /* Slight hover effect */
+    cursor: text; /* Indicate editable field */
+}
+
   
   #resend-timer {
     margin-top: 15px;
@@ -492,30 +651,6 @@ button:active {
     transform: translateY(0);
 }
 
-/* Cancel button styling */
-.cancel-btn {
-    background-color: #e74c3c; /* Red background */
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.cancel-btn:hover {
-    background-color: #c0392b;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-}
-
-.cancel-btn:active {
-    background-color: #9b2d20;
-    transform: translateY(0);
-}
-
 /* Focus effect for inputs and buttons */
 input:focus, button:focus {
     outline: none;
@@ -543,3 +678,102 @@ input:focus, button:focus {
     cursor: not-allowed;
 }
 
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .welcome-message {
+        font-size: 1.5rem; /* Adjust font size for readability */
+        padding: 10px; /* Compact padding for smaller devices */
+        max-width: 90%; /* Set maximum width to fit within the viewport */
+        width: auto; /* Dynamically adjust width */
+        text-align: center; /* Center-align the text */
+        line-height: 1.4; /* Adjust line height for better readability */
+        word-wrap: break-word; /* Ensure long words wrap */
+        overflow-wrap: anywhere; /* Ensure words break anywhere if needed */
+        white-space: normal; /* Allow wrapping for longer content */
+        overflow: visible; /* Ensure text is fully visible */
+    }
+
+    .form-wrapper {
+        max-width: 90%; /* Reduce width for smaller screens */
+        padding: 1.5rem; /* Adjust padding */
+        margin: 20px auto; /* Center form */
+    }
+
+    .form-wrapper input,
+    .form-wrapper button {
+        font-size: 1rem; /* Adjust font size for inputs and buttons */
+        padding: 0.9rem; /* Compact padding for form elements */
+    }
+
+    .toggle-password {
+        right: 1.5rem; /* Adjust positioning inside input */
+        top: 50%; /* Center vertically */
+        transform: translateY(-50%); /* Keep vertically aligned */
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-message {
+        font-size: 1.2rem; /* Adjust font size for readability */
+        padding: 10px; /* Compact padding for smaller devices */
+        max-width: 90%; /* Set maximum width to fit within the viewport */
+        width: auto; /* Dynamically adjust width */
+        text-align: center; /* Center-align the text */
+        line-height: 1.4; /* Adjust line height for better readability */
+        word-wrap: break-word; /* Ensure long words wrap */
+        overflow-wrap: anywhere; /* Ensure words break anywhere if needed */
+        white-space: normal; /* Allow wrapping for longer content */
+        overflow: visible; /* Ensure text is fully visible */
+    }
+
+    .form-wrapper {
+        max-width: 95%; /* Use almost full width */
+        padding: 1rem; /* Compact padding for smaller devices */
+        margin: 15px auto; /* Center form */
+    }
+
+    .form-wrapper input,
+    .form-wrapper button {
+        font-size: 0.9rem; /* Adjust font size for inputs and buttons */
+        padding: 0.8rem; /* Compact padding for form elements */
+    }
+
+    .toggle-password {
+        right: 1rem; /* Adjust positioning inside input for smaller screens */
+        top: 50%; /* Center vertically */
+        transform: translateY(-50%); /* Keep vertically aligned */
+    }
+}
+
+@media (max-width: 360px) {
+    .welcome-message {
+        font-size: 1.2rem; /* Adjust font size for readability */
+        padding: 10px; /* Compact padding for smaller devices */
+        max-width: 90%; /* Set maximum width to fit within the viewport */
+        width: auto; /* Dynamically adjust width */
+        text-align: center; /* Center-align the text */
+        line-height: 1.4; /* Adjust line height for better readability */
+        word-wrap: break-word; /* Ensure long words wrap */
+        overflow-wrap: anywhere; /* Ensure words break anywhere if needed */
+        white-space: normal; /* Allow wrapping for longer content */
+        overflow: visible; /* Ensure text is fully visible */
+    }
+
+    .form-wrapper {
+        max-width: 95%; /* Use most of the screen width */
+        padding: 0.8rem; /* Minimal padding to save space */
+        margin: 10px auto; /* Compact margins */
+    }
+
+    .form-wrapper input,
+    .form-wrapper button {
+        font-size: 0.8rem; /* Further reduce font size */
+        padding: 0.6rem; /* Adjust padding to fit smaller elements */
+    }
+
+    .toggle-password {
+        right: 0.8rem; /* Adjust positioning inside input for extra small screens */
+        top: 50%; /* Center vertically */
+        transform: translateY(-50%); /* Keep vertically aligned */
+    }
+}

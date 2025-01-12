@@ -90,6 +90,7 @@ Route::get('/gallery/{galleryItem}', [GalleryController::class, 'show'])->name('
 Route::get('/reservation', [ReservationController::class, 'showReservationPage'])->name('reservation.page');
 Route::post('/reservation', [ReservationController::class, 'store'])->name('reservation.store');
 Route::get('/reservations/{id}', [ReservationController::class, 'show'])->name('reservation.show');
+Route::get('/reservation/{id}', [ReservationController::class, 'show'])->name('reservation.show');
 
 
 // ----------------------------
@@ -189,9 +190,10 @@ Route::post('/notifications/mark-read', function () {
 })->name('notifications.mark-read');
 Route::post('/notifications/{id}/mark-read', [NotificationController::class, 'markRead'])->name('notifications.mark-single-read');
 Route::get('notifications/unread-count', [NotificationController::class, 'getNotifications'])->name('notifications.get-unread-count');
+
 Route::get('/notifications/fetch', function () {
     return auth()->user()->unreadNotifications;
-})->middleware('auth');
+})->middleware('auth')->name('notifications.fetch');
 
 // ----------------------------
 // Analytics Routes

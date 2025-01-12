@@ -1,3 +1,4 @@
+// Modify markAsRead to disable badge refresh temporarily
 function markAsRead(event, notificationId, csrfToken, url) {
     event.preventDefault();
 
@@ -13,72 +14,126 @@ function markAsRead(event, notificationId, csrfToken, url) {
         "reservation-id"
     );
 
-    // Log the fetched IDs for debugging
     console.log("Fetched Order ID: ", orderId);
     console.log("Fetched Reservation ID: ", reservationId);
 
     $.ajax({
-        url: url, // URL for marking as read
-        method: "POST", // Use POST
+        url: `/notifications/${notificationId}/mark-read`,
+        method: "POST",
         data: {
-            _token: csrfToken, // CSRF token for security
-            notificationId: notificationId, // ID of the notification
+            _token: csrfToken,
+            notificationId: notificationId,
         },
         success: function (response) {
-            // Remove the specific notification from the dropdown
+            // Show success message using Toastify
+            Toastify({
+                text: "Notification marked as read!",
+                duration: 15000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#f4e8c1", // Soft beige for light notifications
+                stopOnFocus: true,
+                style: {
+                    border: "1px solid #d3ad6e", // Thin gold border for elegance
+                    borderRadius: "12px", // Softer rounded corners
+                    padding: "12px", // Balanced padding
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+                    fontSize: "14px", // Consistent font size
+                    color: "#222222", // Dark text for readability
+                },
+            }).showToast();
+
+            // Fade out and remove the notification item from the list
             $("#notification-" + notificationId).fadeOut("slow", function () {
-                $(this).remove(); // Ensure the item is removed from DOM after fade out
-                forceRefreshNotificationBadge(); // Forcefully refresh the badge after DOM changes
+                $(this).remove();
+                // Re-enable badge refresh after updating the list
+                isBadgeRefreshDisabled = false;
+                forceRefreshNotificationBadge();
             });
 
-            // Check if it's an order notification
+            // Manually decrement the unread notification count
+            var unreadCount = parseInt($("#notification-badge").text()) || 0;
+            unreadCount = Math.max(unreadCount - 1, 0); // Ensure it doesn't go below 0
+            $("#notification-badge").text(unreadCount);
+
+            // Hide badge if no unread notifications remain
+            if (unreadCount === 0) {
+                $("#notification-badge").hide();
+            }
+
+            // Fetch order details if the notification is related to an order
             if (orderId) {
-                // Fetch order details
+                console.log(
+                    "Fetched Order ID THIS IS ALREADY IN AJAX: ",
+                    orderId
+                );
+                console.log("Order details response:", response);
+
                 $.ajax({
-                    url: `/orders/${orderId}`, // Correct the route to match your controller
+                    url: `/order/${orderId}/details`, // This should be correct if you are passing the order ID properly
                     method: "GET",
-                    success: function (orderData) {
-                        // Populate the modal with order data
-                        $("#modalCustomerName").text(orderData.customerName);
-                        $("#modalOrderDate").text(orderData.date);
-                        $("#modalOrderStatus").text(orderData.status);
-                        let modalProducts = $("#modalProducts");
-                        modalProducts.empty(); // Clear previous data
+                    success: function (response) {
+                        if (response.success && response.order) {
+                            let orderData = response.order; // Get the order object
 
-                        orderData.products.forEach((product) => {
-                            modalProducts.append(`
-                                <tr>
+                            // Populate the modal with order data
+                            $("#modalCustomerName").text(
+                                orderData.customerName
+                            );
+                            $("#modalOrderDate").text(orderData.date);
+                            $("#modalOrderStatus").text(orderData.status);
+                            let modalProducts = $("#modalProducts");
+                            modalProducts.empty(); // Clear previous data
+
+                            // Append the products to the modal
+                            if (
+                                orderData.products &&
+                                Array.isArray(orderData.products)
+                            ) {
+                                orderData.products.forEach((product) => {
+                                    modalProducts.append(`
+                                    <tr>
                                     <td>${product.name}</td>
-                                    <td>${product.variation}</td>
-                                    <td>${product.quantity}</td>
+                                    <td>${product.pivot.variation}</td>
+                                    <td>${product.pivot.quantity}</td>
                                     <td>${product.price}</td>
-                                    <td>${product.total}</td>
-                                </tr>
-                            `);
-                        });
+                                    <td>${product.total}</td> 
+                                 </tr>
+                                    `);
+                                });
+                            } else {
+                                console.error(
+                                    "Products array is malformed or missing"
+                                );
+                            }
 
-                        // Show the modal
-                        $("#orderDetailsModal").modal("show");
+                            // Show the order details modal
+                            $("#orderDetailsModal").modal("show");
+                        } else {
+                            console.error(
+                                "Error: Order not found or malformed"
+                            );
+                            alert("Order details not found!");
+                        }
                     },
                     error: function () {
                         alert("Error fetching order details!");
                     },
                 });
             }
-
-            // Check if it's a reservation notification
+            // Fetch reservation details if the notification is related to a reservation
             else if (reservationId) {
-                // Fetch reservation details
                 $.ajax({
-                    url: `/reservations/${reservationId}`, // Correct the route to match your controller
+                    url: `/reservations/${reservationId}`, // Correct route for reservations
                     method: "GET",
                     success: function (reservationData) {
-                        // Populate the modal with reservation data
                         let modalReservationDetails = $(
                             "#modalReservationDetails"
                         );
                         modalReservationDetails.empty(); // Clear previous data
 
+                        // Append the reservation data to the modal
                         modalReservationDetails.append(`
                             <tr>
                                 <td>${reservationData.name}</td>
@@ -89,7 +144,7 @@ function markAsRead(event, notificationId, csrfToken, url) {
                             </tr>
                         `);
 
-                        // Optionally, you can add additional data, such as note and email, as separate fields.
+                        // Optionally, you can add additional fields like email, phone, and note
                         modalReservationDetails.append(`
                             <tr>
                                 <td colspan="5"><strong>Email:</strong> ${reservationData.email}</td>
@@ -102,7 +157,7 @@ function markAsRead(event, notificationId, csrfToken, url) {
                             </tr>
                         `);
 
-                        // Show the modal
+                        // Show the reservation details modal
                         $("#reservationDetailsModal").modal("show");
                     },
                     error: function () {
@@ -114,24 +169,93 @@ function markAsRead(event, notificationId, csrfToken, url) {
         error: function (xhr, status, error) {
             console.error("Error marking notification as read", error);
             alert("Failed to mark notification as read!");
+            // Re-enable badge refresh in case of error
+            isBadgeRefreshDisabled = false;
+            forceRefreshNotificationBadge();
         },
     });
 }
 
-// Function to force refresh the notification badge
+// Global flag to control badge refresh behavior
+let isBadgeRefreshDisabled = false;
+var previousUnreadNotificationsCount = 0;
+var isUnreadToastShown = false; // Flag to track if the unread count toast has been shown
+
+$(document).ready(function () {
+    setInterval(forceRefreshNotificationBadge, 500);
+});
+
+// Modify forceRefreshNotificationBadge to check the flag
 function forceRefreshNotificationBadge() {
-    // Recalculate the number of unread notifications based on dropdown items
+    console.log("Force");
+    if (isBadgeRefreshDisabled) {
+        return; // Skip the badge refresh if disabled
+    }
+
     var unreadNotificationsCount = $(
         "#notification-list .notification-item"
     ).length;
 
     if (unreadNotificationsCount > 0) {
-        // Update the badge with the new count and ensure it is visible
         $("#notification-badge").text(unreadNotificationsCount).show();
+
+        // Show toast if unread count is greater than the previous count
+        if (unreadNotificationsCount > previousUnreadNotificationsCount) {
+            toastNotifyNew(); // Call toast function when count increases
+        }
+
+        // Show toast for unread notifications only once
+        if (!isUnreadToastShown) {
+            toastNotifyUnreadCount(unreadNotificationsCount);
+            isUnreadToastShown = true; // Set the flag to true after showing the toast
+        }
     } else {
-        // Hide the badge if there are no unread notifications
-        $("#notification-badge").hide();
+        // Set badge text to "0" and ensure it remains visible
+        $("#notification-badge").text("0").show();
+        isUnreadToastShown = false; // Reset the flag when there are no unread notifications
     }
+
+    previousUnreadNotificationsCount = unreadNotificationsCount; // Update the previous count
+}
+
+function toastNotifyNew() {
+    Toastify({
+        text: "There is a new notification!",
+        duration: 15000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#fff8e1", // Softer yellowish beige
+        stopOnFocus: true,
+        style: {
+            border: "1px solid #d3ad6e", // Gold border for subtle contrast
+            borderRadius: "12px", // Softer rounded corners
+            padding: "12px", // Balanced padding
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+            fontSize: "14px", // Consistent font size
+            color: "#222222", // Dark text for readability
+        },
+    }).showToast();
+}
+
+function toastNotifyUnreadCount(unreadNotificationsCount) {
+    Toastify({
+        text: `You have ${unreadNotificationsCount} unread notifications.`,
+        duration: 15000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#f4f4f4", // Light gray for a modern tone
+        stopOnFocus: true,
+        style: {
+            border: "1px solid #222222", // Dark border for contrast
+            borderRadius: "12px", // Softer rounded corners
+            padding: "12px", // Balanced padding
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+            fontSize: "14px", // Consistent font size
+            color: "#222222", // Dark text for readability
+        },
+    }).showToast();
 }
 
 // Function to mark all notifications as read and force refresh
@@ -144,6 +268,24 @@ function markAllAndRedirect(event) {
         method: "POST",
         data: $("#mark-all-read-form").serialize(), // Serialize the CSRF token
         success: function (response) {
+           // Show toast for marking all notifications as read
+            Toastify({
+                text: "All notifications marked as read.",
+                duration: 10000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#e8e8e8", // Neutral light gray
+                stopOnFocus: true,
+                style: {
+                    border: "1px solid #b5b5b5", // Subtle gray border
+                    borderRadius: "12px", // Softer rounded corners
+                    padding: "12px", // Balanced padding
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+                    fontSize: "14px", // Consistent font size
+                    color: "#222222", // Dark text for readability
+                },
+            }).showToast();
             // Simulate marking all notifications as read by clearing the list
             $("#notification-list .notification-item").fadeOut(
                 "slow",
@@ -155,36 +297,6 @@ function markAllAndRedirect(event) {
         },
         error: function () {
             alert("Failed to mark all notifications as read!");
-        },
-    });
-}
-function fetchOrderDetails(orderId) {
-    $.ajax({
-        url: `/orders/${orderId}`, // Correct URL for fetching order details
-        method: "GET",
-        success: function (orderData) {
-            // Update modal content with fetched order data
-            $("#modalOrderStatus").text(orderData.status);
-            $("#modalOrderDate").text(orderData.created_at); // Assuming 'created_at' holds the date
-
-            let modalProducts = $("#modalProducts");
-            modalProducts.empty(); // Clear any previous data
-
-            // Populate table rows with product details
-            orderData.products.forEach(function (product) {
-                modalProducts.append(`
-                    <tr>
-                        <td>${product.name}</td>
-                        <td>${product.variation}</td>
-                        <td>${product.quantity}</td>
-                        <td>${product.price}</td>
-                        <td>${product.total}</td>
-                    </tr>
-                `);
-            });
-
-            // Open the modal
-            $("#orderDetailsModal").modal("show");
         },
     });
 }

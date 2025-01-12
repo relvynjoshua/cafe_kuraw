@@ -3,6 +3,45 @@
 @section('title', 'Order Details')
 
 @section('content')
+
+
+<head>
+    <!--Meta Tags-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+
+    <!--Favicons-->
+    <link rel="shortcut icon" type="image/x-icon" href="{{asset('img/favicon.ico') }}" />
+
+    <!--Page Title-->
+    <title>Order Details</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Dosis:300,400,500,600,700,800|Roboto:300,400,400i,500,500i,700,700i,900,900i"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Meanmenu CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/meanmenu.min.css') }}">
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/owlcarousel/css/owl.theme.default.min.css') }}">
+    <!-- Animate CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}">
+    <!-- Venobox -->
+    <link rel="stylesheet" href="{{ asset('assets/venobox/css/venobox.min.css') }}" />
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+</head>
+
 <div class="container py-5">
     <div class="p-4 border rounded-lg shadow">
         <h2 class="font-bold text-lg mb-2">Order Details</h2>
@@ -28,14 +67,6 @@
                 </li>
             @endforeach
         </ul>
-
-        @if ($order->isCancelable())
-            <form method="POST" action="{{ route('orders.cancelOrder', $order->id) }}" class="mt-4">
-                @csrf
-                <button type="submit" class="btn btn-danger">Cancel Order</button>
-            </form>
-        @endif
-    </div>
 
     <a href="{{ route('orders.index') }}" class="btn btn-dark mt-4">Back to Orders</a>
 </div>

@@ -54,6 +54,7 @@
     width: 100%;
     text-align: center;
     border-collapse: collapse;
+    overflow-x: auto; /* Allows horizontal scrolling on small screens */
 }
 
 #calendar th,
@@ -76,6 +77,30 @@
 
 .calendar-day:hover {
     background-color: #d1e7dd;
+}
+
+/* Responsive Design for Smaller Screens */
+@media screen and (max-width: 768px) {
+    #calendar th,
+    #calendar td {
+        padding: 10px; /* Reduce padding for smaller screens */
+        font-size: 14px; /* Adjust font size */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #calendar {
+        width: 100%;
+        overflow-x: auto; /* Enable horizontal scrolling for smaller screens */
+        display: block; /* Ensures proper behavior on small screens */
+    }
+
+    #calendar th,
+    #calendar td {
+        padding: 8px; /* Further reduce padding */
+        font-size: 12px; /* Reduce font size for mobile */
+        white-space: nowrap; /* Prevent text from wrapping */
+    }
 }
 
 .past-date {

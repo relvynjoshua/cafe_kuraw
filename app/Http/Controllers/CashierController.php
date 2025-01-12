@@ -167,7 +167,7 @@ class CashierController extends Controller
             'address' => 'nullable|string|max:65535',
             'total_amount' => 'required|numeric|min:0',
             'payment_method' => 'required|string|in:cash,gcash',
-            'delivery_method' => 'required|string|in:dinein,pickup,delivery',
+            'delivery_method' => 'required|string|in:dinein,takeout,pickup,delivery',
             'cart' => 'required|string', // Cart is sent as JSON string
             'reference_number' => 'nullable|string|max:255|required_if:payment_method,gcash',
             'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048|required_if:payment_method,gcash',

@@ -174,10 +174,6 @@
 
 
 
-    <a href="{{ route('dashboard.orders.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Add Order
-    </a>
-
     <!-- Orders Table -->
     <div class="table-responsive">
         <table class="table table-striped table-bordered">

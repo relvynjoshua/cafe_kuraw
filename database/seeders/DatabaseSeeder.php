@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             SupplierSeeder::class,
             InventorySeeder::class,
-            ProductVariationSeeder::class,]);
+            ProductVariationSeeder::class,
+            RolesTableSeeder::class,]);
     }
 }

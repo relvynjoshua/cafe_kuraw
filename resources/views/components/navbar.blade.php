@@ -64,6 +64,7 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
+                    <span class="menu-text">Explore</span> <!-- Add a span for the "MENU" text -->
                 </button>
 
                 <!-- Navigation Menu -->
@@ -144,36 +145,6 @@
                                     <p class="dropdown-item text-center" style="cursor: pointer;">No notifications available
                                     </p>
                                 @endif
-                            </div>
-
-                            <!-- Order Details Modal -->
-                            <div class="modal fade" id="orderDetailsModal" tabindex="-1"
-                                aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content" style="width: 800px;">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Product Name</th>
-                                                        <th>Variation</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="modalProducts">
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                    </div>
-                                </div>
                             </div>
 
                             <!-- Reservation Details Modal -->
@@ -333,52 +304,48 @@
     }
 
     .navbar-toggler {
-        color: #fff;
-        /* Icon color (white) for contrast */
-        font-size: 2rem;
-        /* Larger size for the burger icon */
-        background-color: #000 !important;
-        /* Ensure the background is fully black */
-        border: 3px solid #000;
-        /* Black border for consistent black appearance */
-        border-radius: 12px;
-        /* Rounded corners for a clean look */
-        padding: 12px 18px;
-        /* Adjust padding to make the button larger */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7);
-        /* Strong shadow for visibility */
-        cursor: pointer;
-        /* Pointer cursor for interactivity */
-        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        /* Smooth animations */
-    }
+    color: #fff; /* Icon and text color (white) for contrast */
+    font-size: 2rem; /* Larger size for the burger icon */
+    background-color: #000 !important; /* Fully black background */
+    border: 3px solid #000; /* Black border */
+    border-radius: 12px; /* Rounded corners for a clean look */
+    padding: 12px 18px; /* Adjust padding to make the button larger */
+    display: flex; /* Align icon and text horizontally */
+    justify-content: center; /* Center-align icon and text */
+    align-items: center; /* Vertically align icon and text */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7); /* Strong shadow for visibility */
+    cursor: pointer; /* Pointer cursor for interactivity */
+    gap: 10px; /* Add spacing between the icon and text */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    /* Smooth animations */
+}
 
-    .navbar-toggler:hover {
-        transform: scale(1.2);
-        /* Increase size on hover */
-        background-color: #000;
-        /* Retain black background */
-        border-color: #000;
-        /* Retain black border */
-        box-shadow: 0 12px 25px rgba(0, 0, 0, 1);
-        /* Stronger shadow on hover */
-        color: #fff;
-        /* Keep icon color white for visibility */
-    }
+.navbar-toggler-icon {
+    display: inline-block; /* Ensure proper alignment for the icon */
+}
 
-    .navbar-toggler:focus {
-        outline: none;
-        /* Remove default focus outline */
-        background-color: #000;
-        /* Retain black background */
-        border-color: #fff;
-        /* Add white border for focus effect */
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 1), 0 0 10px rgba(255, 255, 255, 0.8);
-        /* Prominent shadow with glow */
-    }
+.menu-text {
+    font-size: 1.2rem; /* Slightly smaller than the icon for balance */
+    font-weight: bold; /* Make the text bold */
+    color: #fff; /* Match the icon color for consistency */
+    text-transform: uppercase; /* Convert "MENU" to uppercase */
+}
+
+.navbar-toggler:hover {
+    transform: scale(1.2); /* Increase size on hover */
+    background-color: #000; /* Retain black background */
+    border-color: #000; /* Retain black border */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 1); /* Stronger shadow on hover */
+    color: #fff; /* Keep text and icon color white */
+}
+
+.navbar-toggler:focus {
+    outline: none; /* Remove default focus outline */
+    background-color: #000; /* Retain black background */
+    border-color: #fff; /* Add white border for focus effect */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 1), 0 0 10px rgba(255, 255, 255, 0.8);
+    /* Prominent shadow with glow */
+}
 
     .navbar-nav {
         display: flex;
@@ -507,117 +474,93 @@
     }
 
 
-    /* General Dropdown Menu Styles */
+   /* General Dropdown Menu Styles */
+.dropdown-menu {
+    border-radius: 8px; /* Smooth corners */
+    padding: 10px; /* Inner spacing */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    max-width: 450px; /* Set a reasonable width */
+    width: auto; /* Adjust to content size */
+    z-index: 1050; /* Place above other content */
+    background-color: #fff; /* White background for contrast */
+    position: absolute; /* Positioned relative to its parent */
+    top: 100%; /* Place directly below the bell icon */
+    left: 50%; /* Center-align dropdown with the bell */
+    transform: translateX(-50%); /* Offset to ensure alignment */
+    margin-top: 5px; /* Minimal space between dropdown and bell */
+    transition: all 0.3s ease; /* Smooth transition for responsiveness */
+}
+
+/* Dropdown Items */
+.dropdown-item {
+    padding: 10px 15px; /* Padding for usability */
+    font-size: 1rem; /* Ensure text is readable */
+    text-align: left; /* Align text to the left */
+    color: #000; /* Black text for visibility */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+    cursor: pointer; /* Pointer cursor for interactivity */
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0; /* Highlight on hover */
+    color: #333; /* Slightly darker text on hover */
+}
+
+/* Parent Container for Bell Icon */
+.dropdown-container {
+    position: relative; /* Set the context for dropdown positioning */
+    display: inline-block; /* Ensure dropdown aligns with the bell */
+}
+
+/* Show Dropdown on Parent Hover or Click */
+.dropdown-container:hover .dropdown-menu,
+.dropdown-container.active .dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
     .dropdown-menu {
-        border-radius: 8px;
-        /* Smooth corners */
-        padding: 10px;
-        /* Inner spacing */
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        /* Subtle shadow */
-        max-width: 250px;
-        /* Set a reasonable width */
-        width: auto;
-        /* Adjust to content size */
-        z-index: 1050;
-        /* Place above other content */
-        background-color: #fff;
-        /* White background for contrast */
+        max-width: 200px; /* Narrower dropdown for smaller screens */
+        left: 50%; /* Center-align relative to bell */
+        transform: translateX(-50%); /* Maintain centering */
+        margin-top: 5px; /* Minimal gap below bell */
     }
 
-    /* Position Dropdown Below the Bell Icon */
-    .dropdown-below {
-        position: absolute;
-        /* Absolute positioning */
-        top: 100%;
-        /* Place directly below the bell icon */
-        left: 50%;
-        /* Center-align dropdown with the bell */
-        transform: translateX(-50%);
-        /* Offset to ensure alignment */
-        margin-top: 5px;
-        /* Minimal space between dropdown and bell */
-    }
-
-    /* Dropdown Menu Styling */
-    .dropdown-menu {
-        position: absolute;
-        top: 120%;
-        /* Position right below the bell icon */
-        left: 50%;
-        /* Center align the dropdown with the bell icon */
-        transform: translateX(-50%);
-        /* Adjust for perfect centering */
-        width: auto;
-        /* Adjust width automatically to content */
-        max-width: 350px;
-        /* Optional: Limit the width */
-        padding: 10px;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        /* Add shadow for depth */
-        background-color: #fff;
-        /* White background for the dropdown */
-        z-index: 1050;
-    }
-
-
-    /* Dropdown Items */
     .dropdown-item {
-        padding: 10px 15px;
-        /* Add padding for better usability */
-        font-size: 1rem;
-        /* Ensure text is readable */
-        text-align: left;
-        /* Align text to the left */
-        color: #000;
-        /* Black text for visibility */
-        transition: background-color 0.3s ease;
-        /* Smooth hover effect */
+        font-size: 0.9rem; /* Adjust font size for smaller devices */
+        padding: 10px 15px; /* Compact padding for usability */
+    }
+}
+
+@media (max-width: 480px) {
+    .dropdown-menu {
+        max-width: 180px; /* Smaller width for compact screens */
+        left: 50%; /* Center-align relative to bell */
+        transform: translateX(-50%); /* Maintain centering */
+        margin-top: 3px; /* Reduce gap below bell */
     }
 
-    .dropdown-item:hover {
-        background-color: #f0f0f0;
-        /* Highlight on hover */
-        color: #333;
-        /* Slightly darker text on hover */
+    .dropdown-item {
+        font-size: 0.8rem; /* Further reduce font size */
+        padding: 8px 12px; /* Compact padding for touch devices */
+    }
+}
+
+@media (max-width: 360px) {
+    .dropdown-menu {
+        max-width: 150px; /* Even smaller dropdown for tiny screens */
+        left: 50%; /* Center-align relative to bell */
+        transform: translateX(-50%); /* Maintain alignment */
+        margin-top: 2px; /* Minimal gap for tight spaces */
     }
 
-    /* Responsive Styles */
-    @media (max-width: 768px) {
-        .dropdown-menu {
-            width: 90%;
-            /* Use 90% of the screen width on smaller screens */
-            left: 5%;
-            /* Center dropdown horizontally on smaller screens */
-            transform: none;
-            /* Remove transform for smaller screens */
-        }
-
-        .dropdown-item {
-            padding: 12px 20px;
-            /* Increase padding for touch-friendly items */
-            font-size: 1.1rem;
-            /* Slightly larger font size */
-        }
+    .dropdown-item {
+        font-size: 0.8rem; /* Maintain readability */
+        padding: 6px 10px; /* Reduce padding for small screens */
     }
-
-    @media (max-width: 480px) {
-        .dropdown-menu {
-            width: 100%;
-            /* Utilize full width */
-            left: 0;
-            /* Align to the left edge */
-            padding: 15px;
-            /* Add inner padding */
-        }
-
-        .dropdown-item {
-            font-size: 1rem;
-            /* Keep text size readable */
-        }
-    }
-
+}
 
     /* Modal */
     .modal-content {
@@ -745,18 +688,18 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const notificationList = document.getElementById('notification-list');
         const markAllReadContainer = document.getElementById('mark-all-read-container'); // Get the "Mark All Read" container
 
         function fetchNotifications() {
             fetch('/notifications/fetch', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     notificationList.innerHTML = ''; // Clear current list
@@ -767,24 +710,37 @@
                             notificationItem.classList.add('dropdown-item', 'text-dark', 'notification-item');
                             notificationItem.setAttribute('id', `notification-${notification.id}`);
                             notificationItem.setAttribute('data-notification-id', notification.id);
-                            notificationItem.innerHTML = `${notification.data.message}`;
 
-                            // Check if order_id is present
+                            // Check if the notification is for a cancelled order or reservation
+                            if (notification.data.status === 'cancelled') {
+                                const orderOrReservationId = notification.data.order_id || notification.data.reservation_id;
+                                notificationItem.innerHTML = `
+                            <strong>${notification.data.order_id ? 'Order' : 'Reservation'} #${orderOrReservationId}</strong>: 
+                            Your ${notification.data.order_id ? 'Order' : 'Reservation'} #${orderOrReservationId} has been 
+                            <strong style="color: red;">${notification.data.status}</strong> due <br>
+                            <span>to a payment issue. Please contact support for assistance.</span>`;
+                                                } else if (notification.data.status === 'pending') {
+                                                    const orderOrReservationId = notification.data.order_id || notification.data.reservation_id;
+                                                    notificationItem.innerHTML = `
+                            <strong>${notification.data.order_id ? 'Order' : 'Reservation'} #${orderOrReservationId}</strong>: 
+                            Your ${notification.data.order_id ? 'Order' : 'Reservation'} #${orderOrReservationId} is 
+                            <strong>${notification.data.status}</strong>.`;
+                                                } else {
+                                                    // Default notification message for other statuses
+                                                    const orderOrReservationId = notification.data.order_id || notification.data.reservation_id;
+                                                    notificationItem.innerHTML = `
+                            <strong>${notification.data.order_id ? 'Order' : 'Reservation'} #${orderOrReservationId}</strong>: 
+                            Your ${notification.data.order_id ? 'Order' : 'Reservation'} #${orderOrReservationId} has been 
+                            <strong>${notification.data.status}</strong>.`;
+                                                }
+
+
+                            // Add attributes for order_id or reservation_id
                             if (notification.data.order_id) {
                                 notificationItem.setAttribute('data-order-id', notification.data.order_id);
-                                notificationItem.innerHTML = `<strong>Order #${notification.data.order_id}</strong>: ${notification.data.message}`;
-                                notificationItem.onclick = function () {
-                                    markAsRead(event, notification.id, document.querySelector('meta[name="csrf-token"]').getAttribute('content'), '/notifications/mark-read/' + notification.id);
-                                };
                             }
-
-                            // Check if reservation_id is present
                             if (notification.data.reservation_id) {
                                 notificationItem.setAttribute('data-reservation-id', notification.data.reservation_id);
-                                notificationItem.innerHTML = `<strong>Reservation #${notification.data.reservation_id}</strong>: ${notification.data.message}`;
-                                notificationItem.onclick = function () {
-                                    markAsRead(event, notification.id, document.querySelector('meta[name="csrf-token"]').getAttribute('content'), '/notifications/mark-read/' + notification.id);
-                                };
                             }
 
                             // Add hover and click effects
@@ -793,15 +749,15 @@
                             notificationItem.style.padding = '10px 15px';
                             notificationItem.style.borderRadius = '5px';
 
-                            notificationItem.onmouseover = function () {
+                            notificationItem.onmouseover = function() {
                                 this.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.1)';
                             };
-                            notificationItem.onmouseout = function () {
+                            notificationItem.onmouseout = function() {
                                 this.style.boxShadow = 'none';
                             };
 
                             // Handle selection on click
-                            notificationItem.onclick = function () {
+                            notificationItem.onclick = function() {
                                 // Remove "selected" state from any previously selected items
                                 const previouslySelected = document.querySelector('.selected');
                                 if (previouslySelected) {
@@ -844,6 +800,7 @@
         // Initial fetch when the page loads
         fetchNotifications();
     });
+
 
     // Function to mark all notifications as read
     function markAllAndRedirect(event) {

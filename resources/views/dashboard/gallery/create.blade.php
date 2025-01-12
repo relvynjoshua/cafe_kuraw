@@ -14,6 +14,7 @@
 
 <div class="card shadow p-4">
     <h2 class="mb-4">Add New Gallery Item</h2>
+    <h6>Please upload photos in JPG format only.</h6>
     <hr class="solid">
 
     <form action="{{ route('dashboard.gallery.store') }}" method="POST" enctype="multipart/form-data">
@@ -45,7 +46,16 @@
 
         <div class="form-group mb-3">
             <label for="image" class="form-label fw-bold">Image</label>
-            <input type="file" name="image" id="image" class="form-control" required>
+            <input 
+                type="file" 
+                name="image" 
+                id="image" 
+                class="form-control" 
+                accept=".jpg,.jpeg" 
+                required 
+                onchange="validateFile()"
+            >
+            <span id="fileError" class="text-danger d-none">Please upload an image in JPG format only.</span>
             @error('image')
                 <span class="text-danger">{{ $message }}</span>
             @enderror
@@ -54,5 +64,21 @@
         <button type="submit" class="btn btn-primary">Add Item</button>
     </form>
 </div>
+
+<script>
+    function validateFile() {
+        const fileInput = document.getElementById('image');
+        const fileError = document.getElementById('fileError');
+        const filePath = fileInput.value;
+        const allowedExtensions = /(\.jpg|\.jpeg)$/i;
+
+        if (!allowedExtensions.exec(filePath)) {
+            fileError.classList.remove('d-none');
+            fileInput.value = ''; // Clear the input value
+        } else {
+            fileError.classList.add('d-none');
+        }
+    }
+</script>
 
 @endsection

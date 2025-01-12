@@ -13,32 +13,82 @@ use App\Mail\OrderStatusMail;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\OrderStatusNotification;
 use App\Mail\OrderCompletedMail;
+use App\Notifications\OrderCompletedNotification;
 
 class OrderController extends Controller
 {
-    public function myOrders()
+    public function myOrders(Request $request)
     {
-
         session(['notification_count' => 0]);
 
-        // Fetch the user's orders
-        $orders = Auth::user()->orders()->with('products')->orderBy('created_at', 'desc')->get();
+        // Check if the request is for API
+        if ($request->is('api/*')) {
+            // Fetch the user's orders with only the necessary fields
+            $orders = Auth::user()->orders()
+                ->select(['id', 'created_at', 'updated_at', 'status', 'payment_method', 'total_amount'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Return JSON response for API
+            return response()->json([
+                'status' => 'success',
+                'orders' => $orders,
+            ]);
+        }
+
+        // For web requests, include products and render the view
+        $orders = Auth::user()->orders()
+            ->with('products')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         // Update the session with the latest unread notifications count
         session(['notification_count' => auth()->user()->unreadNotifications()->count()]);
 
+        // Return the view for the web
         return view('frontend.orders', compact('orders'));
     }
 
-    public function getOrderDetails($id)
+
+    public function getOrderDetails($id, Request $request)
     {
         try {
             $order = Order::with('products')->findOrFail($id);
+
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'success',
+                    'order' => [
+                        'id' => $order->id,
+                        'date' => $order->created_at->format('F d, Y h:i A'),
+                        'status' => $order->status,
+                        'total_amount' => $order->total_amount,
+                        'discount' => $order->discount ?? 0,
+                        'products' => $order->products->map(function ($product) {
+                            return [
+                                'name' => $product->name,
+                                'quantity' => $product->pivot->quantity,
+                                'price' => $product->pivot->price,
+                                'variation' => $product->pivot->variation,
+                            ];
+                        }),
+                    ],
+                ], 200);
+            }
+
+            // For web requests
             return response()->json([
                 'success' => true,
                 'order' => $order,
             ]);
         } catch (\Exception $e) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Order not found.',
+                ], 404);
+            }
+
             return response()->json([
                 'success' => false,
                 'message' => 'Order not found.',
@@ -46,15 +96,16 @@ class OrderController extends Controller
         }
     }
 
+
     public function index(Request $request)
     {
+        // Get search query
         $search = $request->input('search');
-
 
         session(['notification_count' => 0]);
 
         // Fetch orders with associated products
-        $orders = Order::with('products')
+        $ordersQuery = Order::with('products')
             ->when($search, function ($query, $search) {
                 $query->where('customer_name', 'like', "%$search%")
                     ->orWhere('email', 'like', "%$search%")
@@ -63,19 +114,37 @@ class OrderController extends Controller
                     ->orWhere('payment_method', 'like', "%$search%")
                     ->orWhere('delivery_method', 'like', "%$search%");
             })
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->orderBy('created_at', 'desc');
 
-        // Update the session with the latest unread notifications count
-        session(['notification_count' => auth()->user()->unreadNotifications()->count()]);
+        if ($request->is('api/*')) {
+            // API response: Paginated orders with product details
+            $orders = $ordersQuery->paginate(10);
 
-        // Fetch unread notifications for the logged-in user
-        $user = auth()->user();
-        $notifications = $user ? $user->unreadNotifications : [];
+            return response()->json([
+                'status' => 'success',
+                'orders' => $orders->items(),
+                'pagination' => [
+                    'current_page' => $orders->currentPage(),
+                    'last_page' => $orders->lastPage(),
+                    'total' => $orders->total(),
+                ],
+            ]);
+        } else {
+            // Web response: Paginated orders with notifications
+            $orders = $ordersQuery->paginate(10);
 
-        // Return the view with the orders and notifications
-        return view('dashboard.orders.index', compact('orders', 'notifications'));
+            // Update the session with the latest unread notifications count
+            session(['notification_count' => auth()->user()->unreadNotifications()->count()]);
+
+            // Fetch unread notifications for the logged-in user
+            $user = auth()->user();
+            $notifications = $user ? $user->unreadNotifications : [];
+
+            // Return the view with the orders and notifications
+            return view('dashboard.orders.index', compact('orders', 'notifications'));
+        }
     }
+
 
     public function create()
     {
@@ -144,48 +213,30 @@ class OrderController extends Controller
 
             DB::commit();
 
+            $user = $order->user; // Assuming the order belongs to a user
+            if ($user) {
+                $user->notify(new OrderStatusNotification($order, 'pending')); // Database notification
+                Mail::to($user->email)->send(new OrderStatusMail($order, 'pending')); // Email notification
+            }
+
             session()->forget('cart'); // Clear session cart data
             session()->forget('cart_discount');
             session()->put('cart_count', 0);
 
-            return redirect()->route('dashboard.orders.index')->with(['success' => 'Order created successfully!', 'alert' => 'alert-success']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Order created successfully!',
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Failed to create order: ' . $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create order: ' . $e->getMessage(),
+            ]);
         }
     }
 
-    public function getProductVariations($productId)
-    {
-        $variations = \App\Models\ProductVariation::where('product_id', $productId)->get();
-
-        return response()->json($variations);
-    }
-
-
-    public function showDetails($orderId)
-    {
-        $order = Order::with('products')->findOrFail($orderId);
-
-        if ($order->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        return view('frontend.order-show', compact('order'));
-    }
-
-    public function cancelOrder(Request $request, $orderId)
-    {
-        $order = Order::findOrFail($orderId);
-
-        if ($order->user_id !== auth()->id() || $order->status !== 'pending') {
-            abort(403, 'Unauthorized action or the order cannot be canceled.');
-        }
-
-        $order->update(['status' => 'cancelled']);
-
-        return redirect()->route('orders.index')->with('message', 'Order has been canceled successfully.');
-    }
 
     public function show($orderId)
     {
@@ -257,13 +308,32 @@ class OrderController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('dashboard.orders.index')->with(['success' => 'Order updated successfully!', 'alert' => 'alert-success']);
+
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Order updated successfully!',
+                    'order' => $order->load('products'),
+                ]);
+            }
+
+            return redirect()->route('dashboard.orders.index')->with('success', 'Order updated successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
+
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to update order: ' . $e->getMessage(),
+                ], 500);
+            }
+
             return back()->withErrors(['error' => 'Failed to update order: ' . $e->getMessage()]);
         }
     }
 
+
+    // ALEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERT MAOOOOOOOOOOOOOOOOO NINNNNNNNG GI UPDAAAAAAAAAAAAAAATE
     public function updateStatus(Request $request, Order $order)
     {
         $validated = $request->validate([
@@ -281,24 +351,73 @@ class OrderController extends Controller
             $user = $order->user;
             if ($user) {
                 $earnedPoints = $this->calculateRewardPoints($order->total_amount);
-
+                // ANNNNNNNNNGGGGGGGGGGGGGGGGGGGGGGGGGMGGGGGGA STATUS PARA MA PUSH ANG NOTIFFFS CONSISTENT AAAAAA
+                // Handle completed status
                 if ($oldStatus !== 'completed' && $order->status === 'completed') {
+                    // Increment reward points and notify
                     $user->increment('reward_points', $earnedPoints);
-                    $user->notify(new OrderStatusNotification($order, 'completed'));
-                } elseif ($oldStatus === 'completed' && $order->status !== 'completed') {
+                    $user->notify(new OrderStatusNotification($order, 'completed'));   // DUGGGGGGANGGGGGGGGGGG LANGGGGG OG NOTIIIIIFICATION PARA CONSISTENT
+                }
+                // Handle status change to pending
+                elseif ($order->status === 'pending' && $oldStatus !== 'pending') {
+                    // Decrement reward points and notify
                     $user->decrement('reward_points', $earnedPoints);
-                    $user->notify(new OrderStatusNotification($order, $order->status)); // Pass the current status
+                    $user->notify(new OrderStatusNotification($order, 'pending')); // DUGGGGGGANGGGGGGGGGGG LANGGGGG OG NOTIIIIIFICATION PARA CONSISTENT
+                }
+                // Handle status change to cancelled
+                elseif ($order->status === 'cancelled' && $oldStatus !== 'cancelled') {
+                    // Decrement reward points and notify
+                    $user->decrement('reward_points', $earnedPoints);
+                    $user->notify(new OrderStatusNotification($order, 'cancelled')); // DUGGGGGGANGGGGGGGGGGG LANGGGGG OG NOTIIIIIFICATION PARA CONSISTENT
+                }
+                // Handle cases when changing from completed to another status
+                elseif ($oldStatus === 'completed' && $order->status !== 'completed') {
+                    $user->decrement('reward_points', $earnedPoints);
+                    $user->notify(new OrderStatusNotification($order, $order->status));  // DUGGGGGGANGGGGGGGGGGG LANGGGGG OG NOTIIIIIFICATION PARA CONSISTENT
                 }
             }
-
             DB::commit();
-            return redirect()->route('dashboard.orders.index')->with(['success' => 'Order status updated successfully!', 'alert' => 'alert-success']);
+            
+
+            // Check if this is an API request
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Order status updated successfully!',
+                    'order' => $order,
+                ], 200);
+            }
+
+            // Web response
+            return redirect()->route('dashboard.orders.index')->with([
+                'success' => 'Order status updated successfully!',
+                'alert' => 'alert-success',
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Failed to update status: ' . $e->getMessage(),
+                ], 500);
+            }
+
             return back()->withErrors(['error' => 'Failed to update status: ' . $e->getMessage()]);
         }
     }
 
+
+    public function showDetails($orderId) // ALEEEEEEEEEEEEEERT MAOOOOOOOOOOOOOOOOO NINNNNNNNG GI UPDAAAAAAAAAAAAAAATE 
+    {
+        $order = Order::with('products')->findOrFail($orderId);
+
+        if ($order->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('frontend.order-show', compact('order'));
+    }
 
     public function destroy($id)
     {
@@ -388,6 +507,8 @@ class OrderController extends Controller
             ->with('success', 'Order status updated and customer notified.');
     }
 
+
+
     public function notifications($orderId)
     {
         // Fetch unread notifications for the logged-in user
@@ -404,6 +525,8 @@ class OrderController extends Controller
         return view('frontend.notifications', compact('userNotifications', 'orderNotifications'));
     }
 
+
+
     public function markNotificationsAsRead()
     {
         if (auth()->check()) {
@@ -416,5 +539,4 @@ class OrderController extends Controller
             'notification_count' => auth()->user()->unreadNotifications()->count()
         ]);
     }
-
 }

@@ -39,16 +39,16 @@ class ProductSeeder extends Seeder
 
             // Snacks
             ['name' => 'Banana Cream with Cheese', 'category_id' => 4, 'description' => 'Delicious banana cream dessert.', 'price' => 69.00, 'image' => 'assets/img/menu/bananacream.jpg'],
-            ['name' => 'Chocolate-Coffee Pudding', 'category_id' => 4, 'description' => 'Rich pudding with a hint of coffee.', 'price' => 69.00, 'image' => 'assets/img/menu/chocolatecoffeeudding.jpg'],
+            ['name' => 'Chocolate-Coffee Pudding', 'category_id' => 4, 'description' => 'Rich pudding with a hint of coffee.', 'price' => 69.00, 'image' => 'assets/img/menu/chocolatecoffeepudding.jpg'],
             ['name' => 'Toasted Garlic Bread', 'category_id' => 4, 'description' => 'Crispy garlic-flavored bread.', 'price' => 100.00, 'image' => 'assets/img/menu/garlicbread.jpg'],
             ['name' => 'Beef Nachos', 'category_id' => 4, 'description' => 'Crispy nachos with cheese topping.', 'price' => 169.00, 'image' => 'assets/img/menu/nachos.jpg'],
             ['name' => 'Pizza (White Sauce Hawaiian)', 'category_id' => 4, 'description' => 'White sauce pizza with pineapple and ham.', 'price' => 198.00, 'image' => 'assets/img/menu/pizza.jpg'],
             ['name' => 'Clubhouse Sandwich', 'category_id' => 4, 'description' => 'Classic clubhouse sandwich.', 'price' => 189.00, 'image' => 'assets/img/menu/clubhouse.jpg'],
 
             // Waffle
-            ['name' => 'Hershey\'s Chocolate Waffle', 'category_id' => 5, 'description' => 'Chocolate-filled waffle.', 'price' => 79.00, 'image' => 'assets/img/menu/chocolatewaffle.jpg'],
-            ['name' => 'Hershey\'s Caramel Waffle', 'category_id' => 5, 'description' => 'Crispy caramel-topped waffle.', 'price' => 79.00, 'image' => 'assets/img/menu/caramelwaffle.jpg'],
-            ['name' => 'Hershey\'s Strawberry Waffle', 'category_id' => 5, 'description' => 'Waffle with strawberry topping.', 'price' => 79.00, 'image' => 'assets/img/menu/strawberrywaffle.jpg'],
+            ['name' => 'Hersheys Chocolate Waffle', 'category_id' => 5, 'description' => 'Chocolate-filled waffle.', 'price' => 79.00, 'image' => 'assets/img/menu/chocolatewaffle.jpg'],
+            ['name' => 'Hersheys Caramel Waffle', 'category_id' => 5, 'description' => 'Crispy caramel-topped waffle.', 'price' => 79.00, 'image' => 'assets/img/menu/caramelwaffle.jpg'],
+            ['name' => 'Hersheys Strawberry Waffle', 'category_id' => 5, 'description' => 'Waffle with strawberry topping.', 'price' => 79.00, 'image' => 'assets/img/menu/strawberrywaffle.jpg'],
 
             // Ramen
             ['name' => 'Ku-Ramen', 'category_id' => 6, 'description' => 'Hot ramen bowl with flavorful broth.', 'price' => 149.00, 'image' => 'assets/img/menu/ramen.jpg'],

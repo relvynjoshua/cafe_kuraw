@@ -36,7 +36,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Natural cow’s Milk',
@@ -48,7 +48,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 2, // Assuming this supplier exists
                 'location' => 'Kauswagan Highway, Cagayan de Oro City, 9000, Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Espresso Machine',
@@ -60,7 +60,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Low Stock', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Coffee Grinder',
@@ -72,7 +72,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Low Stock', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Bukidnon Honey',
@@ -84,7 +84,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 2, // Assuming this supplier exists
                 'location' => 'Kauswagan Highway, Cagayan de Oro City, 9000, Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Raspberry Syrup',
@@ -96,7 +96,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Sour Candy Syrup',
@@ -108,7 +108,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => '450ml Mayonaise',
@@ -120,7 +120,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => '200ml Cheez Whiz Pimiento',
@@ -132,7 +132,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Low Stock', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Ramen Mild Noodles',
@@ -144,7 +144,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 2, // Assuming this supplier exists
                 'location' => 'Kauswagan Highway, Cagayan de Oro City, 9000, Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Ramen Spicy Noodles',
@@ -156,7 +156,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 2, // Assuming this supplier exists
                 'location' => 'Kauswagan Highway, Cagayan de Oro City, 9000, Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Waffle Maker',
@@ -168,7 +168,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro City, 9000, Misamis Oriental',
                 'stock_level' => 'Low Stock', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Ice Maker',
@@ -180,7 +180,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro City, 9000, Misamis Oriental',
                 'stock_level' => 'Low Stock', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Thermos',
@@ -192,7 +192,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro City, 9000, Misamis Oriental',
                 'stock_level' => 'Low Stock', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Cooler Ice Box',
@@ -204,7 +204,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro City, 9000, Misamis Oriental',
                 'stock_level' => 'Low Stock', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Big Size Sliced Bread',
@@ -216,7 +216,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 2, // Assuming this supplier exists
                 'location' => 'Kauswagan Highway, Cagayan de Oro City, 9000, Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Oil',
@@ -228,7 +228,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => '160g Salted Butter',
@@ -240,7 +240,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Low Stock', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Tomatoes',
@@ -252,7 +252,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Lettuce',
@@ -264,7 +264,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'Sufficient', // Based on quantity
-
+                
             ],
             [
                 'item_name' => '22oz Plastic Cups with Lid',
@@ -276,7 +276,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'High', // Based on quantity
-
+                
             ],
             [
                 'item_name' => '16oz Plastic Cups with Lid',
@@ -288,7 +288,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'High', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Plastic Straw',
@@ -300,7 +300,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'High', // Based on quantity
-
+                
             ],
             [
                 'item_name' => 'Paper Straw',
@@ -312,7 +312,7 @@ class InventorySeeder extends Seeder
                 'supplier_id' => 1, // Assuming this supplier exists
                 'location' => 'Claro M. Recto Avenue, Cagayan de Oro, 9000 Misamis Oriental',
                 'stock_level' => 'High', // Based on quantity
-
+                
             ],
         ];
 

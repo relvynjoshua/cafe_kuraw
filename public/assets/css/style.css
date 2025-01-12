@@ -2684,7 +2684,7 @@ a.header-search {
 
 .blog-home-post-date span {
   font-size: 13px;
-  color: #ece0d1ece0d1;
+  color: #ece0d1;
   padding: 5px 11px 5px 7px;
 }
 
@@ -5183,7 +5183,7 @@ a.header-search {
 
 .blog-single .blog-single-share .blog-single-share-box .blog-single-share-item span {
   font-size: 12px;
-  color: #ece0d1ece0d1;
+  color: #ece0d1;
   padding: 0 20px;
   background: #967259;
   position: absolute;
@@ -5625,4 +5625,15 @@ a.header-search {
 
 #reservationDetailsModal {
   z-index: 1051 !important; /* Ensure the modal is above the backdrop */
+}
+
+.is-invalid {
+  border-color: #dc3545;
+}
+
+.border-red-500 {
+  border-color: #dc3545 !important; /* Bootstrap danger color */
+}
+.border-2 {
+  border-width: 2px !important;
 }

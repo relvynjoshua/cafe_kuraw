@@ -187,17 +187,17 @@
 <div class="container my-4">
    @php
    $categories = [
-      1 => 'Espresso-Based Coffee',
-      2 => 'Milktea',
-      3 => 'Non-Coffee',
-      4 => 'Snacks',
-      5 => 'Waffle',
-      6 => 'Ramen'
+   1 => 'Espresso-Based Coffee',
+   2 => 'Milktea',
+   3 => 'Non-Coffee',
+   4 => 'Snacks',
+   5 => 'Waffle',
+   6 => 'Ramen'
    ];
    @endphp
    <a href="{{ url('/menu') }}" class="{{ is_null($selectedCategory) ? 'active' : '' }}">All</a>
    @foreach ($categories as $id => $name)
-      <a href="{{ url('/menu/category/' . $id) }}" class="{{ $id == $selectedCategory ? 'active' : '' }}">{{ $name }}</a>
+   <a href="{{ url('/menu/category/' . $id) }}" class="{{ $id == $selectedCategory ? 'active' : '' }}">{{ $name }}</a>
    @endforeach
 </div>
 
@@ -205,13 +205,13 @@
 <div class="container my-5">
    <div class="row">
       @foreach ($products as $product)
-        <div class="col-md-4">
-          <div class="card product-card mb-4 shadow-sm">
+      <div class="col-md-4">
+         <div class="card product-card mb-4 shadow-sm">
             <!-- Product Image -->
             <div class="card-img-container">
                <img
-                 src="{{ Str::startsWith($product->image, 'assets/') ? asset($product->image) : asset('storage/' . $product->image) }}"
-                 class="card-img-top rounded-top" alt="{{ $product->name }}">
+                  src="{{ Str::startsWith($product->image, 'assets/') ? asset($product->image) : asset('storage/' . $product->image) }}"
+                  class="card-img-top rounded-top" alt="{{ $product->name }}">
             </div>
 
             <!-- Product Details -->
@@ -219,39 +219,39 @@
                <h5 class="card-title text-center">{{ $product->name }}</h5>
                <p class="card-text text-muted text-center">{{ $product->description }}</p>
                <p class="card-text text-center">
-                 <strong>Base Price:</strong> ₱{{ number_format($product->price, 2) }}
+                  <strong>Base Price:</strong> ₱{{ number_format($product->price, 2) }}
                </p>
 
                <!-- Variations Dropdown -->
                @if ($product->variations->isNotEmpty())
                <div class="mb-3">
-                <label for="variation_{{ $product->id }}" class="form-label">Select Variation:</label>
-                <select id="variation_{{ $product->id }}" class="form-select">
-                  @foreach ($product->variations as $variation)
-                 <option value="{{ $variation->id }}" data-price="{{ $variation->price }}">
-                  {{ $variation->value }} ({{ $variation->type }}) - ₱{{ number_format($variation->price, 2) }}
-                 </option>
-              @endforeach
-                </select>
+                  <label for="variation_{{ $product->id }}" class="form-label">Select Variation:</label>
+                  <select id="variation_{{ $product->id }}" class="form-select">
+                     @foreach ($product->variations as $variation)
+                     <option value="{{ $variation->id }}" data-price="{{ $variation->price }}">
+                        {{ $variation->value }} ({{ $variation->type }}) - ₱{{ number_format($variation->price, 2) }}
+                     </option>
+                     @endforeach
+                  </select>
                </div>
-            @endif
+               @endif
 
                <!-- Add to Cart Button -->
                <div class="d-flex justify-content-between align-items-center">
-                 <div>
-                   <label for="quantity_{{ $product->id }}" class="form-label">Quantity</label>
-                   <input type="number" id="quantity_{{ $product->id }}" name="quantity" value="1" min="1"
-                     class="form-control w-75" oninput="validateQuantity(this)">
-                 </div>
-                 <button type="button" onclick="addToCart({{ $product->id }})" class="btn btn-primary rounded-pill">
-                   Add to Cart
-                 </button>
+                  <div>
+                     <label for="quantity_{{ $product->id }}" class="form-label">Quantity</label>
+                     <input type="number" id="quantity_{{ $product->id }}" name="quantity" value="1" min="1"
+                        class="form-control w-75" oninput="validateQuantity(this)">
+                  </div>
+                  <button type="button" onclick="addToCart({{ $product->id }})" class="btn btn-primary rounded-pill">
+                     Add to Cart
+                  </button>
                </div>
 
             </div>
-          </div>
-        </div>
-     @endforeach
+         </div>
+      </div>
+      @endforeach
    </div>
 </div>
 
@@ -306,17 +306,17 @@
       const variationId = variationSelect ? variationSelect.value : null; // Get the selected variation ID if it exists
 
       fetch("{{ route('cart.add') }}", {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-         },
-         body: JSON.stringify({
-            product_id: productId,
-            variation_id: variationId,
-            quantity: quantity,
-         }),
-      })
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+               'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: JSON.stringify({
+               product_id: productId,
+               variation_id: variationId,
+               quantity: quantity,
+            }),
+         })
          .then(response => response.json())
          .then(data => {
             if (data.status === 'success') {

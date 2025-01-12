@@ -107,8 +107,7 @@
                 </div>
                 <div class="form-group mb-3">
                     <label for="number_of_guests" class="form-label">Number of Guests:</label>
-                    <input type="number" name="number_of_guests" id="number_of_guests" class="form-control" min="1"
-                        required>
+                    <input type="number" name="number_of_guests" id="number_of_guests" class="form-control" min="1" required>
                 </div>
                 <div class="form-group mb-3">
                     <label for="note" class="form-label">Notes:</label>
@@ -229,25 +228,5 @@
 
 
 <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/bootstrap/js/popper.min.js') }}"></script>
-<script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/js/form-contact.js') }}"></script>
-<script src="{{ asset('assets/js/isotope.3.0.6.min.js') }}"></script>
-<script src="{{ asset('assets/js/jquery-2.2.4.min.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.appear.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.inview.min.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.meanmenu.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.sticky.js') }}"></script>
 <script src="{{ asset('assets/js/main.js') }}"></script>
-<script src="{{ asset('assets/js/modal.js') }}"></script>
-<script src="{{ asset('assets/js/order-summary.js') }}"></script>
-<script src="{{ asset('assets/js/ordermodal.js') }}"></script>
-<script src="{{ asset('assets/js/proceed.js') }}"></script>
-<script src="{{ asset('assets/js/redirectorder.js') }}"></script>
-<script src="{{ asset('assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
-<script src="{{ asset('assets/js/scripts.js') }}"></script>
-<script src="{{ asset('assets/js/scrolltopcontrol.js') }}"></script>
-<script src="{{ asset('assets/venobox/js/venobox.min.js') }}"></script>
-<script src="{{ asset('assets/js/wow.min.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

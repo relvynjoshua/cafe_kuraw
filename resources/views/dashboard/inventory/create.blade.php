@@ -27,12 +27,22 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="quantity" class="form-label fw-bold">Quantity</label>
-            <input type="number" name="quantity" class="form-control" id="quantity" required>
-            @error('quantity')
-                <span class="text-danger">{{ $message }}</span>
-            @enderror
-        </div>
+        <label for="quantity" class="form-label fw-bold">Quantity</label>
+        <input 
+            type="number" 
+            name="quantity" 
+            class="form-control" 
+            id="quantity" 
+            min="0" 
+            required 
+            oninput="validateQuantity(this)"
+        >
+        <span id="quantityError" class="text-danger d-none">Quantity cannot be negative.</span>
+        @error('quantity')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
+
 
         <div class="form-group mb-3">
             <label for="unit" class="form-label fw-bold">Unit</label>
@@ -56,7 +66,17 @@
 
         <div class="form-group mb-3">
             <label for="price" class="form-label fw-bold">Price</label>
-            <input type="number" step="0.01" name="price" class="form-control" id="price" required>
+            <input 
+                type="number" 
+                step="0.01" 
+                name="price" 
+                class="form-control" 
+                id="price" 
+                min="0.01" 
+                required 
+                oninput="validatePrice(this)"
+            >
+            <span id="priceError" class="text-danger d-none">Price must be greater than zero.</span>
             @error('price')
                 <span class="text-danger">{{ $message }}</span>
             @enderror
@@ -116,15 +136,41 @@
 
         <div class="form-group mb-3">
             <label for="low_stock_threshold" class="form-label fw-bold">Low Stock Threshold</label>
-            <input type="number" name="low_stock_threshold" class="form-control"
-                value="{{ old('low_stock_threshold', $inventory->low_stock_threshold ?? 5) }}">
+            <input type="number" name="low_stock_threshold" class="form-control" value="{{ old('low_stock_threshold', $inventory->low_stock_threshold ?? 5) }}">
         </div>
 
         <script>
-            function toggleExpiryDate() {
-                document.getElementById('expiry_date').disabled = !document.getElementById('is_expirable').checked;
+        function toggleExpiryDate() {
+            document.getElementById('expiry_date').disabled = !document.getElementById('is_expirable').checked;
+        }
+
+        function validateNonNegative(input) {
+            if (input.value < 0) {
+                input.value = 0;
             }
-        </script>
+        }
+
+        function validatePrice(input) {
+            const priceError = document.getElementById('priceError');
+            if (input.value <= 0) {
+                priceError.classList.remove('d-none');
+                input.value = ''; // Clear invalid value
+            } else {
+                priceError.classList.add('d-none');
+            }
+        }
+
+        function validateQuantity(input) {
+            const quantityError = document.getElementById('quantityError');
+            if (input.value < 0) {
+                quantityError.classList.remove('d-none');
+                input.value = ''; // Clear invalid value
+            } else {
+                quantityError.classList.add('d-none');
+            }
+        }
+    </script>
+
 
         <button type="submit" class="btn btn-primary">Add Item</button>
     </form>

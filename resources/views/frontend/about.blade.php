@@ -135,89 +135,85 @@
             <p>At Kuraw Coffee Shop, we offer a range of services to cater to your needs:</p>
          </div>
          <div class="row">
-            <div class="col-lg-3">
-               <ul id="tabsJustified" class="nav nav-tabs flex-column">
-                  <li class="nav-item">
-                     <a href="#one" data-toggle="tab" class="nav-link">Deliveries</a>
-                  </li>
-                  <li class="nav-item">
-                     <a href="#two" data-toggle="tab" class="nav-link active">Meeting Reservations</a>
-                  </li>
-                  <li class="nav-item">
-                     <a href="#three" data-toggle="tab" class="nav-link">Dine-in Services</a>
-                  </li>
-               </ul>
-            </div>
-            <div class="col-lg-9">
-               <div class="tab-content">
-                  <!-- Deliveries -->
-                  <div id="one" class="tab-pane fade">
-                     <div class="row">
-                        <div class="col-md-6">
-                           <h4>Deliveries</h4>
-                           <p>Enjoy the taste of Kuraw Coffee Shop from the comfort of your home or office. We offer
-                              convenient delivery services for our coffee, beverages, and snacks.
-                           </p>
-                        </div>
-                        <div class="col-md-6">
-                           <img class="img-fluid" src="{{ asset('assets/img/service/delivery.jpg') }}" alt="Deliveries">
-                        </div>
-                     </div>
-                  </div>
-                  <!-- Meeting Reservations -->
-                  <div id="two" class="tab-pane fade show active">
-                     <div class="row">
-                        <div class="col-md-6">
-                           <h4>Meeting Reservations</h4>
-                           <p>Host your small meetings or gatherings in our cozy space. We provide a welcoming
-                              environment perfect for productive discussions or intimate celebrations.
-                           </p>
-                        </div>
-                        <div class="col-md-6">
-                           <img class="img-fluid" src="{{ asset('assets/img/service/meeting.jpg') }}" alt="Meetings">
-                        </div>
-                     </div>
-                  </div>
-                  <!-- Dine-in Services -->
-                  <div id="three" class="tab-pane fade">
-                     <div class="row">
-                        <div class="col-md-6">
-                           <h4>Dine-in Services</h4>
-                           <p>Relax and savor our menu in the inviting atmosphere of Kuraw Coffee Shop. From signature
-                              coffee to delicious snacks, we provide a delightful dine-in experience.
-                           </p>
-                        </div>
-                        <div class="col-md-6">
-                           <img class="img-fluid" src="{{ asset('assets/img/service/dinein.jpg') }}" alt="Dine-In">
-                        </div>
-                     </div>
-                  </div>
+   <div class="col-lg-3">
+      <ul id="tabsJustified" class="nav nav-tabs flex-column">
+         <li class="nav-item">
+            <a href="#one" data-toggle="tab" class="nav-link">Deliveries</a>
+         </li>
+         <li class="nav-item">
+            <a href="#two" data-toggle="tab" class="nav-link active">Meeting Reservations</a>
+         </li>
+         <li class="nav-item">
+            <a href="#three" data-toggle="tab" class="nav-link">Dine-in Services</a>
+         </li>
+      </ul>
+   </div>
+   <div class="col-lg-9">
+      <div class="tab-content">
+         <!-- Deliveries -->
+         <div id="one" class="tab-pane fade">
+            <div class="row">
+               <div class="col-md-6">
+                  <h4>Deliveries</h4>
+                  <p>Enjoy the taste of Kuraw Coffee Shop from the comfort of your home or office. We offer
+                     convenient delivery services for our coffee, beverages, and snacks.
+                  </p>
+               </div>
+               <div class="col-md-6">
+                  <img class="img-fluid" src="{{ asset('assets/img/service/delivery.jpg') }}" alt="Deliveries">
                </div>
             </div>
          </div>
+         <!-- Meeting Reservations -->
+         <div id="two" class="tab-pane fade show active">
+            <div class="row">
+               <div class="col-md-6">
+                  <h4>Meeting Reservations</h4>
+                  <p>Host your small meetings or gatherings in our cozy space. We provide a welcoming
+                     environment perfect for productive discussions or intimate celebrations.
+                  </p>
+               </div>
+               <div class="col-md-6">
+                  <img class="img-fluid" src="{{ asset('assets/img/service/meeting.jpg') }}" alt="Meetings">
+               </div>
+            </div>
+         </div>
+         <!-- Dine-in Services -->
+         <div id="three" class="tab-pane fade">
+            <div class="row">
+               <div class="col-md-6">
+                  <h4>Dine-in Services</h4>
+                  <p>Relax and savor our menu in the inviting atmosphere of Kuraw Coffee Shop. From signature
+                     coffee to delicious snacks, we provide a delightful dine-in experience.
+                  </p>
+               </div>
+               <div class="col-md-6">
+                  <img class="img-fluid" src="{{ asset('assets/img/service/dinein.jpg') }}" alt="Dine-In">
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
    </section>
    <!-- END SERVICES TAB SECTION -->
 
    <style>
-      /* Style for active tab */
-      .nav-tabs .nav-link.active {
-         background-color: black;
-         /* Black background for active tab */
-         color: white !important;
-         /* White text for active tab */
-      }
+   /* Style for active tab */
+   .nav-tabs .nav-link.active {
+      background-color: black; /* Black background for active tab */
+      color: white !important; /* White text for active tab */
+   }
 
-      /* Style for other tabs */
-      .nav-tabs .nav-link {
-         color: #6c757d;
-         /* Default Bootstrap gray text */
-      }
+   /* Style for other tabs */
+   .nav-tabs .nav-link {
+      color: #6c757d; /* Default Bootstrap gray text */
+   }
 
-      .nav-tabs .nav-link:hover {
-         color: black;
-         /* Black text on hover */
-      }
-   </style>
+   .nav-tabs .nav-link:hover {
+      color: black; /* Black text on hover */
+   }
+</style>
 
 
    <!-- Latest jQuery -->

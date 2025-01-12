@@ -1,5 +1,7 @@
+/* General Card Styling */
 .card {
     border-radius: 10px;
+    border: 1px solid #000; /* Black border */
 }
 
 .card-header {
@@ -8,60 +10,86 @@
     font-size: 1.5rem;
     font-weight: bold;
     padding: 1rem;
+    background-color: #000; /* Black background */
+    color: #fff; /* White text */
 }
 
 .card-header h3 {
     margin: 0;
-    color: #ffffff;
+    color: #fff; /* White text */
 }
 
 .card-header i {
-    color: #ffffff;
+    color: #fff; /* White icon */
+    margin-right: 10px;
 }
 
 .card-header i:hover {
-    color: #d4edda;
+    color: #ccc; /* Lighter gray on hover */
     transform: scale(1.1);
     transition: all 0.3s ease;
 }
 
 .card-body {
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: #fff; /* White background */
     border-radius: 0 0 10px 10px;
+    color: #000; /* Black text */
 }
 
+/* Button Styling */
 .btn {
     display: inline-block;
     margin-top: 10px;
     padding: 10px 20px;
     border-radius: 5px;
     transition: all 0.3s ease;
-    color: #ffffff;
-}
-
-.btn:hover {
-    color: #ffffff;
-    transform: scale(1.02);
+    color: #fff; /* White text */
 }
 
 .btn-success {
-    background-color: #28a745;
-    border: none;
-    transition: all 0.3s ease;
+    background-color: #000; /* Black background for button */
+    border: 1px solid #000; /* Black border */
 }
 
 .btn-success:hover {
-    background-color: #218838;
+    background-color: #333; /* Darker gray on hover */
+    color: #fff; /* Ensure white text remains visible */
     transform: scale(1.02);
+    border-color: #333; /* Darker border on hover */
 }
 
+/* Form Labels and Inputs */
 .form-label {
     font-weight: bold;
-    color: #495057;
+    color: #000; /* Black text for labels */
 }
 
 .form-control {
     border-radius: 0.5rem;
     padding: 0.8rem;
+    border: 1px solid #000; /* Black border for inputs */
+    background-color: #f9f9f9; /* Light gray background */
+    color: #000; /* Black text */
+}
+
+.form-control:focus {
+    border-color: #000; /* Black focus border */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle black shadow */
+    outline: none;
+}
+
+/* Input Placeholder Styling */
+.form-control::placeholder {
+    color: #999; /* Gray placeholder text */
+}
+
+/* Adjust Hover for Input Fields */
+.form-control:hover {
+    background-color: #f0f0f0; /* Slightly darker gray on hover */
+}
+
+/* Adjust Form Spacing */
+.mb-2 {
+    margin-bottom: 1rem; /* Add spacing between fields */
 }
