@@ -67,7 +67,20 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            // Redirect based on the user's role
+            // Handle API login
+            if ($request->is('api/*')) {
+                $token = $user->createToken('auth_token')->plainTextToken;
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Logged in successfully.',
+                    'user' => $user,
+                    'access_token' => $token,
+                    'token_type' => 'Bearer',
+                ], 200);
+            }
+
+            // Handle web login
             if ($user->role === 'admin') {
                 return redirect()->route('dashboard.index')->with('success', 'Welcome, Admin!');
             } elseif ($user->role === 'user') {
@@ -78,35 +91,23 @@ class AuthController extends Controller
             return redirect('/')->with('error', 'Unauthorized role.');
         }
 
+        // Handle failed login
+        if ($request->is('api/*')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid credentials.',
+            ], 401);
+        }
+
         return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
     }
+
 
 
     /**
      * Verify OTP after login.
      */
-    public function verifyOtp(Request $request)
-    {
-        $request->validate(['otp' => 'required|numeric']);
-        $user = User::where('email', $request->session()->get('email'))->first();
 
-        if ($user) {
-            if (Carbon::now()->greaterThan($user->otp_expires_at)) {
-                return back()->withErrors(['otp' => 'The OTP has expired.']);
-            }
-            if ($user->otp == $request->otp) {
-                $user->otp = null;
-                $user->otp_expires_at = null;
-                $user->save();
-
-                Auth::login($user);
-                $request->session()->forget('email');
-                return redirect()->route($user->role === 'admin' ? 'dashboard.index' : 'menu')
-                    ->with('status', 'OTP verified successfully!');
-            }
-        }
-        return back()->withErrors(['otp' => 'Invalid OTP']);
-    }
 
     /**
      * Handle user logout.
@@ -139,7 +140,7 @@ class AuthController extends Controller
     /**
      * Handle API logout.
      */
-    public function apiLogout(Request $request)
+    public function LogoutAccount(Request $request)
     {
         $request->user()->tokens()->delete();
         return response()->json(['message' => 'Logged out successfully'], 200);
