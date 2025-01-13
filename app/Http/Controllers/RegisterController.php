@@ -44,18 +44,17 @@ class RegisterController extends Controller
             // Send OTP using OTPController
             app('App\Http\Controllers\OTPController')->sendOTP($request);
 
-            // For API, return JSON response
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Account created successfully! OTP sent to your email.',
-                    'user' => $user,
-                ], 201);
+            // Redirect to login directly with a success message (for web users)
+            if (!$request->is('api/*')) {
+                return redirect()->route('login')->with('success', 'Account created successfully! You can now log in.');
             }
 
-            // For web, redirect to OTP verification page
-            session(['otp_email' => $user->email]);
-            return redirect()->route('otp.verify')->with('success', 'Account created successfully! OTP sent to your email.');
+            // For API, return JSON response
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Account created successfully! OTP sent to your email.',
+                'user' => $user,
+            ], 201);
         } catch (\Exception $e) {
             Log::error("Error during registration: " . $e->getMessage());
 
@@ -68,6 +67,15 @@ class RegisterController extends Controller
 
             return back()->withErrors(['error' => 'Something went wrong during registration. Please try again.']);
         }
+    }
+
+    /**
+     * Complete registration and redirect to login.s
+     */
+    public function completeRegistration()
+    {
+        // Redirect to login page with success message
+        return redirect()->route('login')->with('success', 'Your account has been successfully verified. You can now log in.');
     }
 
     /**

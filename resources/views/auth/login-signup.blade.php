@@ -17,6 +17,17 @@
             <div class="form-wrapper align-items-center">
                 <div class="form sign-up">
                     <h2>Sign Up</h2>
+
+                    <!-- Success Message -->
+                    @if(session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+
+                    <!-- Error Message -->
+                    @if($errors->any())
+                        <div class="alert alert-danger">{{ $errors->first() }}</div>
+                    @endif
+
                     <form id="signup-form" method="POST" action="{{ route('register') }}">
                         @csrf
                         <div class="input-group">
