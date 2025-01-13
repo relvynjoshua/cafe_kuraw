@@ -166,6 +166,7 @@ class CartController extends Controller
      */
     public function checkout(Request $request)
     {
+        // Validate the request
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
             'email' => 'required|email',
@@ -177,16 +178,17 @@ class CartController extends Controller
             'proof_of_payment' => 'nullable|image|required_if:payment_method,Gcash|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
 
+        // Default address for pickup
         if ($validated['delivery_method'] === 'pickup') {
             $validated['address'] = 'Kuraw Cafe';
         }
 
-        // Retrieve the cart
+        // Retrieve cart based on API or session
         $cart = $request->is('api/*')
             ? json_decode(Auth::user()->cart_items ?? '[]', true)
             : session()->get('cart', []);
 
-        // Handle empty cart scenario
+        // Return error if cart is empty
         if (empty($cart)) {
             return response()->json([
                 'status' => 'error',
@@ -199,13 +201,13 @@ class CartController extends Controller
         $totalAmount = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
         $finalAmount = max(0, $totalAmount - $discount);
 
-        // Handle GCash proof of payment upload
+        // Handle proof of payment for GCash
         $gcashProofPath = null;
         if ($request->payment_method === 'Gcash' && $request->hasFile('proof_of_payment')) {
             $gcashProofPath = $request->file('proof_of_payment')->store('gcash_proofs', 'public');
         }
 
-        // Create order record
+        // Create the order
         $order = Order::create([
             'user_id' => Auth::id(),
             'customer_name' => $validated['customer_name'],
@@ -230,22 +232,22 @@ class CartController extends Controller
                 'variation' => $item['variation'] ?? null,
             ]);
         }
-        // Notify admins for new order MAO NI GI ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+
+        // Notify admins and the user about the order
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             $admin->notify(new NewOrderPlaced($order));
         }
-
-        // Notify the user MAO NI GI ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
         Auth::user()->notify(new NewOrderPlaced($order));
+
         // Clear the cart after checkout
         if ($request->is('api/*')) {
             $user = Auth::user();
             if ($user) {
-                $user->update(['cart_items' => json_encode([])]); // Clear cart in database
+                $user->update(['cart_items' => json_encode([])]);
             }
         } else {
-            session()->forget(['cart', 'cart_discount']); // Clear session-based cart
+            session()->forget(['cart', 'cart_discount']);
         }
 
         // Return success response
@@ -255,38 +257,36 @@ class CartController extends Controller
     }
 
 
+
     public function update(Request $request)
     {
         $itemId = $request->input('item_id');
         $quantity = $request->input('quantity');
-    
+
         if (!$itemId || !$quantity || $quantity < 1) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Invalid item ID or quantity.',
             ], 400);
         }
-    
+
         if ($request->is('api/*')) {
             $user = Auth::user();
-    
+
             if (!$user) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Unauthorized',
                 ], 401);
             }
-    
+
             // Fetch and update cart from database
             $cart = json_decode($user->cart_items ?? '[]', true);
-    
+
             if (isset($cart[$itemId])) {
                 $cart[$itemId]['quantity'] = $quantity; // Update quantity
                 $user->cart_items = json_encode($cart); // Save updated cart to DB
                 $user->save(); // Save user changes
-    
-                // Flash success message for web requests
-                session()->flash('success', 'Quantity updated successfully!');
             } else {
                 return response()->json([
                     'status' => 'error',
@@ -296,13 +296,10 @@ class CartController extends Controller
         } else {
             // Fetch and update cart from session
             $cart = session()->get('cart', []);
-    
+
             if (isset($cart[$itemId])) {
                 $cart[$itemId]['quantity'] = $quantity; // Update quantity
                 session()->put('cart', $cart); // Save updated cart in session
-    
-                // Flash success message for session-based cart
-                session()->flash('success', 'Quantity updated successfully!');
             } else {
                 return response()->json([
                     'status' => 'error',
@@ -310,21 +307,18 @@ class CartController extends Controller
                 ], 404);
             }
         }
-    
+
         // Recalculate totals
         $cartCount = collect($cart)->sum('quantity');
         $totalPrice = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-    
-        // Save cart count for session-based cart
+
+        // Do not attempt to save `cart_count` to the database
+        // Only update it dynamically in the response or session
+
         if (!$request->is('api/*')) {
             session()->put('cart_count', $cartCount); // Update cart count in session
         }
-    
-        // Redirect for web requests, JSON response for API requests
-        if (!$request->is('api/*')) {
-            return redirect()->back(); // Redirect back with success message
-        }
-    
+
         return response()->json([
             'status' => 'success',
             'message' => 'Cart updated successfully!',
@@ -333,74 +327,64 @@ class CartController extends Controller
             'total_price' => $totalPrice,
         ]);
     }
-    
-        /**
-         * Remove an item from the cart.
-         */
-        public function remove(Request $request)
-        {
-            $itemId = $request->input('item_id');
-        
-            // Fetch the cart (API or Web)
-            $cart = $request->is('api/*')
-                ? json_decode(Auth::user()->cart_items ?? '[]', true)
-                : session()->get('cart', []);
-        
-            // Check if the item exists in the cart
-            if (isset($cart[$itemId])) {
-                unset($cart[$itemId]); // Remove the item
-        
-                // Save the updated cart
-                if ($request->is('api/*')) {
-                    $user = Auth::user();
-                    if ($user) {
-                        $user->cart_items = json_encode($cart);
-                        $user->save();
-                    } else {
-                        return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 401);
-                    }
-                } else {
-                    session()->put('cart', $cart);
-                }
-        
-                // Recalculate the cart count for session-based carts
-                $cartCount = collect($cart)->sum('quantity');
-                session()->put('cart_count', $cartCount);
-        
-                // Set a success flash message for web requests
-                session()->flash('success', 'Item removed successfully!');
-            } else {
-                // If the item does not exist
-                $message = 'Item not found in cart.';
-                return $request->is('api/*')
-                    ? response()->json(['status' => 'error', 'message' => $message], 404)
-                    : redirect()->back()->withErrors($message);
-            }
-        
-            // Recalculate totals for the cart
-            $cartCount = collect($cart)->sum('quantity');
-            $totalPrice = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-            $discount = session('cart_discount', 0);
-            $finalPrice = max(0, $totalPrice - $discount);
-        
-            // Save the updated cart count for session-based carts
-            if (!$request->is('api/*')) {
-                session()->put('cart_count', $cartCount);
-            }
-        
-            // Return responses for API or Web
+
+
+    public function remove(Request $request)
+    {
+        $itemId = $request->input('item_id');
+
+        // Fetch the cart (API or Web)
+        $cart = $request->is('api/*')
+            ? json_decode(Auth::user()->cart_items ?? '[]', true)
+            : session()->get('cart', []);
+
+        if (isset($cart[$itemId])) {
+            unset($cart[$itemId]); // Remove the item
+
+            // Save the updated cart
             if ($request->is('api/*')) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Item removed from cart.',
-                    'cart' => $cart,
-                    'cart_count' => $cartCount,
-                    'total_price' => $totalPrice,
-                    'discount' => $discount,
-                    'final_price' => $finalPrice,
-                ]);
+                $user = Auth::user();
+                if ($user) {
+                    $user->cart_items = json_encode($cart);
+                    $user->save();
+                } else {
+                    return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 401);
+                }
+            } else {
+                session()->put('cart', $cart);
             }
-        
-            return redirect()->route('cart.index')->with('success', 'Item removed successfully!');
+        } else {
+            // If the item does not exist
+            $message = 'Item not found in cart.';
+            return $request->is('api/*')
+                ? response()->json(['status' => 'error', 'message' => $message], 404)
+                : redirect()->back()->withErrors($message);
         }
+
+        // Recalculate totals
+        $cartCount = collect($cart)->sum('quantity');
+        $totalPrice = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+        $discount = session('cart_discount', 0);
+        $finalPrice = max(0, $totalPrice - $discount);
+
+        // Save cart count for web
+        if (!$request->is('api/*')) {
+            session()->put('cart_count', $cartCount);
+        }
+
+        // Return responses for API or Web
+        if ($request->is('api/*')) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Item removed from cart.',
+                'cart' => $cart,
+                'cart_count' => $cartCount,
+                'total_price' => $totalPrice,
+                'discount' => $discount,
+                'final_price' => $finalPrice,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Item removed from cart!');
+    }
 }

@@ -58,8 +58,6 @@
             <div class="col-lg-12 my-auto">
                <div class="page-banner-content text-center">
                   <h2 class="page-banner-title">About Us</h2>
-                  <div class="page-banner-breadcrumb">
-                     <p><a href="{{ route('home') }}">Home</a> About</p>
                   </div>
                </div>
             </div>

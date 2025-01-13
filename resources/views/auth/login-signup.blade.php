@@ -31,25 +31,24 @@
                     <form id="signup-form" method="POST" action="{{ route('register') }}">
                         @csrf
                         <div class="input-group">
-                            <i class='bx bxs-user'></i>
                             <input type="text" name="firstname" placeholder="Name" value="{{ old('firstname') }}"
                                 required>
                         </div>
                         <div class="input-group">
-                            <i class='bx bx-mail-send'></i>
                             <input type="email" name="email" id="email" placeholder="Enter your Email"
                                 value="{{ old('email') }}" required>
                         </div>
                         <div class="input-group password-group">
-                            <i class='bx bxs-lock-alt'></i>
                             <input type="password" name="password" id="signup-password" placeholder="Password"
                                 minlength="5" required>
+                                <small class="password-note">
+                                    Must be 8+ characters, include an uppercase, a number, and a special character.
+                                </small>
                             <span class="toggle-password" onclick="togglePassword('signup-password', this)">
                                 <i class="bx bx-show"></i>
                             </span>
                         </div>
                         <div class="input-group password-group">
-                            <i class='bx bxs-lock-alt'></i>
                             <input type="password" name="password_confirmation" id="signup-password-confirmation"
                                 placeholder="Confirm password" minlength="5" required>
                             <span class="toggle-password"
@@ -92,14 +91,12 @@
 
                         <!-- Email Input -->
                         <div class="input-group">
-                            <i class='bx bx-mail-send'></i>
                             <input type="email" name="email" placeholder="Enter your Email" value="{{ old('email') }}"
                                 class="{{ $errors->has('email') ? 'error' : '' }}" required>
                         </div>
 
                         <!-- Password Input -->
                         <div class="input-group password-group">
-                            <i class='bx bxs-lock-alt'></i>
                             <input type="password" name="password" id="signin-password" placeholder="Password"
                                 minlength="5" required>
                             <span class="toggle-password" onclick="togglePassword('signin-password', this)">

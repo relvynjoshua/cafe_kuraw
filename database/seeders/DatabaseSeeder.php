@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             SupplierSeeder::class,
             InventorySeeder::class,
             ProductVariationSeeder::class,
-            RolesTableSeeder::class,]);
+            RolesTableSeeder::class,
+            GallerySeeder::class,]);
     }
 }

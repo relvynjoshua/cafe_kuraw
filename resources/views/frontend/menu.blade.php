@@ -173,9 +173,6 @@
             <div class="col-lg-12 my-auto">
                <div class="page-banner-content text-center">
                   <h2 class="page-banner-title">Menu</h2>
-                  <div class="page-banner-breadcrumb">
-                     <p><a href="{{ route('home') }}">Home</a> Menu</p>
-                  </div>
                </div>
             </div>
          </div>
@@ -296,7 +293,6 @@
    </div>
 </div>
 
-
 <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script>
@@ -326,7 +322,7 @@
                // Show Modal Explicitly
                const addToCartModal = new bootstrap.Modal(document.getElementById('addToCartModal'));
                addToCartModal.show();
-            } else if (data.status === 'error') {
+            } else if (data.status === 'error' && data.message.includes('You cannot order more than')) {
                // Show "Call Us" Modal
                const callUsModal = new bootstrap.Modal(document.getElementById('callUsModal'));
                callUsModal.show();

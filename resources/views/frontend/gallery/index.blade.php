@@ -47,9 +47,6 @@
             <div class="col-lg-12 my-auto">
                 <div class="page-banner-content text-center">
                     <h2 class="page-banner-title">Gallery</h2>
-                    <div class="page-banner-breadcrumb">
-                        <p><a href="{{ url('/') }}">Home</a> Gallery</p>
-                    </div>
                 </div>
             </div>
         </div>

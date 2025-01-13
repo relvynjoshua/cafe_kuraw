@@ -52,6 +52,16 @@
     </div>
     <!-- END PRELOADER -->
 
+       <!-- START BREADCRUMB -->
+        <section class="breadcrumb-section py-5 text-center bg-light">
+            <div class="container">
+                <!-- Page Title -->
+                <h1 class="breadcrumb-title">Home</h1>
+            </div>
+        </section>
+<!-- END BREADCRUMB -->
+
+
     <!-- START SLIDER SECTION -->
     <section class="slider-section">
         <div class="home-slides owl-carousel owl-theme">
@@ -404,56 +414,6 @@
     </section>
     <!-- END TESTIMONIAL & FAQ SECTION -->
 
-    <!-- START PORTFOLIO SECTION -->
-    <section id="portfolio" class="section-padding">
-        <div class="auto-container">
-            <div class="row">
-                <div class="col-lg-7 col-md-7 col-12 mx-auto text-center">
-                    <div class="section-title">
-                        <h2>Image Gallery</h2>
-                        <p>Explore the heart of Kuraw Coffee Shop through our Image Gallery, showcasing our cozy
-                            ambiance, premium coffee creations, and the memorable moments shared with our customers.
-                            From our signature drinks to snapshots of events and milestones, each photo captures the
-                            essence of our passion for coffee and connection.</p>
-                    </div>
-                </div>
-            </div>
-            <!-- end section title -->
-            <div class="row mb-5">
-                <div class="col-12 mx-auto text-center wow fadeInDown">
-                    <div class="portfolio-filter-menu">
-                        <ul>
-                            <li class="filter active" data-filter="*">All</li>
-                            <li class="filter" data-filter=".one">Food & Drinks</li>
-                            <li class="filter" data-filter=".two">Meetings & Small Gatherings</li>
-                            <li class="filter" data-filter=".three">Best Moments</li>
-                            <li class="filter" data-filter=".four">Location</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!-- end portfolio menu list -->
-            <div class="row project-list">
-                @foreach (['moments/1.jpg', 'moments/2.jpg', 'kuraw/a.jpg', 'meetings/1.jpg', 'menu/caramelwaffle.jpg', 'menu/iceddirtymatcha.jpg'] as $image)
-                    <div class="col-lg-4 col-md-6 col-12 mb-lg-4 mb-md-4 mb-4">
-                        <figure class="portfolio-sin-item">
-                            <img class="img-fluid" src="{{ asset('assets/img/gallery/' . $image) }}" alt="" />
-                            <figcaption>
-                                <div class="port-icon mt-3">
-                                    <a class="icon-ho venobox" href="{{ asset('assets/img/gallery/' . $image) }}"
-                                        data-gall="gall1">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                </div>
-                            </figcaption>
-                        </figure>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-    <!-- END PORTFOLIO SECTION -->
-
     <!-- START BLOG SECTION -->
     <section id="blog" class="section-padding bg-gray">
         <div class="auto-container">
@@ -638,6 +598,58 @@
         });
     </script>
 </body>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+    /* Breadcrumb Section Styling */
+    .breadcrumb-section {
+        background-color: #f8f9fa; /* Light background */
+        padding: 3rem 0; /* Vertical spacing */
+    }
+
+    .breadcrumb-title {
+        font-family: 'Poppins', sans-serif; /* Use Poppins font */
+        font-size: 3rem; /* Large title size */
+        font-weight: 700; /* Bold weight */
+        color: #000; /* Black text color */
+        margin-bottom: 1rem; /* Space below the title */
+    }
+
+    .breadcrumb {
+        display: inline-flex;
+        padding: 0;
+        margin: 0;
+        background: none; /* Remove background from breadcrumbs */
+        font-family: 'Poppins', sans-serif; /* Apply Poppins font */
+        font-size: 1rem; /* Font size for breadcrumb text */
+        font-weight: 500; /* Medium weight */
+    }
+
+    .breadcrumb-item a {
+        text-decoration: none; /* Remove underline */
+        color: #007bff; /* Link color */
+        transition: color 0.3s ease; /* Smooth transition */
+    }
+
+    .breadcrumb-item a:hover {
+        color: #0056b3; /* Hover color */
+    }
+
+    .breadcrumb-item.active {
+        color: #000; /* Active breadcrumb color */
+        font-weight: bold; /* Bold for active breadcrumb */
+    }
+
+    .breadcrumb::before {
+        content: "\f105"; /* FontAwesome right arrow */
+        font-family: "Font Awesome 5 Free"; /* FontAwesome */
+        font-weight: 900;
+        margin: 0 0.5rem;
+        color: #6c757d; /* Gray color for separator */
+    }
+</style>
 
 </html>
 

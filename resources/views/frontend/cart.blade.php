@@ -198,6 +198,16 @@
         /* Red color for error */
         font-size: 0.875rem;
     }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+    }
 </style>
 
 <div class="container py-5">
@@ -417,6 +427,9 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="overlay d-none" id="screenOverlay"></div>
+
                 @else
                 <div class="alert alert-warning text-center">
                     <h4>Your cart is empty.</h4>
@@ -441,6 +454,7 @@
         const successModal = new bootstrap.Modal(document.getElementById('successModal'));
         const confirmOrderBtn = document.getElementById('confirmOrderBtn');
         const placeOrderBtn = document.getElementById('placeOrderBtn');
+        const screenOverlay = document.getElementById('screenOverlay');
 
         paymentMethodSelect.addEventListener('change', function () {
             if (this.value === 'Gcash') {
@@ -572,7 +586,11 @@
         });
 
         confirmOrderBtn.addEventListener('click', function () {
-            form.submit(); // Submit the form when "OK" is clicked
+            // Disable the screen
+            screenOverlay.classList.remove('d-none');
+
+            // Submit the form when "OK" is clicked
+            form.submit();
         });
 
         // Quantity Update exceeds 10
