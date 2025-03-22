@@ -140,7 +140,6 @@ php artisan test
    - Select the server type, size, and region.
    - Forge will provision the server and install necessary services like Nginx, PHP, MySQL, etc.
 
----
 
 ## **2. Deploy The Laravel Project**
 
@@ -186,7 +185,6 @@ Replace `<your-domain>` with your project’s directory name.
 1. In Forge, go to "Environment" and add your `.env` variables.
 2. Ensure your database credentials, `APP_ENV=production`, and other API keys are correctly set.
 
----
 
 ## **3. Install and Test Dependencies**
 
@@ -218,7 +216,6 @@ chmod -R 775 storage bootstrap/cache
 chown -R forge:www-data storage bootstrap/cache
 ```
 
----
 
 ## **4. Test Server Configuration**
 
@@ -244,7 +241,6 @@ If your app uses jobs or queues, ensure workers are running:
 
 Enable the scheduler for `php artisan schedule:run` under the "Scheduler" tab in Forge.
 
----
 
 ## **5. Testing Your Application**
 
@@ -270,7 +266,6 @@ cat storage/logs/laravel.log
 cat /var/log/nginx/error.log
 ```
 
----
 
 ## **6. Optimize for Production**
 
@@ -297,14 +292,12 @@ Use Forge’s "SSL Certificates" feature to add a free Let's Encrypt certificate
 - Use Laravel Horizon for queue monitoring.
 - Set up Redis or another caching mechanism if needed.
 
----
 
 ## **7. Continuous Deployment**
 
 - Set up automatic deployment in Forge to trigger on new Git commits.
 - Customize deployment triggers and scripts in the "Deployments" section.
 
----
 
 ## **8. Monitor and Backup**
 
@@ -317,7 +310,6 @@ Use Forge’s "SSL Certificates" feature to add a free Let's Encrypt certificate
 
 - Enable backups in Forge for database snapshots and storage files.
 
----
 
 ## **9. Final Checklist**
 
@@ -325,8 +317,6 @@ Use Forge’s "SSL Certificates" feature to add a free Let's Encrypt certificate
 - All dependencies (Composer, NPM) are installed and optimized.
 - Scheduled tasks and queue workers are running.
 - Logs are clean of errors.
-
----
 
 ## License
 
