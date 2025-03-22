@@ -129,9 +129,9 @@ php artisan test
 
 ## Deployment
 
-### 🚀 Deploying with Laravel Forge and DigitalOcean
+## 🚀 Deploying with Laravel Forge and DigitalOcean
 
-## **1. Set Up Laravel Forge and Create a Server**
+### **1. Set Up Laravel Forge and Create a Server**
 
 1. **Sign up for Laravel Forge**: [Laravel Forge](https://forge.laravel.com) is a tool for managing Laravel applications.
 2. **Connect a Cloud Provider**: Link your cloud hosting provider (e.g., DigitalOcean, AWS, Linode) to Forge.
@@ -141,13 +141,13 @@ php artisan test
    - Forge will provision the server and install necessary services like Nginx, PHP, MySQL, etc.
 
 
-## **2. Deploy The Laravel Project**
+### **2. Deploy The Laravel Project**
 
-### **Connect Git Repository**
+#### **Connect Git Repository**
 1. Link your Laravel project repository (GitHub, GitLab, Bitbucket) in the Forge dashboard.
 2. Add the repository URL and set up SSH keys for Forge to access the repo.
 
-### **Configure Deployment Script**
+#### **Configure Deployment Script**
 1. Navigate to your server in Forge > "Deployments."
 2. Add the following deployment script:
 
@@ -181,14 +181,14 @@ php artisan queue:restart
 
 Replace `<your-domain>` with your project’s directory name.
 
-### **Set Environment Variables**
+#### **Set Environment Variables**
 1. In Forge, go to "Environment" and add your `.env` variables.
 2. Ensure your database credentials, `APP_ENV=production`, and other API keys are correctly set.
 
 
-## **3. Install and Test Dependencies**
+### **3. Install and Test Dependencies**
 
-### **Ensure Composer Dependencies**
+#### **Ensure Composer Dependencies**
 
 Verify `composer.json` lists all required packages (e.g., `laravel/dompdf`, `toastify-js`). If a package is missing, install it:
 
@@ -196,7 +196,7 @@ Verify `composer.json` lists all required packages (e.g., `laravel/dompdf`, `toa
 composer require <package-name>
 ```
 
-### **Node.js and NPM**
+#### **Node.js and NPM**
 
 If your project uses frontend assets:
 
@@ -207,7 +207,7 @@ npm run prod
 
 Ensure `package.json` has the correct dependencies for frontend tools like Toastify.
 
-### **File Permissions**
+#### **File Permissions**
 
 Set correct permissions for storage and bootstrap/cache:
 
@@ -217,9 +217,9 @@ chown -R forge:www-data storage bootstrap/cache
 ```
 
 
-## **4. Test Server Configuration**
+### **4. Test Server Configuration**
 
-### **Check PHP and Database Versions**
+#### **Check PHP and Database Versions**
 
 Ensure your server uses the correct PHP and MySQL versions:
 
@@ -228,28 +228,28 @@ php -v
 mysql -V
 ```
 
-### **Nginx Configuration**
+#### **Nginx Configuration**
 
 Forge sets up Nginx automatically, but ensure the web root points to `/public` in your project folder.
 
-### **Queue Workers**
+#### **Queue Workers**
 
 If your app uses jobs or queues, ensure workers are running:
 - In Forge, go to "Daemon Queue" and set up workers for your queues.
 
-### **Scheduler**
+#### **Scheduler**
 
 Enable the scheduler for `php artisan schedule:run` under the "Scheduler" tab in Forge.
 
 
-## **5. Testing Your Application**
+### **5. Testing Your Application**
 
-### **Access the Site**
+#### **Access the Site**
 
 1. Visit your domain in the browser to confirm the Laravel app is loading.
 2. Check if public assets (CSS, JS) load correctly.
 
-### **Verify Features**
+#### **Verify Features**
 
 - **Test DOMPDF**:
   - Ensure PDFs generate correctly by testing the related functionality.
@@ -257,7 +257,7 @@ Enable the scheduler for `php artisan schedule:run` under the "Scheduler" tab in
 - **Test Toastify**:
   - Verify Toastify alerts display on user actions.
 
-### **Debug Issues**
+#### **Debug Issues**
 
 Check Laravel logs and Nginx logs for errors:
 
@@ -267,13 +267,13 @@ cat /var/log/nginx/error.log
 ```
 
 
-## **6. Optimize for Production**
+### **6. Optimize for Production**
 
-### **Disable Debug Mode**
+#### **Disable Debug Mode**
 
 Ensure `APP_DEBUG=false` in `.env`.
 
-### **Caching**
+#### **Caching**
 
 Pre-cache configs and routes:
 
@@ -283,35 +283,35 @@ php artisan route:cache
 php artisan view:cache
 ```
 
-### **SSL Configuration**
+#### **SSL Configuration**
 
 Use Forge’s "SSL Certificates" feature to add a free Let's Encrypt certificate.
 
-### **Performance Tweaks**
+#### **Performance Tweaks**
 
 - Use Laravel Horizon for queue monitoring.
 - Set up Redis or another caching mechanism if needed.
 
 
-## **7. Continuous Deployment**
+### **7. Continuous Deployment**
 
 - Set up automatic deployment in Forge to trigger on new Git commits.
 - Customize deployment triggers and scripts in the "Deployments" section.
 
 
-## **8. Monitor and Backup**
+### **8. Monitor and Backup**
 
-### **Monitoring**
+#### **Monitoring**
 
 - Use Laravel Telescope or Sentry for monitoring errors.
 - Forge includes server health monitoring tools.
 
-### **Backup**
+#### **Backup**
 
 - Enable backups in Forge for database snapshots and storage files.
 
 
-## **9. Final Checklist**
+### **9. Final Checklist**
 
 - Ensure `.env` is configured correctly for production.
 - All dependencies (Composer, NPM) are installed and optimized.
