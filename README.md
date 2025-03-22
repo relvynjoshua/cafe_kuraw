@@ -1,66 +1,167 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
+  <img src="/cafe_kuraw/public/img/kuraw_logo.jpg" alt="Kuraw logo" width="200" height="auto" />
+  <h1>Kuraw Coffee Shop System</h1>
+  <p>Web and Mobile Management Information System </p>
+</div>
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+## Project Overview 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The **Web and Mobile Management Information System for Kuraw Coffee Shop** is a comprehensive platform designed for both web and mobile users. It allows customers to place orders, reserve tables, and browse the café’s menu with ease. Given the café’s limited space and parking, the reservation feature enhances customer convenience. 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The system consists of two platforms:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- 🌐 **Web Application** – Provides an intuitive interface for customers, cashiers, and administrators to interact with the system.
+- 📱 **Mobile Application** – Built with React Native, offering seamless order placement and reservations on the go.
 
-## Learning Laravel
+The platform supports three user roles:
+- 🍽️ **Customers** – Order food for pickup or delivery, reserve tables, and explore café details.
+- 👨‍💼 **Admins** – Manage orders, track sales trends, generate reports, oversee inventory, and handle user access.
+- 🤝 **Cashiers** – Process in-store orders via the POS system and manage customer reservations.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+This system streamlines café operations, enhances user experience, and optimizes business management.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Features
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- 🛠 **Inventory System:** Manage and track stock levels, product details, and supplier information.
+- 🛒 **Point of Sale (POS) System:** Facilitate in-store transactions with sales processing, receipt generation, and payment handling.
+- 📊 **Admin Dashboard:** Provide administrators with an overview of business metrics, system analytics, and quick access to management tools.
+- 🛒 **Ordering System:** Allow customers to place orders online, customize their selections, and choose pickup or delivery options.
+- 📅 **Reservation System:** Enable customers to reserve tables or event spaces, with scheduling and confirmation functionalities.
+- 🔑 **Authentication:** Support user registration and login processes, ensuring secure access to personalized features.
+- 🖼 **Gallery Management:** Display and manage images of products, events, and the café environment to engage customers.
+- 🤝 **User Management:** Administer user roles, permissions, and profiles to maintain system security and personalized experiences.
+- 🛠 **API Integration:** Connect web and mobile applications using a RESTful API.
+- 📱 **Mobile App:** Developed with React Native to provide a seamless mobile experience.
+- 🛠 **Log Checker:** Logs and tracks changes made in the admin dashboard for accountability.
+- 📃 **PDF Report Generation:** Generate reports for daily, weekly, monthly, and yearly business insights.
+- 📊 **Sales Analytics:** Display trends and key metrics in the admin dashboard.
+- 🛡 **OTP Integration:** Secure account creation with one-time password verification.
+- 📞 **Contact System:** Customers can send messages directly to the administrator for inquiries and support.
+- 💼 **Employee Management:** Administrators can add, edit, and manage employees.
 
-## Laravel Sponsors
+## Tech Stack
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Backend:** Laravel
+- **Database:** MySQL
+- **Frontend:** HTML, CSS, Bootstrap, JavaScript
+- **Mobile Development:** React Native
+- **Hosting & Deployment:** DigitalOcean, Laravel Forge
 
-### Premium Partners
+## Installation
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Prerequisites
 
-## Contributing
+Make sure you have the following installed:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- PHP (≥8.0)
+- Composer
+- Laravel
+- MySQL or any preferred database
 
-## Code of Conduct
+### Steps to Install
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo.git
+   ```
+2. Navigate into the project directory:
+   ```bash
+   cd your-project-name
+   ```
+3. Install dependencies:
+   ```bash
+   composer install
+   ```
+4. Copy the `.env.example` file to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+5. Generate an application key:
+   ```bash
+   php artisan key:generate
+   ```
+6. Configure your `.env` file with your database credentials.
+7. Run database migrations:
+   ```bash
+   php artisan migrate --seed
+   ```
+8. Serve the application:
+   ```bash
+   php artisan serve
+   ```
 
-## Security Vulnerabilities
+## Usage
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 🍽️ For Users
+
+- Order menu items for pickup or delivery.
+- Reserve the café for gatherings and events.
+- Access detailed information about Kuraw Coffee Shop with ease.
+- Contact administrators directly for inquiries.
+
+### 👨‍💼 For Admins
+
+- Manage online orders, track new orders, and analyze sales trends.
+- Export sales and inventory data for record-keeping and decision-making.
+- Maintain and update the café's inventory.
+- Manage the gallery to post news and announcements.
+- Add and update menu items.
+- Oversee user management, including enabling/disabling users.
+- Monitor logs to track data modifications.
+- Manage employee records and roles.
+
+### 🤝 For Cashiers
+
+- Take in-store orders using the POS system.
+- Manage reservations and customer orders efficiently.
+- Access the complete list of food and beverage offerings.
+
+## API Routes (if applicable)
+
+List important API endpoints with descriptions.
+
+## Testing
+
+Run tests with:
+
+```bash
+php artisan test
+```
+
+## Deployment
+
+### 🚀 Deploying with Laravel Forge and DigitalOcean
+
+1. **Set up a DigitalOcean Droplet:**
+   - Create a new Droplet on DigitalOcean with Ubuntu as the OS.
+   - Configure SSH access and retrieve your server’s IP address.
+2. **Connect Laravel Forge:**
+   - Log in to Laravel Forge and connect it to your DigitalOcean account.
+   - Create a new server and select the Droplet you set up.
+3. **Deploy the Laravel Project:**
+   - Add your GitHub repository to Laravel Forge.
+   - Set the root directory for the project (e.g., `/home/forge/yourdomain.com`).
+   - Configure the `.env` file with the correct environment variables.
+4. **Set Up the Database:**
+   - Use Laravel Forge to create a MySQL database and update the `.env` file accordingly.
+   - Run migrations:
+     ```bash
+     php artisan migrate --seed
+     ```
+5. **Configure a Web Server:**
+   - Use Laravel Forge to set up Nginx for serving your Laravel application.
+   - Ensure the document root is set to `/public`.
+6. **SSL and Domain Setup:**
+   - Assign a domain to your project in Laravel Forge.
+   - Enable free SSL via Let’s Encrypt for HTTPS support.
+7. **Automate Deployment:**
+   - Set up automatic deployments in Laravel Forge to pull from your GitHub repository when updates are pushed.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Distributed under the MIT License. See [LICENSE.txt](LICENSE.txt) for more information.
+s
