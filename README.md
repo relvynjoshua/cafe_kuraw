@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="/cafe_kuraw/public/img/kuraw_logo.jpg" alt="Kuraw logo" width="200" height="auto" />
+  <img src="/public/img/kuraw_logo.jpg" alt="Kuraw logo" width="200" height="auto" />
   <h1>Kuraw Coffee Shop System</h1>
   <p>Web and Mobile Management Information System </p>
 </div>
@@ -164,4 +164,3 @@ php artisan test
 ## License
 
 Distributed under the MIT License. See [LICENSE.txt](LICENSE.txt) for more information.
-s
