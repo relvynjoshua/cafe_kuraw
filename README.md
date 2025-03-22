@@ -144,7 +144,7 @@ php artisan test
 ### **2. Deploy The Laravel Project**
 
 #### **Connect Git Repository**
-1. Link your Laravel project repository (GitHub, GitLab, Bitbucket) in the Forge dashboard.
+1. Link the Laravel project repository (GitHub, GitLab, Bitbucket) in the Forge dashboard.
 2. Add the repository URL and set up SSH keys for Forge to access the repo.
 
 #### **Configure Deployment Script**
@@ -317,6 +317,8 @@ Use Forge’s "SSL Certificates" feature to add a free Let's Encrypt certificate
 - All dependencies (Composer, NPM) are installed and optimized.
 - Scheduled tasks and queue workers are running.
 - Logs are clean of errors.
+
+Once you've completed these steps, your Kuraw Coffee Shop System will be live and fully functional!
 
 ## License
 
